@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.RabbitMq", "src\Castle.RabbitMq\Castle.RabbitMq.csproj", "{12AB9987-23C0-415D-8740-3E58D254B03D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.RabbitMq.IntegrationTests", "src\Castle.RabbitMq.IntegrationTests\Castle.RabbitMq.IntegrationTests.csproj", "{B8AD1493-6E79-496E-99D0-17D5CA13325A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{12AB9987-23C0-415D-8740-3E58D254B03D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12AB9987-23C0-415D-8740-3E58D254B03D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12AB9987-23C0-415D-8740-3E58D254B03D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12AB9987-23C0-415D-8740-3E58D254B03D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8AD1493-6E79-496E-99D0-17D5CA13325A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8AD1493-6E79-496E-99D0-17D5CA13325A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8AD1493-6E79-496E-99D0-17D5CA13325A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8AD1493-6E79-496E-99D0-17D5CA13325A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
