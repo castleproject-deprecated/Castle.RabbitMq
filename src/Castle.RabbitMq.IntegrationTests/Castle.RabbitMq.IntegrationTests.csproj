@@ -43,7 +43,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -53,6 +52,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scenarios\_1_DeclareAndUseExchange.cs" />
+    <Compile Include="Scenarios\_2_DirectExchanges.cs" />
+    <Compile Include="Scenarios\_3_UsingPrefetchToLoadBalance.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Castle.RabbitMq\Castle.RabbitMq.csproj">

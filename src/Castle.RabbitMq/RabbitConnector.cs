@@ -4,8 +4,8 @@
 
     public static class RabbitConnector
     {
-        public static IRabbitConnection Connect(string hostname, int port = 5672, 
-            string username = "guest", string password = "guest")
+        public static RabbitConnection Connect(string hostname, int port = 5672, 
+            string username = "guest", string password = "guest", string vhost = "/")
         {
             var connFactory = new ConnectionFactory()
             {
