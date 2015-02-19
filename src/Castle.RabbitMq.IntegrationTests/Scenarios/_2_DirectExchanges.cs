@@ -10,11 +10,11 @@
         public void DeclareAndUseIt()
         {
             var channel = this.Connection.CreateChannel();
-            var exchange = channel.DeclareExchange("my2exchange", new RabbitExchangeOptions()
+            var exchange = channel.DeclareExchange("my2exchange", new ExchangeOptions()
             {
                 // using default options = ephemeral
             });
-            var queue = exchange.DeclareQueue("namedqueue", new RabbitQueueOptions()
+            var queue = exchange.DeclareQueue("namedqueue", new QueueOptions()
             {
 
             });

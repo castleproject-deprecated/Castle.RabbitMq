@@ -55,6 +55,11 @@
     <Compile Include="Scenarios\_1_DeclareAndUseExchange.cs" />
     <Compile Include="Scenarios\_2_DirectExchanges.cs" />
     <Compile Include="Scenarios\_3_UsingPrefetchToLoadBalance.cs" />
+    <Compile Include="Scenarios\_4_HandlingUnroutedMessages.cs" />
+    <Compile Include="Scenarios\_5_UsingMessageCustomProperties.cs" />
+    <Compile Include="Scenarios\_6_PubSubWithFanoutExchange.cs" />
+    <Compile Include="Scenarios\_7_UsingMessageExpiration.cs" />
+    <Compile Include="Scenarios\_8_UsingTransactions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Castle.RabbitMq\Castle.RabbitMq.csproj">

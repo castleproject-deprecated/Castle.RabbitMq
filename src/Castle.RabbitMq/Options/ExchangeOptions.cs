@@ -7,9 +7,9 @@ namespace Castle.RabbitMq
         Direct, Fanout, Headers, Topic
     }
 
-    public class RabbitExchangeOptions
+    public class ExchangeOptions
     {
-        public RabbitExchangeOptions()
+        public ExchangeOptions()
         {
             this.AutoDelete = true;
             this.Durable = false;

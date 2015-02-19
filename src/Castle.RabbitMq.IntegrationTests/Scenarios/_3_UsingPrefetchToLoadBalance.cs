@@ -12,11 +12,11 @@
         {
             var channel = this.Connection.CreateChannel(prefetchCount: 1);
 
-            var exchange = channel.DeclareExchange("my3exchange", new RabbitExchangeOptions()
+            var exchange = channel.DeclareExchange("my3exchange", new ExchangeOptions()
             {
                 // using default options = ephemeral
             });
-            var queue = exchange.DeclareQueue("namedqueue3", new RabbitQueueOptions()
+            var queue = exchange.DeclareQueue("namedqueue3", new QueueOptions()
             {
             });
 

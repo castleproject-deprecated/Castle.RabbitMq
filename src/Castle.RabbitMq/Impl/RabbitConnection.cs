@@ -4,11 +4,6 @@
     using System.Collections.Generic;
     using RabbitMQ.Client;
 
-    public interface IRabbitConnection : IDisposable
-    {
-        IRabbitChannel CreateChannel(bool withConfirmation = false, ushort? prefetchCount = null);
-    }
-
     public class RabbitConnection : IRabbitConnection
     {
         private readonly List<WeakReference<IModel>> _models = new List<WeakReference<IModel>>();

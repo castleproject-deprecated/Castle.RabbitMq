@@ -1,8 +1,10 @@
 ﻿namespace Castle.RabbitMq
 {
-    public class RabbitQueueOptions
+    using System.Collections.Generic;
+
+    public class QueueOptions
     {
-        public RabbitQueueOptions()
+        public QueueOptions()
         {
             this.Durable = true;
             this.Exclusive = true;
@@ -12,6 +14,7 @@
         public bool Durable { get; set; }
         public bool Exclusive { get; set; }
         public bool AutoDelete { get; set; }
+        public IDictionary<string, object> Arguments { get; set; }
 
         IRabbitSerializer Serializer { get; set; }
     }

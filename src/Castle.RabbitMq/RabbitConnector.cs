@@ -4,6 +4,8 @@
 
     public static class RabbitConnector
     {
+        // TODO: Set up logger here?
+
         public static RabbitConnection Connect(string hostname, int port = 5672, 
             string username = "guest", string password = "guest", string vhost = "/")
         {
@@ -15,7 +17,9 @@
                 Password = password
             };
 
-            return new RabbitConnection( connFactory.CreateConnection() );
+            var connection = connFactory.CreateConnection();
+
+            return new RabbitConnection(connection);
         }
     }
 }

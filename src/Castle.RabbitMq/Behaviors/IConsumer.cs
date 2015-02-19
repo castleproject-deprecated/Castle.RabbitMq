@@ -11,9 +11,9 @@
         void Consume<T>(Action<MessageEnvelope<T>> onMsgReceived, ConsumeOptions options) where T : class;
 
         // Designated Consume overload
-        void Consume<T>(Action<MessageEnvelope<T>, MessageAction> onMsgReceived, ConsumeOptions options) where T : class;
+        void Consume<T>(Action<MessageEnvelope<T>, MessageAck> onMsgReceived, ConsumeOptions options) where T : class;
 
         // Designated Consume overload
-        void ConsumeRaw(Action<MessageEnvelope, MessageAction> onMsgReceived, ConsumeOptions options);
+        void ConsumeRaw(Action<MessageEnvelope, MessageAck> onMsgReceived, ConsumeOptions options);
     }
 }

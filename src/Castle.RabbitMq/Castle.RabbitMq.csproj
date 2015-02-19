@@ -50,22 +50,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="api.cs" />
+    <Compile Include="IRabbitConnection.cs" />
     <Compile Include="Options\ConsumeOptions.cs" />
-    <Compile Include="IConsumer.cs" />
+    <Compile Include="Behaviors\IConsumer.cs" />
     <Compile Include="Behaviors\IDestroyable.cs" />
     <Compile Include="IExchangeQueueBinding.cs" />
     <Compile Include="Behaviors\IQueueDeclarer.cs" />
-    <Compile Include="IRabbitSerializer.cs" />
+    <Compile Include="Serializers\IRabbitSerializer.cs" />
     <Compile Include="Behaviors\ISender.cs" />
-    <Compile Include="MessageAction.cs" />
+    <Compile Include="Behaviors\IMessageAck.cs" />
     <Compile Include="MessageEnvelope.cs" />
     <Compile Include="MessageProperties.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Impl\RabbitChannel.cs" />
     <Compile Include="Impl\RabbitConnection.cs" />
     <Compile Include="RabbitConnector.cs" />
-    <Compile Include="Options\RabbitExchangeOptions.cs" />
-    <Compile Include="Options\RabbitQueueOptions.cs" />
+    <Compile Include="Options\ExchangeOptions.cs" />
+    <Compile Include="Options\QueueOptions.cs" />
     <Compile Include="Serializers\JsonSerializer.cs" />
     <Compile Include="Serializers\ProtoBufSerializer.cs" />
   </ItemGroup>

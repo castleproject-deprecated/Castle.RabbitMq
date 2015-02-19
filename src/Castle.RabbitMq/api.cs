@@ -4,7 +4,7 @@
 
     public static class RabbitChannelExtensions
     {
-        public static IRabbitExchange DeclareExchange(this IRabbitChannel source, RabbitExchangeOptions options)
+        public static IRabbitExchange DeclareExchange(this IRabbitChannel source, ExchangeOptions options)
         {
             return source.DeclareExchange(string.Empty, options);
         }
@@ -15,15 +15,15 @@
         // OnException?
         // OnMessageNotDelivered --> OnMessageUnrouted
 
-        IRabbitExchange DeclareExchange(string name, RabbitExchangeOptions options);
+        IRabbitExchange DeclareExchange(string name, ExchangeOptions options);
 
-//        IRabbitQueue DeclareQueue(IRabbitExchange exchange, string name, RabbitQueueOptions options);
+//        IRabbitQueue DeclareQueue(IRabbitExchange exchange, string name, QueueOptions options);
 
         /// <summary>
         /// Uses the default exchange
         /// </summary>
-//        IRabbitQueue DeclareQueue(string name, RabbitQueueOptions options);
-//        IRabbitQueue DeclareEphemeralQueue(IRabbitExchange exchange, RabbitQueueOptions options);
+//        IRabbitQueue DeclareQueue(string name, QueueOptions options);
+//        IRabbitQueue DeclareEphemeralQueue(IRabbitExchange exchange, QueueOptions options);
 
         IExchangeQueueBinding Bind(IRabbitExchange exchange, IRabbitQueue queue, string routingKeyOrFilter = null);
     }
@@ -36,12 +36,16 @@
 
     public interface IRabbitQueue : ISender, IConsumer, IDestroyable
     {
+        string Name { get; }
+        uint ConsumerCount { get; }
+        uint MessageCount { get; }
+
 //        void Send();
 //        Task SendAsync();
 
         // void Receive();
 
-//        void Consume(Action<RabbitMessage, MessageAction> onMsgReceived);
+//        void Consume(Action<RabbitMessage, MessageAck> onMsgReceived);
     }
 
     public class MessageInfo

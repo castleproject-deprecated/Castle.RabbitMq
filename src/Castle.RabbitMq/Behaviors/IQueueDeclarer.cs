@@ -2,8 +2,8 @@
 {
     public interface IQueueDeclarer
     {
-        IRabbitQueue DeclareQueue(string name, RabbitQueueOptions options);
+        IRabbitQueue DeclareQueue(string name, QueueOptions options);
 
-        IRabbitQueue DeclareEphemeralQueue(RabbitQueueOptions options);
+        IRabbitQueue DeclareEphemeralQueue(QueueOptions options);
     }
 }

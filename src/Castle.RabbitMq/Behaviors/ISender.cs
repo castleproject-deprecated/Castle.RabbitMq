@@ -1,10 +1,30 @@
 namespace Castle.RabbitMq
 {
+    using System;
+
+    public class SendOptions
+    {
+        public static SendOptions Default = new SendOptions()
+        {
+            Mandatory = false,
+            Persist = false,
+            Routing = string.Empty
+        }; 
+
+        public string Routing { get; set; }
+        public bool Persist { get; set; }
+        public bool Mandatory { get; set; }
+
+        
+    }
+
     public interface ISender
     {
-// 
-        MessageInfo Send<T>(T message, string routing = "", bool persist = false, bool mandatory = false, MessageProperties properties = null) where T : class;
+        Action<int> ConfirmationCallback { get; set; }
 
-//        MessageInfo SendRaw(byte[] body, bool persist = false, bool mandatory = false, MessageProperties properties = null);
+// 
+        MessageInfo Send<T>(T message, MessageProperties properties = null, SendOptions options = null) where T : class;
+
+//        MessageInfo SendRaw(byte[] body, MessageProperties properties = null, SendOptions options = null);
     }
 }

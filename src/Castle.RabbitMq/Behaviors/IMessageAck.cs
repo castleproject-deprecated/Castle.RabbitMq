@@ -1,15 +1,14 @@
 ﻿namespace Castle.RabbitMq
 {
-
-    public interface IMessageAction
+    public interface IMessageAck
     {
         void Ack();
         void Reject();
     }
 
-    public class MessageAction : IMessageAction
+    public class MessageAck : IMessageAck
     {
-        public MessageAction()
+        public MessageAck()
         {
         }
 
