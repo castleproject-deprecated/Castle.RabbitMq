@@ -11,6 +11,7 @@
         private readonly IRabbitSerializer _defaultSerializer;
         private readonly bool _canDestroy;
         private readonly ExchangeOptions _options;
+        private readonly RpcHelper _rpcHelper;
 
         public RabbitExchange(IModel model, IRabbitSerializer serializer, 
                               string name, bool canDestroy, ExchangeOptions options)
@@ -21,6 +22,8 @@
             _defaultSerializer = serializer;
             _canDestroy = canDestroy;
             _options = options;
+
+            _rpcHelper = new RpcHelper(_model, this.Name, serializer);
         }
 
         #region IRabbitExchange
@@ -35,7 +38,23 @@
                                 MessageProperties properties = null, 
                                 SendOptions options = null)
         {
-            throw new NotImplementedException();
+            options = options ?? SendOptions.Default;
+            var prop = properties ?? _model.CreateBasicProperties();
+            if (options.Persist)
+            {
+                prop.DeliveryMode = 2; // persistent
+            }
+
+            lock (_model)
+            {
+                var id = _model.NextPublishSeqNo;
+                _model.BasicPublish("", routingKey,
+                                    mandatory: options.Mandatory,
+                                    immediate: options.Immediate,
+                                    basicProperties: properties,
+                                    body: body);
+                return new MessageInfo() { Tag = id };
+            }
         }
 
         public MessageInfo Send<T>(T message, string routingKey = "", 
@@ -43,16 +62,29 @@
                                    SendOptions options = null) 
             where T : class
         {
-            throw new NotImplementedException();
+            options = options ?? SendOptions.Default;
+            var serializer = options.Serializer ?? _defaultSerializer;
+            var data = serializer.Serialize(message);
+
+            return Send(data, routingKey, properties, options);
+        }
+
+        public MessageEnvelope SendRequest(byte[] data, string routingKey = "",
+                                           MessageProperties properties = null,
+                                           RpcSendOptions options = null)
+        {
+            return _rpcHelper.SendRequest(data, 
+                routingKey, properties, options);
         }
 
         public TResponse SendRequest<TRequest, TResponse>(TRequest request, string routingKey = "",
-                                                          MessageProperties properties = null, 
-                                                          SendOptions options = null) 
+                                                          MessageProperties properties = null,
+                                                          RpcSendOptions options = null) 
             where TRequest : class 
             where TResponse : class
         {
-            throw new NotImplementedException();
+            return _rpcHelper.SendRequest<TRequest, TResponse>(request, 
+                routingKey, properties, options);
         }
 
         #endregion
@@ -68,25 +100,6 @@
             lock (_model)
             {
                 var result = _model.QueueDeclare(name, options.Durable, options.Exclusive, options.AutoDelete, options.Arguments);
-
-                // binds it to "this" exchange
-                _model.QueueBind(result.QueueName, this.Name, "#");
-
-                return new RabbitQueue(_model, this, serializer, result, options);
-            }
-        }
-
-        public IRabbitQueue DeclareEphemeralQueue(QueueOptions options)
-        {
-            options = options ?? new QueueOptions();
-            options.AutoDelete = true;
-            options.Exclusive = true;
-
-            var serializer = options.Serializer ?? _defaultSerializer;
-
-            lock (_model)
-            {
-                var result = _model.QueueDeclare();
 
                 // binds it to "this" exchange
                 _model.QueueBind(result.QueueName, this.Name, "#");

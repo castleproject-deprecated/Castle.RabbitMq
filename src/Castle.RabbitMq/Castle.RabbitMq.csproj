@@ -49,7 +49,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="api.cs" />
     <Compile Include="Behaviors\Subscription.cs" />
     <Compile Include="Impl\Consumers\RabbitDefaultConsumer.cs" />
     <Compile Include="Impl\Consumers\RabbitSharedQueueConsumer.cs" />
@@ -58,9 +57,13 @@
     <Compile Include="Impl\RabbitExchange.cs" />
     <Compile Include="Impl\RabbitQueue.cs" />
     <Compile Include="Impl\RabbitQueueBinding.cs" />
+    <Compile Include="Impl\RpcHelper.cs" />
+    <Compile Include="IRabbitChannel.cs" />
     <Compile Include="IRabbitConnection.cs" />
     <Compile Include="Behaviors\IRabbitQueueConsumer.cs" />
     <Compile Include="Behaviors\IDestroyable.cs" />
+    <Compile Include="IRabbitExchange.cs" />
+    <Compile Include="IRabbitQueue.cs" />
     <Compile Include="IRabbitQueueBinding.cs" />
     <Compile Include="Behaviors\IRabbitQueueDeclarer.cs" />
     <Compile Include="IRabbitSerializer.cs" />

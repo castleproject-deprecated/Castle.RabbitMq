@@ -8,18 +8,23 @@
     {
         private readonly IModel _model;
         private readonly IRabbitExchange _exchange;
+        private readonly IRabbitSerializer _defaultSerializer;
         private readonly QueueOptions _queueOptions;
+        private readonly RpcHelper _rpcHelper;
 
         public RabbitQueue(IModel model, IRabbitExchange exchange, IRabbitSerializer serializer, 
                            QueueDeclareOk result, QueueOptions queueOptions)
         {
             _model = model;
             _exchange = exchange;
+            _defaultSerializer = serializer;
             _queueOptions = queueOptions;
 
             this.Name = result.QueueName;
             this.ConsumerCount = result.ConsumerCount;
             this.MessageCount = result.MessageCount;
+
+            _rpcHelper = new RpcHelper(_model, this.Name, serializer);
         }
 
         #region IRabbitQueue
@@ -60,15 +65,25 @@
                                    SendOptions options = null) 
             where T : class
         {
-            var data = new byte[0];
+            options = options ?? SendOptions.Default;
+            var serializer = options.Serializer ?? _defaultSerializer;
+            var data = serializer.Serialize(message);
 
             return Send(data, routingKey, properties, options);
         }
 
+        public MessageEnvelope SendRequest(byte[] data, string routingKey = "",
+                                           MessageProperties properties = null,
+                                           RpcSendOptions options = null)
+        {
+
+            throw new NotImplementedException();
+        }
+
         public TResponse SendRequest<TRequest, TResponse>(TRequest request, 
                                                           string routingKey = "",
-                                                          MessageProperties properties = null, 
-                                                          SendOptions options = null) 
+                                                          MessageProperties properties = null,
+                                                          RpcSendOptions options = null) 
             where TRequest : class where TResponse : class
         {
             throw new NotImplementedException();
@@ -95,7 +110,7 @@
                 var serializer = options.Serializer ?? _queueOptions.Serializer;
 
                 // TODO: perf test consumers
-                // var consumer = new RabbitSharedQueueConsumer(_model, serializer);
+                // var consumer = new RabbitSharedQueueConsumer(_model, defaultSerializer);
                 var consumer = new RabbitDefaultConsumer<T>(_model, serializer, onReceived);
                 var consumerTag = _model.BasicConsume(this.Name, options.NoAck, consumer);
                 return new Subscription(_model, consumerTag);

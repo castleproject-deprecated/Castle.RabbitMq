@@ -16,6 +16,18 @@ namespace Castle.RabbitMq
         public bool Mandatory { get; set; }
     }
 
+    public class RpcSendOptions : SendOptions
+    {
+        public TimeSpan Timeout { get; set; }
+
+
+    }
+
+    public class MessageInfo
+    {
+        public ulong Tag { get; set; }
+    }
+
     public interface IRabbitSender
     {
         MessageInfo Send(byte[] body, string routingKey = "", 
@@ -26,10 +38,14 @@ namespace Castle.RabbitMq
                             MessageProperties properties = null, 
                             SendOptions options = null) where T : class;
 
+        MessageEnvelope SendRequest(byte[] data, string routingKey = "",
+                                    MessageProperties properties = null,
+                                    RpcSendOptions options = null);
+
         TResponse SendRequest<TRequest, TResponse>(TRequest request, 
                                                    string routingKey = "", 
-                                                   MessageProperties properties = null, 
-                                                   SendOptions options = null) 
+                                                   MessageProperties properties = null,
+                                                   RpcSendOptions options = null) 
             where TRequest : class 
             where TResponse : class;
 
