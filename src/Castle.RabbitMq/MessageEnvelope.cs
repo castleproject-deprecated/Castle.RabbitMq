@@ -24,10 +24,10 @@
             get { return _properties; }
         }
 
-//        public byte[] Body
-//        {
-//            get { return _body; }
-//        }
+        public byte[] Body
+        {
+            get { return _body; }
+        }
     }
 
     public class MessageEnvelope<T> : MessageEnvelope // where T : class
