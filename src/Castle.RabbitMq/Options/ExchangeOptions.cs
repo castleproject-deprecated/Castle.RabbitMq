@@ -1,5 +1,6 @@
 namespace Castle.RabbitMq
 {
+    using System;
     using System.Collections.Generic;
 
     public enum RabbitExchangeType
@@ -20,5 +21,10 @@ namespace Castle.RabbitMq
         public bool Durable { get; set; }
         public bool AutoDelete { get; set; }
         public IDictionary<string, object> Arguments { get; set; }
+
+        public override string ToString()
+        {
+            return String.Format("{0} Durable {1} AutoDelete {2}", ExchangeType, Durable, AutoDelete);
+        }
     }
 }

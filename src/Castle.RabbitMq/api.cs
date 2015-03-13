@@ -4,52 +4,44 @@
 
     public static class RabbitChannelExtensions
     {
-        public static IRabbitExchange DeclareExchange(this IRabbitChannel source, ExchangeOptions options)
+        public static IRabbitExchange DeclareExchange(this IRabbitChannel source, string name, RabbitExchangeType exchangeType)
         {
-            return source.DeclareExchange(string.Empty, options);
+            return source.DeclareExchange(string.Empty, new ExchangeOptions()
+            {
+                ExchangeType = exchangeType,
+                // defaults from the original api:
+                Durable = false, 
+                AutoDelete = false
+            });
         }
     }
 
-    public interface IRabbitChannel : IQueueDeclarer, IDisposable
+    public interface IRabbitChannel : IRabbitQueueDeclarer, IDisposable
     {
         // OnException?
         // OnMessageNotDelivered --> OnMessageUnrouted
 
+        IRabbitExchange DefaultExchange { get; }
+
         IRabbitExchange DeclareExchange(string name, ExchangeOptions options);
 
-//        IRabbitQueue DeclareQueue(IRabbitExchange exchange, string name, QueueOptions options);
-
-        /// <summary>
-        /// Uses the default exchange
-        /// </summary>
-//        IRabbitQueue DeclareQueue(string name, QueueOptions options);
-//        IRabbitQueue DeclareEphemeralQueue(IRabbitExchange exchange, QueueOptions options);
-
-        IExchangeQueueBinding Bind(IRabbitExchange exchange, IRabbitQueue queue, string routingKeyOrFilter = null);
+        IRabbitQueueBinding Bind(IRabbitExchange exchange, IRabbitQueue queue, string routingKeyOrFilter = null);
     }
 
-    public interface IRabbitExchange : ISender, IQueueDeclarer, IDestroyable
+    public interface IRabbitExchange : IRabbitSender, IRabbitQueueDeclarer, IDestroyable
     {
-//        void Publish();
-//        Task PublishAsync();
+        string Name { get; }
     }
 
-    public interface IRabbitQueue : ISender, IConsumer, IDestroyable
+    public interface IRabbitQueue : IRabbitSender, IRabbitQueueConsumer, IDestroyable
     {
         string Name { get; }
         uint ConsumerCount { get; }
         uint MessageCount { get; }
-
-//        void Send();
-//        Task SendAsync();
-
-        // void Receive();
-
-//        void Consume(Action<RabbitMessage, MessageAck> onMsgReceived);
     }
 
     public class MessageInfo
     {
-        public int Tag { get; set; }
+        public ulong Tag { get; set; }
     }
 }

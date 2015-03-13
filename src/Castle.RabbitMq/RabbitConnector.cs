@@ -7,7 +7,9 @@
         // TODO: Set up logger here?
 
         public static RabbitConnection Connect(string hostname, int port = 5672, 
-            string username = "guest", string password = "guest", string vhost = "/")
+                                               string username = "guest", 
+                                               string password = "guest", 
+                                               string vhost = "/")
         {
             var connFactory = new ConnectionFactory()
             {
@@ -15,7 +17,9 @@
                 Port = port, 
                 UserName = username,
                 Password = password,
-                VirtualHost = vhost
+                VirtualHost = vhost,
+                // should it be enabled by default?
+                AutomaticRecoveryEnabled = true
             };
 
             var connection = connFactory.CreateConnection();

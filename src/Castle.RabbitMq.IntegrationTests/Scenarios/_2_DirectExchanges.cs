@@ -19,11 +19,11 @@
 
             });
 
-            queue.Consume(new Action<MessageEnvelope<MyDumbMessage>>(env =>
+            queue.Consume<MyDumbMessage>("", (env, ack) =>
             {
                 Console.WriteLine("Received dumb message");
 
-            }), new ConsumeOptions());
+            }, new ConsumerOptions() {  });
 
             exchange.Send(new MyDumbMessage());
         }

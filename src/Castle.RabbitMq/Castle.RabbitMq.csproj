@@ -50,19 +50,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="api.cs" />
+    <Compile Include="Behaviors\QueueSubscription.cs" />
+    <Compile Include="Impl\Consumers\Class1.cs" />
+    <Compile Include="Impl\ExtHelpers.cs" />
+    <Compile Include="Impl\RabbitChannel.cs" />
+    <Compile Include="Impl\RabbitExchange.cs" />
+    <Compile Include="Impl\RabbitQueue.cs" />
+    <Compile Include="Impl\RabbitQueueBinding.cs" />
     <Compile Include="IRabbitConnection.cs" />
-    <Compile Include="Options\ConsumeOptions.cs" />
-    <Compile Include="Behaviors\IConsumer.cs" />
+    <Compile Include="Behaviors\IRabbitQueueConsumer.cs" />
     <Compile Include="Behaviors\IDestroyable.cs" />
-    <Compile Include="IExchangeQueueBinding.cs" />
-    <Compile Include="Behaviors\IQueueDeclarer.cs" />
+    <Compile Include="IRabbitQueueBinding.cs" />
+    <Compile Include="Behaviors\IRabbitQueueDeclarer.cs" />
     <Compile Include="Serializers\IRabbitSerializer.cs" />
-    <Compile Include="Behaviors\ISender.cs" />
+    <Compile Include="Behaviors\IRabbitSender.cs" />
     <Compile Include="Behaviors\IMessageAck.cs" />
     <Compile Include="MessageEnvelope.cs" />
     <Compile Include="MessageProperties.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Impl\RabbitChannel.cs" />
     <Compile Include="Impl\RabbitConnection.cs" />
     <Compile Include="RabbitConnector.cs" />
     <Compile Include="Options\ExchangeOptions.cs" />

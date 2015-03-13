@@ -25,13 +25,13 @@
                 Console.WriteLine("Received dumb message 1");
                 Thread.Sleep(1000);
 
-            }), new ConsumeOptions());
+            }), new ConsumerOptions());
             queue.Consume(new Action<MessageEnvelope<MyDumbMessage>>(env =>
             {
                 Console.WriteLine("Received dumb message 2");
                 Thread.Sleep(1000);
 
-            }), new ConsumeOptions());
+            }), new ConsumerOptions());
 
             exchange.Send(new MyDumbMessage());
             exchange.Send(new MyDumbMessage());

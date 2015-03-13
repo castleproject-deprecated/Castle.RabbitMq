@@ -27,12 +27,12 @@
             {
                 wait.Release();
                 Interlocked.Increment(ref receivedCount);
-            }), new ConsumeOptions());
+            }), new ConsumerOptions());
             queue2.Consume(new Action<MessageEnvelope<MyDumbMessage>>(env =>
             {
                 wait.Release();
                 Interlocked.Increment(ref receivedCount);
-            }), new ConsumeOptions());
+            }), new ConsumerOptions());
 
             exchange.Send(new MyDumbMessage()); // message will be dropped
 
