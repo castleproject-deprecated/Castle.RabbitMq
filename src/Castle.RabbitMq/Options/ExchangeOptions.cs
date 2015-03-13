@@ -5,7 +5,10 @@ namespace Castle.RabbitMq
 
     public enum RabbitExchangeType
     {
-        Direct, Fanout, Headers, Topic
+        Direct,
+        Fanout,
+        Headers, 
+        Topic
     }
 
     public class ExchangeOptions

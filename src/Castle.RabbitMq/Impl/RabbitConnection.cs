@@ -15,13 +15,16 @@
             _connection = connection;
         }
 
-        public IRabbitChannel CreateChannel(bool withConfirmation = false, ushort? prefetchCount = null)
+        public IRabbitChannel CreateChannel(ChannelOptions options)
         {
             EnsureNotDisposed();
 
+            options = options ?? ChannelOptions.Default;
+            var prefetchCount = options.PrefetchCount;
+
             const ushort defaultPrefetch = 50;
 
-            if (withConfirmation)
+            if (options.WithConfirmation)
                 throw new NotImplementedException();
 
             IModel model = _connection.CreateModel();
@@ -35,7 +38,7 @@
 
             _models.Add(new WeakReference<IModel>(model));
 
-            return new RabbitChannel(model);
+            return new RabbitChannel(model, options.DefaultSerializer);
         }
 
         public void Dispose()

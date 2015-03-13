@@ -10,7 +10,8 @@
         private readonly IRabbitExchange _exchange;
         private readonly QueueOptions _queueOptions;
 
-        public RabbitQueue(IModel model, IRabbitExchange exchange, QueueDeclareOk result, QueueOptions queueOptions)
+        public RabbitQueue(IModel model, IRabbitExchange exchange, IRabbitSerializer serializer, 
+                           QueueDeclareOk result, QueueOptions queueOptions)
         {
             _model = model;
             _exchange = exchange;
@@ -77,19 +78,16 @@
 
         #region IRabbitQueueConsumer
 
-        public QueueSubscription Respond<TRequest, TResponse>(string routingKey,
-                                                              Func<MessageEnvelope<TRequest>, MessageAck, TResponse> onRespond,
-                                                              ConsumerOptions options)
+        public Subscription Respond<TRequest, TResponse>(Func<MessageEnvelope<TRequest>, IMessageAck, TResponse> onRespond,
+                                                         ConsumerOptions options)
             where TRequest : class 
             where TResponse : class
         {
-            
+            return null;
         }
 
-        public QueueSubscription Consume<T>(string routingKey, 
-                                            Action<MessageEnvelope<T>, MessageAck> onReceived, 
-                                            ConsumerOptions options) 
-            where T : class
+        public Subscription Consume<T>(Action<MessageEnvelope<T>, IMessageAck> onReceived, 
+                                       ConsumerOptions options) 
         {
             options = options ?? ConsumerOptions.Default;
             lock (_model)
@@ -98,9 +96,9 @@
 
                 // TODO: perf test consumers
                 // var consumer = new RabbitSharedQueueConsumer(_model, serializer);
-                var consumer = new RabbitDefaultConsumer<T>(_model, serializer, onReceived, routingKey);
+                var consumer = new RabbitDefaultConsumer<T>(_model, serializer, onReceived);
                 var consumerTag = _model.BasicConsume(this.Name, options.NoAck, consumer);
-                return new QueueSubscription(_model, consumerTag);
+                return new Subscription(_model, consumerTag);
             }
         }
 

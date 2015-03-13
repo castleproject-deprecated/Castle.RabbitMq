@@ -34,12 +34,10 @@
         /// </summary>
         /// <typeparam name="TRequest"></typeparam>
         /// <typeparam name="TResponse"></typeparam>
-        /// <param name="routingKey"></param>
         /// <param name="onRespond"></param>
         /// <param name="options"></param>
-        QueueSubscription Respond<TRequest, TResponse>(string routingKey, 
-                                                       Func<MessageEnvelope<TRequest>, MessageAck, TResponse> onRespond, 
-                                                       ConsumerOptions options) 
+        Subscription Respond<TRequest, TResponse>(Func<MessageEnvelope<TRequest>, IMessageAck, TResponse> onRespond, 
+                                                  ConsumerOptions options) 
             where TRequest : class 
             where TResponse : class;
 
@@ -47,12 +45,9 @@
         /// For pure message consumption
         /// </summary>
         /// <param name="onReceived"></param>
-        /// <param name="routingKey"></param>
         /// <param name="options"></param>
-        QueueSubscription Consume<T>(string routingKey, 
-                                     Action<MessageEnvelope<T>, MessageAck> onReceived, 
-                                     ConsumerOptions options) 
-            where T : class;
+        Subscription Consume<T>(Action<MessageEnvelope<T>, IMessageAck> onReceived, 
+                                ConsumerOptions options);
 
         // MessageEnvelope<T> Receive<T>() where T : class;
         // MessageEnvelope<T> Peek<T>() where T : class;

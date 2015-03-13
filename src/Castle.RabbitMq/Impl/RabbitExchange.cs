@@ -8,14 +8,17 @@
     public class RabbitExchange : IRabbitExchange
     {
         private readonly IModel _model;
+        private readonly IRabbitSerializer _defaultSerializer;
         private readonly bool _canDestroy;
         private readonly ExchangeOptions _options;
 
-        public RabbitExchange(IModel model, string name, bool canDestroy, ExchangeOptions options)
+        public RabbitExchange(IModel model, IRabbitSerializer serializer, 
+                              string name, bool canDestroy, ExchangeOptions options)
         {
             this.Name = name;
 
             _model = model;
+            _defaultSerializer = serializer;
             _canDestroy = canDestroy;
             _options = options;
         }
@@ -60,14 +63,16 @@
         {
             options = options ?? QueueOptions.Default;
 
+            var serializer = options.Serializer ?? _defaultSerializer;
+
             lock (_model)
             {
                 var result = _model.QueueDeclare(name, options.Durable, options.Exclusive, options.AutoDelete, options.Arguments);
 
                 // binds it to "this" exchange
-                _model.QueueBind(result.QueueName, this.Name, "");
-                
-                return new RabbitQueue(_model, this, result, options);
+                _model.QueueBind(result.QueueName, this.Name, "#");
+
+                return new RabbitQueue(_model, this, serializer, result, options);
             }
         }
 
@@ -77,14 +82,16 @@
             options.AutoDelete = true;
             options.Exclusive = true;
 
+            var serializer = options.Serializer ?? _defaultSerializer;
+
             lock (_model)
             {
                 var result = _model.QueueDeclare();
 
                 // binds it to "this" exchange
-                _model.QueueBind(result.QueueName, this.Name, "");
+                _model.QueueBind(result.QueueName, this.Name, "#");
 
-                return new RabbitQueue(_model, this, result, options);
+                return new RabbitQueue(_model, this, serializer, result, options);
             }
         }
 

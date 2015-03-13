@@ -1,5 +1,7 @@
 ﻿namespace Castle.RabbitMq
 {
+    using System;
+
     public interface IMessageAck
     {
         void Ack();
@@ -8,15 +10,22 @@
 
     public class MessageAck : IMessageAck
     {
-        public MessageAck()
+        private readonly Action _ack;
+        private readonly Action _nack;
+
+        public MessageAck(Action ack, Action nack)
         {
+            _ack = ack;
+            _nack = nack;
         }
 
         public void Ack()
         {
+            _ack();
         }
         public void Reject()
         {
+            _nack();
         }
     }
 }

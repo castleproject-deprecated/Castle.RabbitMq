@@ -1,17 +1,37 @@
 ﻿namespace Castle.RabbitMq.Serializers
 {
     using System;
+    using System.Text;
+    using Newtonsoft.Json;
 
     public class JsonSerializer : IRabbitSerializer
     {
-        public byte[] Serialize(Type type, object instance)
+        private static readonly JsonSerializerSettings _settings = new JsonSerializerSettings()
         {
-            throw new NotImplementedException();
+            TypeNameHandling = TypeNameHandling.Auto
+        };
+
+        public byte[] Serialize<T>(T instance)
+        {
+            var json = JsonConvert.SerializeObject(instance, Formatting.None, _settings);
+            return Encoding.UTF8.GetBytes(json);
         }
 
-        public object Deserialize(byte[] data, Type type)
+        public T Deserialize<T>(byte[] data)
         {
-            throw new NotImplementedException();
+            var json = Encoding.UTF8.GetString(data);
+
+            return JsonConvert.DeserializeObject<T>(json, _settings);
         }
+
+//        public byte[] Serialize(Type type, object instance)
+//        {
+//            throw new NotImplementedException();
+//        }
+//
+//        public object Deserialize(byte[] data, Type type)
+//        {
+//            throw new NotImplementedException();
+//        }
     }
 }

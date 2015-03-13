@@ -5,15 +5,17 @@
     public class RabbitChannel : IRabbitChannel
     {
         private readonly IModel _model;
+        private readonly IRabbitSerializer _defaultSerializer;
         private readonly IRabbitExchange _defaultExchange;
 
-        public RabbitChannel(IModel model)
+        public RabbitChannel(IModel model, IRabbitSerializer defaultSerializer)
         {
             _model = model;
-            _defaultExchange = new RabbitExchange(_model, name: string.Empty, canDestroy: false, options: new ExchangeOptions());
+            _defaultSerializer = defaultSerializer;
+            _defaultExchange = new RabbitExchange(_model, _defaultSerializer, 
+                name: string.Empty, canDestroy: false, 
+                options: new ExchangeOptions());
         }
-
-        // IRabbitChannel : IRabbitQueueDeclarer, IDisposable
 
         #region IRabbitChannel
 
@@ -28,7 +30,7 @@
             {
                 _model.ExchangeDeclare(name, options.ExchangeType.ToStr());
             }
-            return new RabbitExchange(_model, name, true, options);
+            return new RabbitExchange(_model, _defaultSerializer, name, true, options);
         }
 
         public IRabbitQueueBinding Bind(IRabbitExchange exchange, IRabbitQueue queue, string routingKeyOrFilter = null)
@@ -48,10 +50,12 @@
         {
             options = options ?? QueueOptions.Default;
 
+            var serializer = options.Serializer ?? _defaultSerializer;
+
             lock (_model)
             {
                 var result = _model.QueueDeclare(name, options.Durable, options.Exclusive, options.AutoDelete, options.Arguments);
-                return new RabbitQueue(_model, _defaultExchange, result, options);
+                return new RabbitQueue(_model, _defaultExchange, serializer, result, options);
             }
         }
 
@@ -61,11 +65,13 @@
             options.AutoDelete = true;
             options.Exclusive = true;
 
+            var serializer = options.Serializer ?? _defaultSerializer;
+
             lock (_model)
             {
                 var result = _model.QueueDeclare();
 
-                return new RabbitQueue(_model, _defaultExchange, result, options);
+                return new RabbitQueue(_model, _defaultExchange, serializer, result, options);
             }
         }
 

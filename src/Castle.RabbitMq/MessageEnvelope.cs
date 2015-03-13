@@ -24,17 +24,21 @@
             get { return _properties; }
         }
 
-        public byte[] Body
-        {
-            get { return _body; }
-        }
+//        public byte[] Body
+//        {
+//            get { return _body; }
+//        }
     }
 
-    public class MessageEnvelope<T> : MessageEnvelope where T : class
+    public class MessageEnvelope<T> : MessageEnvelope // where T : class
     {
-        public MessageEnvelope(IBasicProperties properties, byte[] body) : base(properties, body)
+        public MessageEnvelope(IBasicProperties properties, T message, byte[] body) 
+            : base(properties, body)
         {
+            this.Message = message;
         }
+
+        public T Message { get; private set; }
     }
 
 }

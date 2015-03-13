@@ -50,8 +50,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="api.cs" />
-    <Compile Include="Behaviors\QueueSubscription.cs" />
-    <Compile Include="Impl\Consumers\Class1.cs" />
+    <Compile Include="Behaviors\Subscription.cs" />
+    <Compile Include="Impl\Consumers\RabbitDefaultConsumer.cs" />
+    <Compile Include="Impl\Consumers\RabbitSharedQueueConsumer.cs" />
     <Compile Include="Impl\ExtHelpers.cs" />
     <Compile Include="Impl\RabbitChannel.cs" />
     <Compile Include="Impl\RabbitExchange.cs" />
@@ -62,7 +63,7 @@
     <Compile Include="Behaviors\IDestroyable.cs" />
     <Compile Include="IRabbitQueueBinding.cs" />
     <Compile Include="Behaviors\IRabbitQueueDeclarer.cs" />
-    <Compile Include="Serializers\IRabbitSerializer.cs" />
+    <Compile Include="IRabbitSerializer.cs" />
     <Compile Include="Behaviors\IRabbitSender.cs" />
     <Compile Include="Behaviors\IMessageAck.cs" />
     <Compile Include="MessageEnvelope.cs" />

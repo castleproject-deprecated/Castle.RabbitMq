@@ -19,7 +19,7 @@
 
             });
 
-            queue.Consume<MyDumbMessage>("", (env, ack) =>
+            queue.Consume<MyDumbMessage>((env, ack) =>
             {
                 Console.WriteLine("Received dumb message");
 
