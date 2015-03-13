@@ -14,7 +14,8 @@
                 HostName = hostname, 
                 Port = port, 
                 UserName = username,
-                Password = password
+                Password = password,
+                VirtualHost = vhost
             };
 
             var connection = connFactory.CreateConnection();
