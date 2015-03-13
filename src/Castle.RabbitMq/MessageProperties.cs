@@ -6,182 +6,109 @@
 
     public class MessageProperties : IBasicProperties
     {
-        private int _protocolClassId;
+        private int? _protocolClassId;
         private string _protocolClassName;
         private string _appId;
         private string _clusterId;
         private string _contentEncoding;
         private string _contentType;
         private string _correlationId;
-        private byte _deliveryMode;
+        private byte? _deliveryMode;
         private string _expiration;
         private IDictionary<string, object> _headers;
         private string _messageId;
-        private byte _priority;
+        private byte? _priority;
         private string _replyTo;
         private PublicationAddress _replyToAddress;
-        private AmqpTimestamp _timestamp;
+        private AmqpTimestamp? _timestamp;
         private string _type;
         private string _userId;
 
-        public object Clone()
-        {
-            throw new NotImplementedException();
-        }
-
         public int ProtocolClassId
         {
-            get { return _protocolClassId; }
+            get { return _protocolClassId.Value; }
+            set { _protocolClassId = value; }
         }
 
         public string ProtocolClassName
         {
             get { return _protocolClassName; }
-        }
-
-        public void ClearAppId()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ClearClusterId()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ClearContentEncoding()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ClearContentType()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ClearCorrelationId()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ClearDeliveryMode()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ClearExpiration()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ClearHeaders()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ClearMessageId()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ClearPriority()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ClearReplyTo()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ClearTimestamp()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ClearType()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ClearUserId()
-        {
-            throw new NotImplementedException();
+            set { _protocolClassName = value; }
         }
 
         public bool IsAppIdPresent()
         {
-            throw new NotImplementedException();
+            return _appId != null;
         }
 
         public bool IsClusterIdPresent()
         {
-            throw new NotImplementedException();
+            return _clusterId != null;
         }
 
         public bool IsContentEncodingPresent()
         {
-            throw new NotImplementedException();
+            return _contentType != null;
         }
 
         public bool IsContentTypePresent()
         {
-            throw new NotImplementedException();
+            return _contentType != null;
         }
 
         public bool IsCorrelationIdPresent()
         {
-            throw new NotImplementedException();
+            return _correlationId != null;
         }
 
         public bool IsDeliveryModePresent()
         {
-            throw new NotImplementedException();
+            return _deliveryMode != 0;
         }
 
         public bool IsExpirationPresent()
         {
-            throw new NotImplementedException();
+            return _expiration != null;
         }
 
         public bool IsHeadersPresent()
         {
-            throw new NotImplementedException();
+            return _headers != null;
         }
 
         public bool IsMessageIdPresent()
         {
-            throw new NotImplementedException();
+            return _messageId != null;
         }
 
         public bool IsPriorityPresent()
         {
-            throw new NotImplementedException();
+            return _priority.HasValue;
         }
 
         public bool IsReplyToPresent()
         {
-            throw new NotImplementedException();
+            return _replyTo != null;
         }
 
         public bool IsTimestampPresent()
         {
-            throw new NotImplementedException();
+            return _timestamp.HasValue;
         }
 
         public bool IsTypePresent()
         {
-            throw new NotImplementedException();
+            return _type != null;
         }
 
         public bool IsUserIdPresent()
         {
-            throw new NotImplementedException();
+            return _userId != null;
         }
 
         public void SetPersistent(bool persistent)
         {
-            throw new NotImplementedException();
+            _deliveryMode = (byte) (persistent ? 2 : 1);
         }
 
         public string AppId
@@ -216,7 +143,7 @@
 
         public byte DeliveryMode
         {
-            get { return _deliveryMode; }
+            get { return _deliveryMode.Value; }
             set { _deliveryMode = value; }
         }
 
@@ -240,7 +167,7 @@
 
         public byte Priority
         {
-            get { return _priority; }
+            get { return _priority.Value; }
             set { _priority = value; }
         }
 
@@ -258,7 +185,7 @@
 
         public AmqpTimestamp Timestamp
         {
-            get { return _timestamp; }
+            get { return _timestamp.Value; }
             set { _timestamp = value; }
         }
 
@@ -272,6 +199,85 @@
         {
             get { return _userId; }
             set { _userId = value; }
+        }
+
+        #region Clears
+
+        public void ClearAppId()
+        {
+            _appId = null;
+        }
+
+        public void ClearClusterId()
+        {
+            _clusterId = null;
+        }
+
+        public void ClearContentEncoding()
+        {
+            _contentEncoding = null;
+        }
+
+        public void ClearContentType()
+        {
+            _contentType = null;
+        }
+
+        public void ClearCorrelationId()
+        {
+            _correlationId = null;
+        }
+
+        public void ClearDeliveryMode()
+        {
+            _deliveryMode = null;
+        }
+
+        public void ClearExpiration()
+        {
+            _expiration = null;
+        }
+
+        public void ClearHeaders()
+        {
+            _headers = null;
+        }
+
+        public void ClearMessageId()
+        {
+            _messageId = null;
+        }
+
+        public void ClearPriority()
+        {
+            _priority = null;
+        }
+
+        public void ClearReplyTo()
+        {
+            _replyTo = null;
+        }
+
+        public void ClearTimestamp()
+        {
+            _timestamp = null;
+        }
+
+        public void ClearType()
+        {
+            _type = null;
+        }
+
+        public void ClearUserId()
+        {
+            _userId = null;
+        }
+
+        #endregion
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
         }
     }
 }
