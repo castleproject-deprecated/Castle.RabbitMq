@@ -34,7 +34,7 @@
 
         public override string ToString()
         {
-            return String.Format("Durable {0} Exclusive {1} AutoDelete {2}", Durable, Exclusive, AutoDelete);
+            return String.Format("Durable: {0} Exclusive: {1} AutoDelete: {2}", Durable, Exclusive, AutoDelete);
         }
     }
 }

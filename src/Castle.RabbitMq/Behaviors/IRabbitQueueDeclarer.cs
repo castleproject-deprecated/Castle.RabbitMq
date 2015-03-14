@@ -23,6 +23,17 @@
             return source.DeclareQueue("", options);
         }
 
+        /// <summary>
+        /// The queue is declared non-passive, non-durable,
+        /// but exclusive and autodelete, with no arguments. The
+        /// server autogenerates a name for the queue
+        /// </summary>
+        public static IRabbitQueue DeclareEphemeralQueue(this IRabbitQueueDeclarer source)
+        {
+            return DeclareEphemeralQueue(source, null);
+        }
+
+
         public static IRabbitQueue DeclareQueue(this IRabbitQueueDeclarer source, string name)
         {
             return source.DeclareQueue(name, new QueueOptions()

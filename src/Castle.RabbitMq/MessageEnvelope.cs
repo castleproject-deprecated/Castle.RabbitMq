@@ -28,6 +28,12 @@
         {
             get { return _body; }
         }
+
+        public override string ToString()
+        {
+            return string.Format("RoutingKey: {0} DeliveryTag: {1} IsRedelivery: {2} ConsumerTag: {3} Exchange: {4}",
+                RoutingKey, DeliveryTag, IsRedelivery, ConsumerTag, ExchangeName);
+        }
     }
 
     public class MessageEnvelope<T> : MessageEnvelope // where T : class

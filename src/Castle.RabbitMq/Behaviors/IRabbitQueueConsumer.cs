@@ -57,5 +57,11 @@
     {
         // TODO: move this one to Extension method
         // void Consume<T>(Action<MessageEnvelope<T>> onMsgReceived, ConsumerOptions options) where T : class;
+
+        public static Subscription Consume<T>(this IRabbitQueueConsumer source,
+                                              Action<MessageEnvelope<T>, IMessageAck> onReceived)
+        {
+            return source.Consume<T>(onReceived, null);
+        }
     }
 }

@@ -46,10 +46,17 @@
             EnsureNotDisposed();
 
             lock (_model)
-            {
                 _model.QueueBind(queue.Name, exchange.Name, routingKeyOrFilter);
-            }
+
             return new RabbitQueueBinding(_model, queue.Name, exchange.Name, routingKeyOrFilter);
+        }
+
+        public void UnBind(IRabbitExchange exchange, IRabbitQueue queue, string routingKeyOrFilter = null)
+        {
+            EnsureNotDisposed();
+
+            lock (_model)
+                _model.QueueUnbind(queue.Name, exchange.Name, routingKeyOrFilter, null);
         }
 
         #endregion

@@ -12,13 +12,22 @@
         IRabbitExchange DeclareExchange(string name, ExchangeOptions options);
 
         IRabbitQueueBinding Bind(IRabbitExchange exchange, IRabbitQueue queue, string routingKeyOrFilter = null);
+
+        void UnBind(IRabbitExchange exchange, IRabbitQueue queue, string routingKeyOrFilter = null);
     }
 
     public static class RabbitChannelExtensions
     {
+        public static IRabbitQueueBinding Bind(this IRabbitChannel source, 
+                                               string exchange, string queue,
+                                               string routingKeyOrFilter = null)
+        {
+            throw new NotImplementedException();
+        }
+
         public static IRabbitExchange DeclareExchange(this IRabbitChannel source, string name, RabbitExchangeType exchangeType)
         {
-            return source.DeclareExchange(string.Empty, new ExchangeOptions()
+            return source.DeclareExchange(name, new ExchangeOptions()
             {
                 ExchangeType = exchangeType,
                 // defaults from the original api:

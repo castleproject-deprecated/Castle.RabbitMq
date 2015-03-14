@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Behaviors\MessageInfo.cs" />
     <Compile Include="Behaviors\Subscription.cs" />
     <Compile Include="Impl\Consumers\RabbitDefaultConsumer.cs" />
     <Compile Include="Impl\Consumers\RabbitSharedQueueConsumer.cs" />

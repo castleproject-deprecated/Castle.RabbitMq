@@ -3,7 +3,7 @@
     using System;
     using RabbitMQ.Client;
 
-    [System.Diagnostics.DebuggerDisplay("Queue {Name} Options {_queueOptions}", Name = "Queue")]
+    [System.Diagnostics.DebuggerDisplay("Queue '{Name}' {_queueOptions}", Name = "Queue")]
     public class RabbitQueue : IRabbitQueue
     {
         private readonly IModel _model;
@@ -17,7 +17,7 @@
         {
             _model = model;
             _exchange = exchange;
-            _defaultSerializer = serializer;
+            _defaultSerializer = serializer ?? queueOptions.Serializer;
             _queueOptions = queueOptions;
 
             this.Name = result.QueueName;
@@ -33,6 +33,25 @@
         public uint ConsumerCount { get; private set; }
         public uint MessageCount { get; private set; }
 
+        public void Purge()
+        {
+            lock (_model)
+                _model.QueuePurge(this.Name);
+        }
+
+        public void Delete()
+        {
+            lock (_model)
+                _model.QueueDelete(this.Name);
+        }
+
+        public void Delete(bool ifUnused, bool ifEmpty)
+        {
+            lock (_model)
+                _model.QueueDelete(this.Name, ifUnused, ifEmpty);
+        }
+
+
         #endregion
 
         #region IRabbitSender
@@ -42,6 +61,7 @@
                                 SendOptions options = null)
         {
             options = options ?? SendOptions.Default;
+
             var prop = properties ?? _model.CreateBasicProperties();
             if (options.Persist)
             {
@@ -105,25 +125,18 @@
                                        ConsumerOptions options) 
         {
             options = options ?? ConsumerOptions.Default;
+
             lock (_model)
             {
-                var serializer = options.Serializer ?? _queueOptions.Serializer;
+                var serializer = options.Serializer ?? _defaultSerializer;
 
                 // TODO: perf test consumers
                 // var consumer = new RabbitSharedQueueConsumer(_model, defaultSerializer);
                 var consumer = new RabbitDefaultConsumer<T>(_model, serializer, onReceived);
                 var consumerTag = _model.BasicConsume(this.Name, options.NoAck, consumer);
+
                 return new Subscription(_model, consumerTag);
             }
-        }
-
-        #endregion
-
-        #region IDestroyable
-
-        public void Delete()
-        {
-            throw new NotImplementedException();
         }
 
         #endregion

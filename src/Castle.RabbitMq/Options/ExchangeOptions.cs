@@ -27,7 +27,7 @@ namespace Castle.RabbitMq
 
         public override string ToString()
         {
-            return String.Format("{0} Durable {1} AutoDelete {2}", ExchangeType, Durable, AutoDelete);
+            return String.Format("{0} Durable: {1} AutoDelete: {2}", ExchangeType, Durable, AutoDelete);
         }
     }
 }

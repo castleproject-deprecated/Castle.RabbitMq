@@ -1,10 +1,9 @@
 ﻿namespace Castle.RabbitMq
 {
-    using System;
-    using System.Threading.Tasks;
     using RabbitMQ.Client;
 
-    [System.Diagnostics.DebuggerDisplay("Exchange {Name} Options {_options}", Name = "Exchange")]
+
+    [System.Diagnostics.DebuggerDisplay("Exchange '{Name}' {_options}", Name = "Exchange")]
     public class RabbitExchange : IRabbitExchange
     {
         private readonly IModel _model;
@@ -12,6 +11,7 @@
         private readonly bool _canDestroy;
         private readonly ExchangeOptions _options;
         private readonly RpcHelper _rpcHelper;
+        private readonly bool _isDefaultExchange;
 
         public RabbitExchange(IModel model, IRabbitSerializer serializer, 
                               string name, bool canDestroy, ExchangeOptions options)
@@ -22,13 +22,36 @@
             _defaultSerializer = serializer;
             _canDestroy = canDestroy;
             _options = options;
+            _isDefaultExchange = name == string.Empty;
 
             _rpcHelper = new RpcHelper(_model, this.Name, serializer);
         }
 
+
         #region IRabbitExchange
 
         public string Name { get; private set; }
+
+        public IRabbitQueueBinding Bind(IRabbitQueue queue, string routingKeyOrFilter)
+        {
+            lock (_model)
+                _model.QueueBind(queue.Name, this.Name, routingKeyOrFilter);
+
+            return new RabbitQueueBinding(_model, queue.Name, this.Name, routingKeyOrFilter);
+        }
+
+        public void Delete()
+        {
+            lock (_model)
+                _model.ExchangeDelete(this.Name);
+        }
+
+        public void Delete(bool ifUnused)
+        {
+            lock (_model)
+                _model.ExchangeDelete(this.Name, ifUnused);
+        }
+
 
         #endregion
 
@@ -101,22 +124,13 @@
             {
                 var result = _model.QueueDeclare(name, options.Durable, options.Exclusive, options.AutoDelete, options.Arguments);
 
-                // binds it to "this" exchange
-                _model.QueueBind(result.QueueName, this.Name, "#");
+                if (!this._isDefaultExchange)
+                {
+                    // binds it to "this" exchange
+                    _model.QueueBind(result.QueueName, this.Name, "");
+                }
 
                 return new RabbitQueue(_model, this, serializer, result, options);
-            }
-        }
-
-        #endregion
-
-        #region IDestroyable
-
-        public void Delete()
-        {
-            lock (_model)
-            {
-                _model.ExchangeDelete(this.Name);
             }
         }
 
