@@ -2,31 +2,6 @@
 {
     using System;
 
-    public class TransportOptions
-    {
-        public IRabbitSerializer Serializer { get; set; }
-    }
-
-    public class ConsumerOptions : TransportOptions
-    {
-        internal static ConsumerOptions Default = new ConsumerOptions();
-
-        // bool exclusive
-        // IDictionary<string, object> arguments
-
-        public ConsumerOptions()
-        {
-            this.NoAck = true;
-        }
-
-        /// <summary>
-        /// Note that if the "noAck" option is enabled (which it is by default), 
-        /// then received deliveries are automatically acked within the 
-        /// server before they are even transmitted across the network to us. 
-        /// </summary>
-        public bool NoAck { get; set; }
-    }
-
     public interface IRabbitQueueConsumer
     {
         /// <summary>
@@ -36,10 +11,8 @@
         /// <typeparam name="TResponse"></typeparam>
         /// <param name="onRespond"></param>
         /// <param name="options"></param>
-        Subscription Respond<TRequest, TResponse>(Func<MessageEnvelope<TRequest>, IMessageAck, TResponse> onRespond, 
-                                                  ConsumerOptions options) 
-            where TRequest : class 
-            where TResponse : class;
+        Subscription Respond<TRequest, TResponse>(Func<MessageEnvelope<TRequest>, IMessageAck, TResponse> onRespond,
+                                                  ConsumerOptions options);
 
         /// <summary>
         /// For pure message consumption
@@ -62,6 +35,12 @@
                                               Action<MessageEnvelope<T>, IMessageAck> onReceived)
         {
             return source.Consume<T>(onReceived, null);
+        }
+
+        public static Subscription Respond<TRequest, TResponse>(this IRabbitQueueConsumer source, 
+            Func<MessageEnvelope<TRequest>, IMessageAck, TResponse> onRespond)
+        {
+            return source.Respond(onRespond, null);
         }
     }
 }

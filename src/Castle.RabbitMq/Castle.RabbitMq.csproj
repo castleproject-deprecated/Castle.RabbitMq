@@ -49,8 +49,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Options\SendOptions.cs" />
+    <Compile Include="Options\ConsumerOptions.cs" />
     <Compile Include="Behaviors\MessageInfo.cs" />
     <Compile Include="Behaviors\Subscription.cs" />
+    <Compile Include="Options\TransportOptions.cs" />
     <Compile Include="Impl\Consumers\IMessageConsumer.cs" />
     <Compile Include="Impl\Consumers\IMessageProducer.cs" />
     <Compile Include="Impl\Consumers\RabbitDefaultConsumer.cs" />

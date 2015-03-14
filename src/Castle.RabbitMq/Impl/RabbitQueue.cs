@@ -116,8 +116,6 @@
 
         public Subscription Respond<TRequest, TResponse>(Func<MessageEnvelope<TRequest>, IMessageAck, TResponse> onRespond,
                                                          ConsumerOptions options)
-            where TRequest : class 
-            where TResponse : class
         {
             options = options ?? ConsumerOptions.Default;
 

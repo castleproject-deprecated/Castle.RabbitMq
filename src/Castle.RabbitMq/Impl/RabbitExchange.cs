@@ -69,7 +69,7 @@
             lock (_model)
             {
                 var id = _model.NextPublishSeqNo;
-                _model.BasicPublish("", routingKey,
+                _model.BasicPublish(this.Name, routingKey,
                                     mandatory: options.Mandatory,
                                     immediate: options.Immediate,
                                     basicProperties: properties,
