@@ -119,7 +119,20 @@
             where TRequest : class 
             where TResponse : class
         {
-            return _rpcHelper.CreateRespondSubscription(this.Name, onRespond, options);
+            options = options ?? ConsumerOptions.Default;
+
+            var serializer = options.Serializer ?? _defaultSerializer;
+
+            var consumer = new StreamerConsumer<TRequest>(_model, serializer);
+
+            consumer.Subscribe(new RpcResponder<TRequest, TResponse>(_model, serializer, onRespond));
+
+            lock (_model)
+            {
+                var consumerTag = _model.BasicConsume(this.Name, options.NoAck, consumer);
+
+                return new Subscription(_model, consumerTag);
+            }
         }
 
         public Subscription Consume<T>(Action<MessageEnvelope<T>, IMessageAck> onReceived, 
@@ -127,13 +140,26 @@
         {
             options = options ?? ConsumerOptions.Default;
 
+            var serializer = options.Serializer ?? _defaultSerializer;
+
+            // TODO: perf test consumers
+            var consumer = new StreamerConsumer<T>(_model, serializer);
+
+            consumer.Subscribe(new ActionAdapter<T>(env =>
+            {
+                var msgAcker = new MessageAck(() =>
+                {
+                    lock (_model) _model.BasicAck(env.DeliveryTag, false);
+                }, (requeue) =>
+                {
+                    lock (_model) _model.BasicNack(env.DeliveryTag, false, requeue);
+                });
+
+                onReceived(env, msgAcker);
+            }));
+
             lock (_model)
             {
-                var serializer = options.Serializer ?? _defaultSerializer;
-
-                // TODO: perf test consumers
-                // var consumer = new RabbitSharedQueueConsumer(_model, defaultSerializer);
-                var consumer = new RabbitDefaultConsumer<T>(_model, serializer, onReceived);
                 var consumerTag = _model.BasicConsume(this.Name, options.NoAck, consumer);
 
                 return new Subscription(_model, consumerTag);

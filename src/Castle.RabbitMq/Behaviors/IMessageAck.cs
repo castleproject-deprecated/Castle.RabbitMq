@@ -5,15 +5,15 @@
     public interface IMessageAck
     {
         void Ack();
-        void Reject();
+        void Reject(bool requeue);
     }
 
     public class MessageAck : IMessageAck
     {
         private readonly Action _ack;
-        private readonly Action _nack;
+        private readonly Action<bool> _nack;
 
-        public MessageAck(Action ack, Action nack)
+        public MessageAck(Action ack, Action<bool> nack)
         {
             _ack = ack;
             _nack = nack;
@@ -23,9 +23,9 @@
         {
             _ack();
         }
-        public void Reject()
+        public void Reject(bool requeue)
         {
-            _nack();
+            _nack(requeue);
         }
     }
 }

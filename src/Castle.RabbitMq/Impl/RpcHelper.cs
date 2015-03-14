@@ -7,19 +7,6 @@
     using RabbitMQ.Client;
     using RabbitMQ.Client.Events;
 
-    class RpcResponderHelper // : Subscription
-    {
-        public Subscription CreateRespondSubscription(string queue,
-            Func<MessageEnvelope<object>, IMessageAck, object> onRespond,
-            ConsumerOptions options)
-        {
-            options = options ?? ConsumerOptions.Default;
-
-            var serializer = options.Serializer ?? _serializer;
-
-            return null;
-        }
-    }
 
     class RpcHelper : IBasicConsumer
     {
@@ -41,8 +28,6 @@
             _waits = new ConcurrentDictionary<string, AutoResetEvent>(StringComparer.Ordinal);
             _replyData = new ConcurrentDictionary<string, MessageEnvelope>(StringComparer.Ordinal);
         }
-
-        
 
         public MessageEnvelope SendRequest(byte[] data, 
                                            string routingKey, 
