@@ -26,7 +26,6 @@
         }
     }
 
-
     // Orthogonal:
     //  Using a custom logger
     //  Using a custom serializer

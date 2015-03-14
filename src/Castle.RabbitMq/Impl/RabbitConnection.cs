@@ -55,6 +55,8 @@
                     model.Dispose();
                 }
             }
+
+            _connection.Dispose();
         }
 
         private void EnsureNotDisposed()

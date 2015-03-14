@@ -6,23 +6,23 @@
 
     public class MessageProperties : IBasicProperties
     {
-        private int? _protocolClassId;
         private string _protocolClassName;
         private string _appId;
         private string _clusterId;
         private string _contentEncoding;
         private string _contentType;
         private string _correlationId;
-        private byte? _deliveryMode;
         private string _expiration;
-        private IDictionary<string, object> _headers;
         private string _messageId;
-        private byte? _priority;
         private string _replyTo;
-        private PublicationAddress _replyToAddress;
-        private AmqpTimestamp? _timestamp;
         private string _type;
         private string _userId;
+        private int? _protocolClassId;
+        private byte? _priority;
+        private byte? _deliveryMode;
+        private PublicationAddress _replyToAddress;
+        private AmqpTimestamp? _timestamp;
+        private IDictionary<string, object> _headers;
 
         public int ProtocolClassId
         {
@@ -34,76 +34,6 @@
         {
             get { return _protocolClassName; }
             set { _protocolClassName = value; }
-        }
-
-        public bool IsAppIdPresent()
-        {
-            return _appId != null;
-        }
-
-        public bool IsClusterIdPresent()
-        {
-            return _clusterId != null;
-        }
-
-        public bool IsContentEncodingPresent()
-        {
-            return _contentType != null;
-        }
-
-        public bool IsContentTypePresent()
-        {
-            return _contentType != null;
-        }
-
-        public bool IsCorrelationIdPresent()
-        {
-            return _correlationId != null;
-        }
-
-        public bool IsDeliveryModePresent()
-        {
-            return _deliveryMode != 0;
-        }
-
-        public bool IsExpirationPresent()
-        {
-            return _expiration != null;
-        }
-
-        public bool IsHeadersPresent()
-        {
-            return _headers != null;
-        }
-
-        public bool IsMessageIdPresent()
-        {
-            return _messageId != null;
-        }
-
-        public bool IsPriorityPresent()
-        {
-            return _priority.HasValue;
-        }
-
-        public bool IsReplyToPresent()
-        {
-            return _replyTo != null;
-        }
-
-        public bool IsTimestampPresent()
-        {
-            return _timestamp.HasValue;
-        }
-
-        public bool IsTypePresent()
-        {
-            return _type != null;
-        }
-
-        public bool IsUserIdPresent()
-        {
-            return _userId != null;
         }
 
         public void SetPersistent(bool persistent)
@@ -271,6 +201,80 @@
         public void ClearUserId()
         {
             _userId = null;
+        }
+
+        #endregion
+
+        #region Is X Present
+
+        public bool IsAppIdPresent()
+        {
+            return _appId != null;
+        }
+
+        public bool IsClusterIdPresent()
+        {
+            return _clusterId != null;
+        }
+
+        public bool IsContentEncodingPresent()
+        {
+            return _contentType != null;
+        }
+
+        public bool IsContentTypePresent()
+        {
+            return _contentType != null;
+        }
+
+        public bool IsCorrelationIdPresent()
+        {
+            return _correlationId != null;
+        }
+
+        public bool IsDeliveryModePresent()
+        {
+            return _deliveryMode != 0;
+        }
+
+        public bool IsExpirationPresent()
+        {
+            return _expiration != null;
+        }
+
+        public bool IsHeadersPresent()
+        {
+            return _headers != null;
+        }
+
+        public bool IsMessageIdPresent()
+        {
+            return _messageId != null;
+        }
+
+        public bool IsPriorityPresent()
+        {
+            return _priority.HasValue;
+        }
+
+        public bool IsReplyToPresent()
+        {
+            return _replyTo != null;
+        }
+
+        public bool IsTimestampPresent()
+        {
+            return _timestamp.HasValue;
+        }
+
+        public bool IsTypePresent()
+        {
+            return _type != null;
+        }
+
+        public bool IsUserIdPresent()
+        {
+            return _userId != null;
         }
 
         #endregion

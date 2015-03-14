@@ -6,7 +6,7 @@
     {
         public ConnectorFixture()
         {
-            this.Connection = RabbitConnector.Connect("localhost", vhost: "/castle");
+            this.Connection = RabbitConnector.Connect("localhost", vhost: "castle");
         }
 
         public IRabbitConnection Connection { get; set; }

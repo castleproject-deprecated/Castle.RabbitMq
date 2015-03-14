@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Threading;
     using RabbitMQ.Client;
     using RabbitMQ.Client.Events;
@@ -11,10 +10,10 @@
     class RpcHelper : IBasicConsumer
     {
         private readonly IModel _model;
-        private readonly string _exchange;
         private readonly IRabbitSerializer _serializer;
+        private readonly string _exchange;
         
-        private Dictionary<string, string> _routing2RetQueue;
+        private readonly Dictionary<string, string> _routing2RetQueue;
         private readonly ConcurrentDictionary<string, AutoResetEvent> _waits;
         private readonly ConcurrentDictionary<string, MessageEnvelope> _replyData;
 
@@ -86,6 +85,9 @@
             return queueName;
         }
 
+        //
+        // IBasicConsumer implementation
+        //
 
         public void HandleBasicCancel(string consumerTag)
         {
