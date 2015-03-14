@@ -7,6 +7,20 @@
     using RabbitMQ.Client;
     using RabbitMQ.Client.Events;
 
+    class RpcResponderHelper // : Subscription
+    {
+        public Subscription CreateRespondSubscription(string queue,
+            Func<MessageEnvelope<object>, IMessageAck, object> onRespond,
+            ConsumerOptions options)
+        {
+            options = options ?? ConsumerOptions.Default;
+
+            var serializer = options.Serializer ?? _serializer;
+
+            return null;
+        }
+    }
+
     class RpcHelper : IBasicConsumer
     {
         private readonly IModel _model;
@@ -28,37 +42,46 @@
             _replyData = new ConcurrentDictionary<string, MessageEnvelope>(StringComparer.Ordinal);
         }
 
+        
+
         public MessageEnvelope SendRequest(byte[] data, 
                                            string routingKey, 
                                            MessageProperties properties,
                                            RpcSendOptions options)
         {
+            // CreateBasicProperties doesnt need the lock
             var prop = properties ?? _model.CreateBasicProperties();
 
-            AutoResetEvent @event;
+            var @event = new AutoResetEvent(false);
 
-            lock (_model)
+            try
             {
-                var returnQueue = GetOrCreateReturnQueue(routingKey);
-                prop.ReplyTo = returnQueue;
-                prop.CorrelationId = Guid.NewGuid().ToString();
-                prop.Expiration = TimeSpan.FromSeconds(30).TotalMilliseconds.ToString(); // 30 seconds
+                lock (_model)
+                {
+                    var returnQueue = GetOrCreateReturnQueue(routingKey);
+                    prop.ReplyTo = returnQueue;
+                    prop.CorrelationId = Guid.NewGuid().ToString();
+                    prop.Expiration = options.Timeout.TotalMilliseconds.ToString(); // 30 seconds
 
-                @event = new AutoResetEvent(false);
-                _waits[prop.CorrelationId] = @event;
+                    @event = new AutoResetEvent(false);
+                    _waits[prop.CorrelationId] = @event;
 
-                _model.BasicPublish(_exchange, routingKey, false, false, properties, data);
+                    _model.BasicPublish(_exchange, routingKey, false, false, prop, data);
+                }
+
+                if (!@event.WaitOne(options.Timeout))
+                {
+                    throw new Exception("timeout");
+                }
+
+                MessageEnvelope reply;
+                _replyData.TryRemove(prop.CorrelationId, out reply);
+                return reply;
             }
-
-            using (@event)
-            if (!@event.WaitOne(options.Timeout))
+            finally
             {
-                throw new Exception("timeout");
+                @event.Dispose();
             }
-
-            MessageEnvelope reply;
-            _replyData.TryRemove(prop.CorrelationId, out reply);
-            return reply;
         }
 
         public TResponse SendRequest<TRequest, TResponse>(TRequest request,
@@ -66,6 +89,8 @@
                                                           MessageProperties properties,
                                                           RpcSendOptions options)
         {
+            options = options ?? RpcSendOptions.Default;
+
             var data = _serializer.Serialize(request);
             var reply = this.SendRequest(data, routingKey, properties, options);
 

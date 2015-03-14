@@ -27,7 +27,6 @@
             _rpcHelper = new RpcHelper(_model, this.Name, serializer);
         }
 
-
         #region IRabbitExchange
 
         public string Name { get; private set; }
@@ -51,7 +50,6 @@
             lock (_model)
                 _model.ExchangeDelete(this.Name, ifUnused);
         }
-
 
         #endregion
 
@@ -96,8 +94,8 @@
                                            MessageProperties properties = null,
                                            RpcSendOptions options = null)
         {
-            return _rpcHelper.SendRequest(data, 
-                routingKey, properties, options);
+            return _rpcHelper.SendRequest(
+                data, routingKey, properties, options);
         }
 
         public TResponse SendRequest<TRequest, TResponse>(TRequest request, string routingKey = "",
@@ -106,8 +104,8 @@
             where TRequest : class 
             where TResponse : class
         {
-            return _rpcHelper.SendRequest<TRequest, TResponse>(request, 
-                routingKey, properties, options);
+            return _rpcHelper.SendRequest<TRequest, TResponse>(
+                request, routingKey, properties, options);
         }
 
         #endregion

@@ -3,4 +3,14 @@
     class MyDumbMessage
     {
     }
+
+    class MyRequest
+    {
+        
+    }
+
+    class MyResponse
+    {
+        
+    }
 }

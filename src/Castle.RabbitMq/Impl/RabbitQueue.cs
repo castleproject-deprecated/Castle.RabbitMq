@@ -24,7 +24,7 @@
             this.ConsumerCount = result.ConsumerCount;
             this.MessageCount = result.MessageCount;
 
-            _rpcHelper = new RpcHelper(_model, this.Name, serializer);
+            _rpcHelper = new RpcHelper(_model, _exchange.Name, _defaultSerializer);
         }
 
         #region IRabbitQueue
@@ -97,7 +97,7 @@
                                            RpcSendOptions options = null)
         {
 
-            throw new NotImplementedException();
+            return _rpcHelper.SendRequest(data, routingKey, properties, options);
         }
 
         public TResponse SendRequest<TRequest, TResponse>(TRequest request, 
@@ -106,7 +106,8 @@
                                                           RpcSendOptions options = null) 
             where TRequest : class where TResponse : class
         {
-            throw new NotImplementedException();
+            return _rpcHelper.SendRequest<TRequest, TResponse>(
+                request, routingKey, properties, options);
         }
 
         #endregion
@@ -118,7 +119,7 @@
             where TRequest : class 
             where TResponse : class
         {
-            return null;
+            return _rpcHelper.CreateRespondSubscription(this.Name, onRespond, options);
         }
 
         public Subscription Consume<T>(Action<MessageEnvelope<T>, IMessageAck> onReceived, 

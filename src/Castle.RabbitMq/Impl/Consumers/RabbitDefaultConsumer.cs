@@ -3,6 +3,12 @@ namespace Castle.RabbitMq
     using System;
     using RabbitMQ.Client;
 
+    interface IMessageProducer<T>
+    {
+        Action<MessageEnvelope<T>> Produced { get; }
+    }
+
+
     class RabbitDefaultConsumer<T> : DefaultBasicConsumer
     {
         private readonly IModel _model;

@@ -58,6 +58,7 @@
     <Compile Include="Scenarios\_2_ConsumingMsgs.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Scenarios\_9_Rpc.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Castle.RabbitMq\Castle.RabbitMq.csproj">

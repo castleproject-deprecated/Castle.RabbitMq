@@ -66,30 +66,6 @@
 
             msgReceived.Should().Be(1);
         }
-
-        [Fact]
-        public void ConsumingFromEphemeralQueue_WontWorkBeforeBinding()
-        {
-            var channel = this.Connection.CreateChannel();
-            var exchange = channel.DeclareExchange("exchange2", RabbitExchangeType.Direct);
-
-            var queue = channel.DeclareEphemeralQueue();
-
-            var @event = new AutoResetEvent(false);
-            var msgReceived = 0;
-
-            queue.Consume<MyDumbMessage>((env, ack) =>
-            {
-                msgReceived++;
-                ack.Ack();
-                @event.Set();
-            });
-
-            exchange.Send(new MyDumbMessage(), queue.Name);
-            @event.WaitOne(TimeSpan.FromSeconds(2));
-
-            msgReceived.Should().Be(0);
-        }
        
     }
 }
