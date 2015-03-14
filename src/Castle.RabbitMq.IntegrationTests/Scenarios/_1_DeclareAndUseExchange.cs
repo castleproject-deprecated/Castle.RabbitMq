@@ -14,6 +14,8 @@
             });
 
             exchange.Send(new MyDumbMessage()); // message will be dropped
+
+            exchange.Delete();
         }
 
         [Fact]

@@ -41,12 +41,16 @@
 
         public void Delete()
         {
+            if (!_canDestroy) return;
+
             lock (_model)
                 _model.ExchangeDelete(this.Name);
         }
 
         public void Delete(bool ifUnused)
         {
+            if (!_canDestroy) return;
+
             lock (_model)
                 _model.ExchangeDelete(this.Name, ifUnused);
         }
