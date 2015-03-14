@@ -10,8 +10,8 @@ namespace Castle.RabbitMq
         private readonly Func<MessageEnvelope<T>, IMessageAck, TResponse> _onRespond;
 
         public RpcResponder(IModel model, 
-            IRabbitSerializer serializer, 
-            Func<MessageEnvelope<T>, IMessageAck, TResponse> onRespond)
+                            IRabbitSerializer serializer, 
+                            Func<MessageEnvelope<T>, IMessageAck, TResponse> onRespond)
         {
             _model = model;
             _serializer = serializer;
@@ -20,7 +20,15 @@ namespace Castle.RabbitMq
 
         public void OnNext(MessageEnvelope<T> newMsg)
         {
-            var response = _onRespond(newMsg, null);
+            var msgAcker = new MessageAck(() =>
+            {
+                lock (_model) _model.BasicAck(newMsg.DeliveryTag, false);
+            }, (requeue) =>
+            {
+                lock (_model) _model.BasicNack(newMsg.DeliveryTag, false, requeue);
+            });
+
+            var response = _onRespond(newMsg, msgAcker);
 
             var prop = newMsg.Properties;
             var replyQueue = prop.ReplyTo;
@@ -33,7 +41,8 @@ namespace Castle.RabbitMq
 
             if (typeof(TResponse) == typeof(byte[]))
             {
-                // ugly, but should be safe
+                // ugly, but should be safe - 
+                // would this cause an expensive boxing/unboxing??
                 replyData = (byte[]) (object) response;
             }
             else

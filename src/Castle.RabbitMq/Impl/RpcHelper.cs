@@ -46,12 +46,11 @@
                     var returnQueue = GetOrCreateReturnQueue(routingKey);
                     prop.ReplyTo = returnQueue;
                     prop.CorrelationId = Guid.NewGuid().ToString();
-                    prop.Expiration = options.Timeout.TotalMilliseconds.ToString(); // 30 seconds
+                    prop.Expiration = options.Timeout.TotalMilliseconds.ToString();
 
-                    @event = new AutoResetEvent(false);
                     _waits[prop.CorrelationId] = @event;
 
-                    _model.BasicPublish(_exchange, routingKey, false, false, prop, data);
+                    _model.BasicPublish(_exchange, routingKey, prop, data);
                 }
 
                 if (!@event.WaitOne(options.Timeout))
@@ -87,10 +86,10 @@
             string queueName;
             if (_routing2RetQueue.TryGetValue(routingKey, out queueName)) return queueName;
             
-            queueName = (string)_model.QueueDeclare();
+            queueName = _model.QueueDeclare();
             _routing2RetQueue[routingKey] = queueName;
 
-            _model.BasicConsume(queueName, false, this);
+            _model.BasicConsume(queueName, true, this);
             
             return queueName;
         }
@@ -127,9 +126,11 @@
             AutoResetEvent @event;
             if (!_waits.TryRemove(correlationId, out @event))
             {
-                // wtf?
+                // timeout'd - no need to move further
+                return;
             }
 
+            // hold reply
             _replyData[correlationId] = new MessageEnvelope(properties, body)
             {
                 ConsumerTag = consumerTag, 
@@ -142,14 +143,10 @@
             try
             {
                 @event.Set(); // may have been disposed
-
-                lock (_model)
-                    _model.BasicAck(deliveryTag, false);
             }
             catch (Exception)
             {
-                lock (_model)
-                    _model.BasicNack(deliveryTag, false, false);
+                // potential object disposed
             }
         }
 
