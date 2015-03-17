@@ -1,6 +1,5 @@
 ﻿namespace Castle.RabbitMq
 {
-    using System;
     using System.Collections.Generic;
     using RabbitMQ.Client;
 

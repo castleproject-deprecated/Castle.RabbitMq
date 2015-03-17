@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LogAdapter.cs" />
     <Compile Include="Options\SendOptions.cs" />
     <Compile Include="Options\ConsumerOptions.cs" />
     <Compile Include="Behaviors\MessageInfo.cs" />
@@ -56,7 +57,7 @@
     <Compile Include="Options\TransportOptions.cs" />
     <Compile Include="Impl\Consumers\IMessageConsumer.cs" />
     <Compile Include="Impl\Consumers\IMessageProducer.cs" />
-    <Compile Include="Impl\Consumers\RabbitDefaultConsumer.cs" />
+    <Compile Include="Impl\Consumers\StreamerConsumer.cs" />
     <Compile Include="Impl\Consumers\RabbitSharedQueueConsumer.cs" />
     <Compile Include="Impl\Consumers\RpcResponder.cs" />
     <Compile Include="Impl\ExtHelpers.cs" />
@@ -90,6 +91,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Extensions\" />
     <Folder Include="Stubs\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

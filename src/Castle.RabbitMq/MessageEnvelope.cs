@@ -4,30 +4,20 @@
 
     public class MessageEnvelope
     {
-        private readonly IBasicProperties _properties;
-        private readonly byte[] _body;
-
         public MessageEnvelope(IBasicProperties properties, byte[] body)
         {
-            _properties = properties;
-            _body = body;
+            this.Properties = properties;
+            this.Body = body;
         }
 
         public string ConsumerTag { get; set; }
-        public ulong DeliveryTag { get; set; }
-        public bool IsRedelivery { get; set; }
         public string ExchangeName { get; set; }
         public string RoutingKey { get; set; }
+        public ulong DeliveryTag { get; set; }
+        public bool IsRedelivery { get; set; }
 
-        public IBasicProperties Properties
-        {
-            get { return _properties; }
-        }
-
-        public byte[] Body
-        {
-            get { return _body; }
-        }
+        public IBasicProperties Properties { get; private set; }
+        public byte[] Body { get; private set; }
 
         public override string ToString()
         {
@@ -36,7 +26,7 @@
         }
     }
 
-    public class MessageEnvelope<T> : MessageEnvelope // where T : class
+    public class MessageEnvelope<T> : MessageEnvelope
     {
         public MessageEnvelope(IBasicProperties properties, T message, byte[] body) 
             : base(properties, body)
@@ -46,5 +36,4 @@
 
         public T Message { get; private set; }
     }
-
 }

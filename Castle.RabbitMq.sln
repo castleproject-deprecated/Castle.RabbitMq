@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.RabbitMq", "src\Cast
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.RabbitMq.IntegrationTests", "src\Castle.RabbitMq.IntegrationTests\Castle.RabbitMq.IntegrationTests.csproj", "{B8AD1493-6E79-496E-99D0-17D5CA13325A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.RabbitMq.Extensions.MessageHandler", "src\Castle.RabbitMq.Extensions.MessageHandler\Castle.RabbitMq.Extensions.MessageHandler.csproj", "{C718F8DF-DC89-47CA-8EB8-5E4A0B79B829}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.RabbitMq.Extensions.MessageHandler.Tests", "src\Castle.RabbitMq.Extensions.MessageHandler.Tests\Castle.RabbitMq.Extensions.MessageHandler.Tests.csproj", "{236B3D10-520C-42FB-839C-2BC907900155}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{B8AD1493-6E79-496E-99D0-17D5CA13325A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8AD1493-6E79-496E-99D0-17D5CA13325A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8AD1493-6E79-496E-99D0-17D5CA13325A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C718F8DF-DC89-47CA-8EB8-5E4A0B79B829}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C718F8DF-DC89-47CA-8EB8-5E4A0B79B829}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C718F8DF-DC89-47CA-8EB8-5E4A0B79B829}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C718F8DF-DC89-47CA-8EB8-5E4A0B79B829}.Release|Any CPU.Build.0 = Release|Any CPU
+		{236B3D10-520C-42FB-839C-2BC907900155}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{236B3D10-520C-42FB-839C-2BC907900155}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{236B3D10-520C-42FB-839C-2BC907900155}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{236B3D10-520C-42FB-839C-2BC907900155}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
