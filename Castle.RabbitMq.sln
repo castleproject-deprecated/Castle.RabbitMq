@@ -7,9 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.RabbitMq", "src\Cast
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.RabbitMq.IntegrationTests", "src\Castle.RabbitMq.IntegrationTests\Castle.RabbitMq.IntegrationTests.csproj", "{B8AD1493-6E79-496E-99D0-17D5CA13325A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.RabbitMq.Extensions.MessageHandler", "src\Castle.RabbitMq.Extensions.MessageHandler\Castle.RabbitMq.Extensions.MessageHandler.csproj", "{C718F8DF-DC89-47CA-8EB8-5E4A0B79B829}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{EB2709FF-410A-467A-A9A9-E3E471345E00}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.RabbitMq.Extensions.MessageHandler.Tests", "src\Castle.RabbitMq.Extensions.MessageHandler.Tests\Castle.RabbitMq.Extensions.MessageHandler.Tests.csproj", "{236B3D10-520C-42FB-839C-2BC907900155}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.Facilities.RabbitMq", "src\extensions\Castle.Facilities.RabbitMq\Castle.Facilities.RabbitMq.csproj", "{C718F8DF-DC89-47CA-8EB8-5E4A0B79B829}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.Facilities.RabbitMq.Tests", "src\extensions\Castle.Facilities.RabbitMq.Tests\Castle.Facilities.RabbitMq.Tests.csproj", "{236B3D10-520C-42FB-839C-2BC907900155}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,5 +38,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C718F8DF-DC89-47CA-8EB8-5E4A0B79B829} = {EB2709FF-410A-467A-A9A9-E3E471345E00}
+		{236B3D10-520C-42FB-839C-2BC907900155} = {EB2709FF-410A-467A-A9A9-E3E471345E00}
 	EndGlobalSection
 EndGlobal

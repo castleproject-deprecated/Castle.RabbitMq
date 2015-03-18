@@ -46,9 +46,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\api.cs" />
     <Compile Include="LogAdapter.cs" />
     <Compile Include="Options\SendOptions.cs" />
     <Compile Include="Options\ConsumerOptions.cs" />
@@ -91,7 +91,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Extensions\" />
     <Folder Include="Stubs\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
