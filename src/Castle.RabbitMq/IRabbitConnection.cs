@@ -1,6 +1,8 @@
 ﻿namespace Castle.RabbitMq
 {
     using System;
+    using System.Collections;
+    using RabbitMQ.Client;
     using Serializers;
 
     public class ChannelOptions
@@ -20,5 +22,7 @@
     public interface IRabbitConnection : IDisposable
     {
         IRabbitChannel CreateChannel(ChannelOptions options = null);
+
+        IRabbitConsole Console { get; }
     }
 }

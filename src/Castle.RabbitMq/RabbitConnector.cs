@@ -24,7 +24,7 @@
 
             var connection = connFactory.CreateConnection();
 
-            return new RabbitConnection(connection);
+            return new RabbitConnection(connection, connFactory);
         }
     }
 }

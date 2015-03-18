@@ -46,10 +46,16 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MgmtConsole\BindingInfo.cs" />
+    <Compile Include="MgmtConsole\HttpBasedRabbitConsole.cs" />
     <Compile Include="Extensions\api.cs" />
+    <Compile Include="IRabbitConsole.cs" />
     <Compile Include="LogAdapter.cs" />
+    <Compile Include="MgmtConsole\ExchangeInfo.cs" />
+    <Compile Include="MgmtConsole\QueueInfo.cs" />
     <Compile Include="Options\SendOptions.cs" />
     <Compile Include="Options\ConsumerOptions.cs" />
     <Compile Include="Behaviors\MessageInfo.cs" />
