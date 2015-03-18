@@ -43,7 +43,7 @@
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
 //            container.
-            container.Register(Component.For<IBus, RabbitMQBusAdapter>().ImplementedBy<RabbitMQBusAdapter>());
+//            container.Register(Component.For<IBus, RabbitMQBusAdapter>().ImplementedBy<RabbitMQBusAdapter>());
 
             foreach (var asm in _assembliesWithHandlers)
             {
