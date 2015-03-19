@@ -49,6 +49,7 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Asserts.cs" />
     <Compile Include="MgmtConsole\BindingInfo.cs" />
     <Compile Include="MgmtConsole\HttpBasedRabbitConsole.cs" />
     <Compile Include="Extensions\api.cs" />

@@ -24,7 +24,7 @@ namespace Castle.RabbitMq
 
     public class RpcSendOptions : SendOptions
     {
-        internal static RpcSendOptions Default = new RpcSendOptions()
+        new internal static RpcSendOptions Default = new RpcSendOptions()
         {
             Mandatory = false,
             Persist = false,

@@ -5,6 +5,7 @@
     using System.Reflection;
     using Core.Internal;
     using Core.Logging;
+    using Messaging;
     using MicroKernel.Registration;
     using MicroKernel.SubSystems.Configuration;
     using Windsor;
@@ -42,8 +43,13 @@
 
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-//            container.
-//            container.Register(Component.For<IBus, RabbitMQBusAdapter>().ImplementedBy<RabbitMQBusAdapter>());
+            if (!container.Kernel.HasComponent(typeof(CastleRabbitMqBus)))
+            {
+                container.Register(
+                    Component.For<IBus, CastleRabbitMqBus>()
+                             .ImplementedBy<CastleRabbitMqBus>()
+                );
+            }
 
             foreach (var asm in _assembliesWithHandlers)
             {
@@ -85,7 +91,7 @@
 
             foreach (var handlerContract in handlerContracts)
             {
-                HandlingStrategy.Register(container, handlerContract, handler);
+                HandlingStrategy.Register(handlerContract, handler);
             }
         }
 

@@ -7,6 +7,7 @@
     using System.Transactions;
     using Messaging;
     using Transactions;
+    using Castle.RabbitMq;
 
 
     public class CastleRabbitMqBus : IBus, IDisposable
@@ -101,19 +102,19 @@
         {
             IRabbitQueue queue;
             string routingKey;
-            EnsureDeclaredAndBound(message, exact, createQueue, out queue, out routingKey);
+            var exchange = EnsureDeclaredAndBound(message, exact, createQueue, out routingKey);
 
-            InternalSend(queue, message, routingKey, persist: true);
+            InternalSend(exchange, message, routingKey, persist: true);
         }
 
-        private void InternalSend(IRabbitQueue queue, IMessage message, string routingKey, bool persist)
+        private void InternalSend(IRabbitExchange exchange, IMessage message, string routingKey, bool persist)
         {
             var props = new MessageProperties()
             {
                 Type = message.GetType().ExtendedName()
             };
 
-            Action sendAction = () => queue.Send(message, routingKey, props, new SendOptions()
+            Action sendAction = () => exchange.Send(message, routingKey, props, new SendOptions()
             {
                 Persist = persist
             });
@@ -131,7 +132,7 @@
             }
         }
 
-        private void EnsureDeclaredAndBound(IMessage message, bool exact, bool createQueue, out IRabbitQueue queue, out string routingKey)
+        private IRabbitExchange EnsureDeclaredAndBound(IMessage message, bool exact, bool createQueue, out string routingKey)
         {
             EnsureStarted();
 
@@ -139,21 +140,23 @@
 
             IRabbitExchange exchange = GetOrDeclareExchange(exchangeName);
 
-            var queueName = ResolveQueueNameAndRoutingKey(message, out routingKey);
+            routingKey = ResolveRoutingKey(message);
 
-            queue = null;
+            if (routingKey == null) // message does not implement IRoutable
+            {
+                routingKey = message.GetType().FullName;
+            }
+
             if (createQueue)
             {
-                if (DeclareQueueIfNecessary(queueName, out queue))
+                IRabbitQueue queue;
+                if (DeclareQueueIfNecessary(routingKey, out queue))
                 {
                     BindQueueToExchange(exchange, queue, routingKey);
                 }
             }
 
-            if (queue == null)
-            {
-                queue = GetQueue(queueName);
-            }
+            return exchange;
         }
 
         private IRabbitExchange GetOrDeclareExchange(string exchangeName)
@@ -210,39 +213,22 @@
             return true;
         }
 
-        private IRabbitQueue GetQueue(string queueName)
-        {
-            IRabbitQueue queue;
-            if (_declaredQueue.TryGetValue(queueName, out queue))
-            {
-                return queue;
-            }
-
-            throw new Exception("This just cannot happen");
-        }
-
         private void BindQueueToExchange(IRabbitExchange exchange, IRabbitQueue queue, string routingKey)
         {
             _channel.Bind(exchange, queue, routingKey);
         }
 
-        private string ResolveQueueNameAndRoutingKey(IMessage message, out string routingKey)
+        private string ResolveRoutingKey(IMessage message)
         {
-            var queueName = "";
             var routable = message as IRoutable;
 
             if (routable != null)
             {
-                routingKey = routable.RoutingKey;
-                queueName = routingKey;
-            }
-            else
-            {
-                routingKey = message.GetType().FullName;
-                queueName = routingKey;
+                routable.RoutingKey.AssertNotNullOrEmpty();
+                return routable.RoutingKey;
             }
 
-            return queueName;
+            return null;
         }
 
         private string ResolveExchangeName(IMessage message, ConfigSettings config, bool exact)

@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Castle.RabbitMq.Extensions.MessageHandler")]
+[assembly: AssemblyTitle("Castle.Facilities.RabbitMq")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Castle.RabbitMq.Extensions.MessageHandler")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyProduct("Castle.Facilities.RabbitMq")]
+[assembly: AssemblyCopyright("Copyright Castle Project © 2015 - LGPL")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
