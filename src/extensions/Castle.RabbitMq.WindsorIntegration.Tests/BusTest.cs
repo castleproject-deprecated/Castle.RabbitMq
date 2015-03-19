@@ -27,7 +27,7 @@
                 QueueNamePrefix = "test_q_",
                 Endpoints = new Dictionary<string, string>()
                 {
-                    { "Castle.Facilities.RabbitMq.Tests", "test1" }
+                    { "Castle.RabbitMq.WindsorIntegration.Tests", "test1" }
                 }
             }, this.Channel);
 
@@ -46,7 +46,7 @@
             {
                 ack.Ack();
 
-                env.Properties.Type.Should().Be("Castle.Facilities.RabbitMq.Tests.MyRoutableMessage, Castle.Facilities.RabbitMq.Tests");
+                env.Properties.Type.Should().Be("Castle.RabbitMq.WindsorIntegration.Tests.MyRoutableMessage, Castle.Facilities.RabbitMq.Tests");
 
                 @event.Set();
             });

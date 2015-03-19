@@ -38,7 +38,7 @@
                 QueueNamePrefix = "test_q_",
                 Endpoints = new Dictionary<string, string>()
                 {
-                    {"Castle.Facilities.RabbitMq.Tests", "test2"}
+                    {"Castle.RabbitMq.WindsorIntegration.Tests", "test2"}
                 }
             };
 
