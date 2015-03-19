@@ -10,6 +10,6 @@
 
 //        byte[] Serialize(Type type, object instance);
 //
-//        object Deserialize(byte[] data, Type type);
+        object Deserialize(byte[] data, Type type);
     }
 }

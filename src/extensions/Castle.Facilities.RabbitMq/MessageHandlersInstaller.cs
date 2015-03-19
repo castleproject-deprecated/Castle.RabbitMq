@@ -36,8 +36,6 @@
         /// Name this host current scope of message handlers. 
         /// </summary>
         public string CurrentScopeName { get; set; }
-//        public string ExchangeNamePrefix { get; set; }
-//        public string QueueNamePrefix { get; set; }
 
         public MessageHandlingStrategy HandlingStrategy { get; set; }
 

@@ -1,6 +1,6 @@
 ﻿namespace Castle.RabbitMq
 {
-    public interface IRabbitQueue : IRabbitSender, IRabbitQueueConsumer
+    public interface IRabbitQueue : /*IRabbitSender,*/ IRabbitQueueConsumer
     {
         string Name { get; }
         uint ConsumerCount { get; }

@@ -22,6 +22,7 @@
         private IRabbitChannel _channel;
         private volatile bool _started;
         private volatile bool _disposed;
+        private bool _ownChannel;
 
         public CastleRabbitMqBus(ConfigSettings config)
         {
@@ -29,6 +30,11 @@
 
             _declaredExchange = new ConcurrentDictionary<string, IRabbitExchange>(StringComparer.Ordinal);
             _declaredQueue = new ConcurrentDictionary<string, IRabbitQueue>(StringComparer.Ordinal);
+        }
+
+        public CastleRabbitMqBus(ConfigSettings config, IRabbitChannel channel) : this(config)
+        {
+            _channel = channel;
         }
 
         public event EventHandler Started;
@@ -60,16 +66,21 @@
             _started = true;
             Thread.MemoryBarrier();
 
-            _connection = 
+            // channel was supplied on alternative constructor
+            if (_channel != null) return;
+
+            _connection =
                 RabbitConnector.Connect(
-                    _config.TargetHost,
-                    _config.Port, 
-                    _config.Username, 
-                    _config.Password, 
-                    _config.TargetVHost);
+                    _config.Host,
+                    _config.Port,
+                    _config.Username,
+                    _config.Password,
+                    _config.VHost);
 
             // Single consumer thread + single IO thread
             _channel = _connection.CreateChannel(new ChannelOptions());
+
+            _ownChannel = true;
         }
 
         public void Dispose()
@@ -79,12 +90,12 @@
             _disposed = true;
             Thread.MemoryBarrier();
 
-            if (_channel != null)
+            if (_ownChannel && _channel != null)
             {
                 _channel.Dispose();
             }
 
-            if (_connection != null)
+            if (_ownChannel && _connection != null)
             {
                 _connection.Dispose();
             }
@@ -100,7 +111,6 @@
 
         private void InternalPublish(IMessage message, bool exact, bool createQueue)
         {
-            IRabbitQueue queue;
             string routingKey;
             var exchange = EnsureDeclaredAndBound(message, exact, createQueue, out routingKey);
 
@@ -124,7 +134,8 @@
             if (curTransaction != null)
             {
                 curTransaction.EnlistVolatile(
-                    new DispatcherEnlistment(sendAction), EnlistmentOptions.EnlistDuringPrepareRequired);
+                    new DispatcherEnlistment(sendAction), 
+                    EnlistmentOptions.EnlistDuringPrepareRequired);
             }
             else
             {
@@ -134,9 +145,12 @@
 
         private IRabbitExchange EnsureDeclaredAndBound(IMessage message, bool exact, bool createQueue, out string routingKey)
         {
+            Argument.NotNull(message, "message");
+
             EnsureStarted();
 
             var exchangeName = ResolveExchangeName(message, _config, exact);
+            exchangeName.AssertNotNullOrEmpty();
 
             IRabbitExchange exchange = GetOrDeclareExchange(exchangeName);
 
@@ -149,8 +163,9 @@
 
             if (createQueue)
             {
+                var queueName = GetQueueName(routingKey);
                 IRabbitQueue queue;
-                if (DeclareQueueIfNecessary(routingKey, out queue))
+                if (DeclareQueueIfNecessary(queueName, out queue))
                 {
                     BindQueueToExchange(exchange, queue, routingKey);
                 }
@@ -218,6 +233,11 @@
             _channel.Bind(exchange, queue, routingKey);
         }
 
+        private string GetQueueName(string routingKey)
+        {
+            return (_config.QueueNamePrefix ?? "") + routingKey;
+        }
+
         private string ResolveRoutingKey(IMessage message)
         {
             var routable = message as IRoutable;
@@ -241,15 +261,15 @@
             // PERF: Assembly.GetName is slow
             var asmName = msgType.Assembly.GetName().Name;
             if (config.Endpoints.TryGetValue(asmName, out endpoint))
-                return endpoint;
+                return (_config.ExchangeNamePrefix ?? "") + endpoint;
 
             if (config.Endpoints.TryGetValue(msgType.Name, out endpoint))
-                return endpoint;
+                return (_config.ExchangeNamePrefix ?? "") + endpoint;
 
             if (exact)
                 throw new Exception("Messaging's Endpoint not found for " + msgType.FullName);
 
-            return config.Id;
+            return (_config.ExchangeNamePrefix ?? "") + config.Id;
         }
 
         private void EnsureStarted()

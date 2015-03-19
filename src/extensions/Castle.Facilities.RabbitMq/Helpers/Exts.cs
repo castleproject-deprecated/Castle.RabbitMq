@@ -12,7 +12,7 @@ namespace Castle.RabbitMq.Extensions.MessageHandler
 
             var sndComma = fullname.IndexOf("Version=", source.FullName.Length, StringComparison.Ordinal);
 
-            return fullname.Substring(0, sndComma);
+            return fullname.Substring(0, sndComma - 2);
         }
     }
 }

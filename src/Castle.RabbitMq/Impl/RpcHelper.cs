@@ -35,7 +35,11 @@
                                            RpcSendOptions options)
         {
             // CreateBasicProperties doesnt need the lock
-            var prop = properties ?? _model.CreateBasicProperties();
+            var prop = _model.CreateBasicProperties();
+            if (properties != null)
+            {
+                properties.CopyTo(prop);
+            }
 
             var @event = new AutoResetEvent(false);
 

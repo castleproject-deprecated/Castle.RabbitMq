@@ -23,11 +23,23 @@
 
     public abstract class ConnectorFixtureBase : Xunit.IUseFixture<ConnectorFixture>
     {
-        public IRabbitConnection Connection { get; set; }
+        public IRabbitConnection Connection { get; private set; }
 
-        public void SetFixture(ConnectorFixture data)
+        public virtual void SetFixture(ConnectorFixture data)
         {
             Connection = data.Connection;
+        }
+    }
+
+    public abstract class ChannelFixtureBase : ConnectorFixtureBase
+    {
+        public IRabbitChannel Channel { get; private set; }
+
+        public override void SetFixture(ConnectorFixture data)
+        {
+            base.SetFixture(data);
+
+            this.Channel = this.Connection.CreateChannel();
         }
     }
 }

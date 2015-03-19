@@ -64,7 +64,8 @@
                                 SendOptions options = null)
         {
             options = options ?? SendOptions.Default;
-            var prop = properties ?? _model.CreateBasicProperties();
+            var prop = _model.CreateBasicProperties();
+            if (properties != null) properties.CopyTo(prop);
             if (options.Persist)
             {
                 prop.DeliveryMode = 2; // persistent
@@ -76,7 +77,7 @@
                 _model.BasicPublish(this.Name, routingKey,
                                     mandatory: options.Mandatory,
                                     immediate: options.Immediate,
-                                    basicProperties: properties,
+                                    basicProperties: prop,
                                     body: body);
                 return new MessageInfo() { Tag = id };
             }

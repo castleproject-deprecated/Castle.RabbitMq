@@ -60,24 +60,26 @@
                                 MessageProperties properties = null, 
                                 SendOptions options = null)
         {
-            options = options ?? SendOptions.Default;
+            return _exchange.Send(body, routingKey, properties, options);
 
-            var prop = properties ?? _model.CreateBasicProperties();
-            if (options.Persist)
-            {
-                prop.DeliveryMode = 2; // persistent
-            }
-
-            lock (_model)
-            {
-                var id = _model.NextPublishSeqNo;
-                _model.BasicPublish(_exchange.Name, routingKey,
-                                    mandatory: options.Mandatory,
-                                    immediate: options.Immediate, 
-                                    basicProperties: properties, 
-                                    body: body);
-                return new MessageInfo() { Tag = id };
-            }
+//            options = options ?? SendOptions.Default;
+//
+//            var prop = properties ?? _model.CreateBasicProperties();
+//            if (options.Persist)
+//            {
+//                prop.DeliveryMode = 2; // persistent
+//            }
+//
+//            lock (_model)
+//            {
+//                var id = _model.NextPublishSeqNo;
+//                _model.BasicPublish(_exchange.Name, routingKey,
+//                                    mandatory: options.Mandatory,
+//                                    immediate: options.Immediate, 
+//                                    basicProperties: properties, 
+//                                    body: body);
+//                return new MessageInfo() { Tag = id };
+//            }
         }
 
         public MessageInfo Send<T>(T message, string routingKey = "", 

@@ -67,8 +67,8 @@
 
         public ConfigSettings()
         {
-            this.TargetHost = "localhost";
-            this.TargetVHost = "/";
+            this.Host = "localhost";
+            this.VHost = "/";
             this.Username = this.Password = "guest";
             this.Port = 5672;
         }
@@ -79,8 +79,11 @@
         /// </summary>
         public string Id { get; set; }
 
-        public string TargetHost { get; set; }
-        public string TargetVHost { get; set; }
+        public string ExchangeNamePrefix { get; set; }
+        public string QueueNamePrefix { get; set; }
+
+        public string Host { get; set; }
+        public string VHost { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
         public int Port { get; set; }

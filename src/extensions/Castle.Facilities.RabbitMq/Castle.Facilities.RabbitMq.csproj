@@ -50,9 +50,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CastleRabbitMqBus.cs" />
-    <Compile Include="Exts.cs" />
+    <Compile Include="Helpers\Exts.cs" />
+    <Compile Include="Impl\Invokers\MessageHandlerInvoker.cs" />
     <Compile Include="Transactions\DispatcherEnlistment.cs" />
-    <Compile Include="Impl\IMessageHandlerInvoker.cs" />
     <Compile Include="MessageHandlersInstaller.cs" />
     <Compile Include="Impl\MessageHandlingStrategy.cs" />
     <Compile Include="Impl\MessageStreamSource.cs" />

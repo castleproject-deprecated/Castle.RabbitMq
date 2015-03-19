@@ -23,6 +23,56 @@
         private AmqpTimestamp? _timestamp;
         private IDictionary<string, object> _headers;
 
+        internal void CopyTo(IBasicProperties properties)
+        {
+            if (this.IsAppIdPresent())
+                properties.AppId = this.AppId;
+
+            if (this.IsClusterIdPresent())
+                properties.ClusterId = this.ClusterId;
+            
+            if (this.IsContentEncodingPresent())
+                properties.ContentEncoding = this.ContentEncoding;
+
+            if (this.IsContentTypePresent())
+                properties.ContentType = this.ContentType;
+
+            if (this.IsCorrelationIdPresent())
+                properties.CorrelationId = this.CorrelationId;
+
+            if (this.IsExpirationPresent())
+                properties.Expiration = this.Expiration;
+
+            if (this.IsMessageIdPresent())
+                properties.MessageId = this.MessageId;
+
+            if (this.IsTypePresent())
+                properties.Type = this.Type;
+
+            if (this.IsUserIdPresent())
+                properties.UserId = this.UserId;
+
+            if (this.IsPriorityPresent())
+                properties.Priority = this.Priority;
+
+            if (this.IsDeliveryModePresent())
+                properties.DeliveryMode = this.DeliveryMode;
+
+            if (this.IsReplyToPresent())
+            {
+                properties.ReplyTo = this.ReplyTo;
+                properties.ReplyToAddress = this.ReplyToAddress;
+            }
+            
+            if (this.IsTimestampPresent())
+                properties.Timestamp = this.Timestamp;
+
+            if (this.IsHeadersPresent())
+                properties.Headers = this.Headers;
+        }
+
+        #region Properties
+
         public int ProtocolClassId
         {
             get { return _protocolClassId.Value; }
@@ -130,6 +180,8 @@
             set { _userId = value; }
         }
 
+        #endregion
+
         #region Clears
 
         public void ClearAppId()
@@ -233,7 +285,7 @@
 
         public bool IsDeliveryModePresent()
         {
-            return _deliveryMode != 0;
+            return _deliveryMode.HasValue;
         }
 
         public bool IsExpirationPresent()
@@ -258,7 +310,7 @@
 
         public bool IsReplyToPresent()
         {
-            return _replyTo != null;
+            return _replyTo != null || _replyToAddress != null;
         }
 
         public bool IsTimestampPresent()
