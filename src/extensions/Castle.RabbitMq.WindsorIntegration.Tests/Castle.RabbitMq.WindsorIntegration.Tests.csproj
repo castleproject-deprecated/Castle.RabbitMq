@@ -86,7 +86,7 @@
       <Project>{12ab9987-23c0-415d-8740-3e58d254b03d}</Project>
       <Name>Castle.RabbitMq</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Castle.Facilities.RabbitMq\Castle.RabbitMq.WindsorIntegration.csproj">
+    <ProjectReference Include="..\Castle.RabbitMq.WindsorIntegration\Castle.RabbitMq.WindsorIntegration.csproj">
       <Project>{c718f8df-dc89-47ca-8eb8-5e4a0b79b829}</Project>
       <Name>Castle.RabbitMq.WindsorIntegration</Name>
     </ProjectReference>
