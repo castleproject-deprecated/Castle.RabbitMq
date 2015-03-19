@@ -1,14 +1,14 @@
-﻿namespace Castle.RabbitMq.Extensions.MessageHandler
+﻿namespace Castle.RabbitMq.WindsorIntegration
 {
     using System;
     using System.Linq;
     using System.Reflection;
+    using Windsor;
     using Core.Internal;
     using Core.Logging;
     using Messaging;
     using MicroKernel.Registration;
     using MicroKernel.SubSystems.Configuration;
-    using Windsor;
 
     /// <summary>
     /// Maps messages from a queue to instances of <see cref="IMessageHandler{TMessage}"/>

@@ -1,4 +1,4 @@
-﻿namespace Castle.RabbitMq.Extensions.MessageHandler
+﻿namespace Castle.RabbitMq.WindsorIntegration
 {
     using System;
     using System.Collections.Concurrent;
@@ -6,8 +6,8 @@
     using System.Threading;
     using System.Transactions;
     using Messaging;
-    using Transactions;
     using Castle.RabbitMq;
+    using Transactions;
 
 
     public class CastleRabbitMqBus : IBus, IDisposable

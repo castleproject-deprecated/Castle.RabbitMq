@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 
-[assembly: InternalsVisibleTo("Castle.Facilities.RabbitMq")]
+[assembly: InternalsVisibleTo("Castle.RabbitMq.WindsorIntegration")]
 
 
 

@@ -1,4 +1,4 @@
-﻿namespace Castle.Facilities.RabbitMq.Tests
+﻿namespace Castle.RabbitMq.WindsorIntegration.Tests
 {
     using Castle.RabbitMq.Messaging;
 

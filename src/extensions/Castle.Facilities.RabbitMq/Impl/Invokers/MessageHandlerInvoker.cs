@@ -1,4 +1,4 @@
-﻿namespace Castle.Facilities.RabbitMq.Impl
+﻿namespace Castle.RabbitMq.WindsorIntegration.Impl
 {
     using System;
     using Castle.RabbitMq.Messaging;

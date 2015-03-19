@@ -7,8 +7,8 @@
     <ProjectGuid>{236B3D10-520C-42FB-839C-2BC907900155}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Castle.Facilities.RabbitMq.Tests</RootNamespace>
-    <AssemblyName>Castle.Facilities.RabbitMq.Tests</AssemblyName>
+    <RootNamespace>Castle.RabbitMq.Extensions.Windsor.Tests</RootNamespace>
+    <AssemblyName>Castle.RabbitMq.Extensions.Windsor.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -86,9 +86,9 @@
       <Project>{12ab9987-23c0-415d-8740-3e58d254b03d}</Project>
       <Name>Castle.RabbitMq</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Castle.Facilities.RabbitMq\Castle.Facilities.RabbitMq.csproj">
+    <ProjectReference Include="..\Castle.Facilities.RabbitMq\Castle.RabbitMq.WindsorIntegration.csproj">
       <Project>{c718f8df-dc89-47ca-8eb8-5e4a0b79b829}</Project>
-      <Name>Castle.Facilities.RabbitMq</Name>
+      <Name>Castle.RabbitMq.WindsorIntegration</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

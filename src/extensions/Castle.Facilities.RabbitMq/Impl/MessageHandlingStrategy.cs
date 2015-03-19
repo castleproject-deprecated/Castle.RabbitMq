@@ -1,9 +1,9 @@
-﻿namespace Castle.RabbitMq.Extensions.MessageHandler
+﻿namespace Castle.RabbitMq.WindsorIntegration
 {
     using System;
     using System.Collections.Concurrent;
     using System.Linq;
-    using Facilities.RabbitMq.Impl;
+    using Impl;
     using Messaging;
 
 

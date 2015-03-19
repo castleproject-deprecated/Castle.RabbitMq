@@ -24,14 +24,11 @@
             return JsonConvert.DeserializeObject<T>(json, _settings);
         }
 
-//        public byte[] Serialize(Type type, object instance)
-//        {
-//            throw new NotImplementedException();
-//        }
-//
-//        public object Deserialize(byte[] data, Type type)
-//        {
-//            throw new NotImplementedException();
-//        }
+        public object Deserialize(byte[] data, Type type)
+        {
+            var json = Encoding.UTF8.GetString(data);
+
+            return JsonConvert.DeserializeObject(json, type, _settings);
+        }
     }
 }

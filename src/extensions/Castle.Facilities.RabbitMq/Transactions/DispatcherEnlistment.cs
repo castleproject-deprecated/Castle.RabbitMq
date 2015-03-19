@@ -1,4 +1,4 @@
-﻿namespace Castle.RabbitMq.Extensions.MessageHandler.Transactions
+﻿namespace Castle.RabbitMq.WindsorIntegration.Transactions
 {
     using System;
     using System.Transactions;

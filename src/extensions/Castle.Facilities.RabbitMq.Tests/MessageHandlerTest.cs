@@ -1,9 +1,8 @@
-﻿namespace Castle.Facilities.RabbitMq.Tests
+﻿namespace Castle.RabbitMq.WindsorIntegration.Tests
 {
     using System.Collections.Generic;
     using System.Threading;
     using Castle.RabbitMq;
-    using Castle.RabbitMq.Extensions.MessageHandler;
     using Castle.RabbitMq.IntegrationTests.Scenarios;
     using Castle.RabbitMq.Messaging;
     using FluentAssertions;

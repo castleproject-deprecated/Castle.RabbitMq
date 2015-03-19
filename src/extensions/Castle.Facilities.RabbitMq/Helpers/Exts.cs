@@ -1,4 +1,4 @@
-namespace Castle.RabbitMq.Extensions.MessageHandler
+namespace Castle.RabbitMq.WindsorIntegration
 {
     using System;
 

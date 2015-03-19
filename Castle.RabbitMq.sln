@@ -9,9 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.RabbitMq.Integration
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{EB2709FF-410A-467A-A9A9-E3E471345E00}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.Facilities.RabbitMq", "src\extensions\Castle.Facilities.RabbitMq\Castle.Facilities.RabbitMq.csproj", "{C718F8DF-DC89-47CA-8EB8-5E4A0B79B829}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.RabbitMq.WindsorIntegration", "src\extensions\Castle.Facilities.RabbitMq\Castle.RabbitMq.WindsorIntegration.csproj", "{C718F8DF-DC89-47CA-8EB8-5E4A0B79B829}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.Facilities.RabbitMq.Tests", "src\extensions\Castle.Facilities.RabbitMq.Tests\Castle.Facilities.RabbitMq.Tests.csproj", "{236B3D10-520C-42FB-839C-2BC907900155}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.RabbitMq.WindsorIntegration.Tests", "src\extensions\Castle.Facilities.RabbitMq.Tests\Castle.RabbitMq.WindsorIntegration.Tests.csproj", "{236B3D10-520C-42FB-839C-2BC907900155}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
