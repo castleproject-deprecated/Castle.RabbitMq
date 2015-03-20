@@ -21,7 +21,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\..\build\Castle.RabbitMq.WindsorIntegration.XML</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -41,9 +42,9 @@
     <Reference Include="Castle.Windsor">
       <HintPath>..\..\..\lib\Castle.Windsor.dll</HintPath>
     </Reference>
-    <Reference Include="RabbitMQ.Client, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="RabbitMQ.Client, Version=3.5.0.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\lib\RabbitMQ.Client.dll</HintPath>
+      <HintPath>..\..\..\packages\RabbitMQ.Client.3.5.0\lib\net40\RabbitMQ.Client.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -66,7 +67,9 @@
       <Name>Castle.RabbitMq</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

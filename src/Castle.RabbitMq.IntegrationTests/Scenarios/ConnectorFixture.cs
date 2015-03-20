@@ -1,6 +1,7 @@
 ﻿namespace Castle.RabbitMq.IntegrationTests.Scenarios
 {
     using System;
+    using Xunit;
 
     public class ConnectorFixture : IDisposable
     {
@@ -21,7 +22,7 @@
         }
     }
 
-    public abstract class ConnectorFixtureBase : Xunit.IUseFixture<ConnectorFixture>
+    public abstract class ConnectorFixtureBase : IClassFixture<ConnectorFixture>
     {
         public IRabbitConnection Connection { get; private set; }
 

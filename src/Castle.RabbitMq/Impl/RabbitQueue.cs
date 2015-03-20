@@ -53,6 +53,8 @@
         public Subscription Respond<TRequest, TResponse>(Func<MessageEnvelope<TRequest>, IMessageAck, TResponse> onRespond,
                                                          ConsumerOptions options)
         {
+            Argument.NotNull(onRespond, "onRespond");
+
             options = options ?? ConsumerOptions.Default;
 
             var serializer = options.Serializer ?? _defaultSerializer;
@@ -72,6 +74,8 @@
         public Subscription Consume<T>(Action<MessageEnvelope<T>, IMessageAck> onReceived, 
                                        ConsumerOptions options) 
         {
+            Argument.NotNull(onReceived, "onReceived");
+
             options = options ?? ConsumerOptions.Default;
 
             var serializer = options.Serializer ?? _defaultSerializer;

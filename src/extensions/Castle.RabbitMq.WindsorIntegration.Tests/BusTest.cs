@@ -21,7 +21,7 @@
 
             var bus = new CastleRabbitMqBus(new ConfigSettings()
             {
-                Id = "test_bus",
+                OurScope = "test_bus",
                 VHost = vhost,
                 ExchangeNamePrefix = "test_e_",
                 QueueNamePrefix = "test_q_",

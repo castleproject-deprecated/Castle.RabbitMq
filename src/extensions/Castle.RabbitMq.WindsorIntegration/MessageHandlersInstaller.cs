@@ -96,6 +96,8 @@
 
         private void Register(Type handlerContract, Func<IMessageHandler> handlerBuilder)
         {
+            if (!handlerContract.IsGenericType) return;
+
             var msgType = handlerContract.GetGenericArguments()[0];
 
             _mainDispatcher.Add(msgType, handlerBuilder);
@@ -110,7 +112,7 @@
         {
             var attr = handlerType.GetAttribute<MessagingScopeAttribute>();
 
-            return attr == null || attr.GetScopes().Any(s => s == _config.Id);
+            return attr == null || attr.GetScopes().Any(s => s == _config.OurScope);
         }
 
         private void StartBus(IWindsorContainer container)

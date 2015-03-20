@@ -50,7 +50,7 @@ namespace Castle.RabbitMq.WindsorIntegration
         /// </summary>
         public void Start()
         {
-            _subscription = _bus.Consume(_config.Id, OnReceived);
+            _subscription = _bus.Consume(_config.OurScope, OnReceived);
         }
 
         /// <summary>

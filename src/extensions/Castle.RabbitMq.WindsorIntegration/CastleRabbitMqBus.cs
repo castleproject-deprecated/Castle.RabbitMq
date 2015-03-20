@@ -297,7 +297,7 @@
             if (exact)
                 throw new Exception("Messaging's Endpoint not found for " + msgType.FullName);
 
-            return (_config.ExchangeNamePrefix ?? "") + config.Id;
+            return (_config.ExchangeNamePrefix ?? "") + config.OurScope;
         }
 
         private void EnsureStarted()

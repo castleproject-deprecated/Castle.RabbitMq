@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Configuration;
 
     public interface IBus
     {
@@ -81,7 +82,7 @@
         /// Used to scope the messages, 
         /// and as basis to create queues/exchanges names
         /// </summary>
-        public string Id { get; set; }
+        public string OurScope { get; set; }
 
         public string ExchangeNamePrefix { get; set; }
         public string QueueNamePrefix { get; set; }
@@ -96,6 +97,18 @@
         {
             get { return _namespace2Exchange ?? (_namespace2Exchange = new Dictionary<string, string>()); }
             set { _namespace2Exchange = value; }
+        }
+
+        internal void AssertMinimalInfoSupplied()
+        {
+            if (string.IsNullOrEmpty(this.OurScope))
+            {
+                throw new Exception("Configuration error: 'OurScope' is required");
+            }
+            if (string.IsNullOrEmpty(this.Host))
+            {
+                throw new Exception("Configuration error: 'Host' is required");
+            }
         }
     }
 }

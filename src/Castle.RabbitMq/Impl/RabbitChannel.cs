@@ -32,6 +32,8 @@
 
         public IRabbitExchange DeclareExchange(string name, ExchangeOptions options)
         {
+            Argument.NotNullOrEmpty(name, "name");
+
             EnsureNotDisposed();
 
             lock (_model)
@@ -65,6 +67,8 @@
 
         public IRabbitQueue DeclareQueue(string name, QueueOptions options)
         {
+            Argument.NotNullOrEmpty(name, "name");
+
             EnsureNotDisposed();
 
             options = options ?? QueueOptions.Default;
