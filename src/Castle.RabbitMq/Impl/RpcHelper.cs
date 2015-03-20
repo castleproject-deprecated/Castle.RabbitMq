@@ -93,6 +93,7 @@
             queueName = _model.QueueDeclare();
             _routing2RetQueue[routingKey] = queueName;
 
+            // starts a bare metal consumer with no acks
             _model.BasicConsume(queueName, true, this);
             
             return queueName;
@@ -101,18 +102,6 @@
         //
         // IBasicConsumer implementation
         //
-
-        public void HandleBasicCancel(string consumerTag)
-        {
-        }
-
-        public void HandleBasicCancelOk(string consumerTag)
-        {
-        }
-
-        public void HandleBasicConsumeOk(string consumerTag)
-        {
-        }
 
         public void HandleBasicDeliver(string consumerTag, 
                                        ulong deliveryTag, 
@@ -124,7 +113,7 @@
             var correlationId = properties.CorrelationId;
             if (string.IsNullOrEmpty(correlationId))
             {
-                throw new Exception("Invalid correlationId");
+                throw new Exception("Invalid correlationId: got a null or empty one");
             }
 
             AutoResetEvent @event;
@@ -154,15 +143,27 @@
             }
         }
 
-        public void HandleModelShutdown(object model, ShutdownEventArgs reason)
-        {
-        }
-
         public IModel Model
         {
             get { return _model; }
         }
 
+        public void HandleModelShutdown(object model, ShutdownEventArgs reason)
+        {
+        }
+
         public event EventHandler<ConsumerEventArgs> ConsumerCancelled;
+
+        public void HandleBasicCancel(string consumerTag)
+        {
+        }
+
+        public void HandleBasicCancelOk(string consumerTag)
+        {
+        }
+
+        public void HandleBasicConsumeOk(string consumerTag)
+        {
+        }
     }
 }

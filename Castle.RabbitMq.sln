@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.RabbitMq.WindsorInte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.RabbitMq.WindsorIntegration.Tests", "src\extensions\Castle.RabbitMq.WindsorIntegration.Tests\Castle.RabbitMq.WindsorIntegration.Tests.csproj", "{236B3D10-520C-42FB-839C-2BC907900155}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.RabbitMq.Tests", "src\Castle.RabbitMq.Tests\Castle.RabbitMq.Tests.csproj", "{869C4E88-C0E5-48E9-BE88-0E460F0B6A26}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{236B3D10-520C-42FB-839C-2BC907900155}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{236B3D10-520C-42FB-839C-2BC907900155}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{236B3D10-520C-42FB-839C-2BC907900155}.Release|Any CPU.Build.0 = Release|Any CPU
+		{869C4E88-C0E5-48E9-BE88-0E460F0B6A26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{869C4E88-C0E5-48E9-BE88-0E460F0B6A26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{869C4E88-C0E5-48E9-BE88-0E460F0B6A26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{869C4E88-C0E5-48E9-BE88-0E460F0B6A26}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

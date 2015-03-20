@@ -25,9 +25,9 @@ namespace Castle.RabbitMq.IntegrationTests.Scenarios
 
                 }, new ConsumerOptions());
 
-            var reply =
-                channelClient.DeclareQueue("rpc_1")
-                    .SendRequest<MyRequest, MyResponse>(new MyRequest(), "rpc_1");
+
+            var reply = channelClient.DefaultExchange
+                .SendRequest<MyRequest, MyResponse>(new MyRequest(), "rpc_1");
 
             @event.WaitOne(TimeSpan.FromSeconds(2));
 

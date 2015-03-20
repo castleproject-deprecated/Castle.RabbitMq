@@ -4,8 +4,7 @@ namespace Castle.RabbitMq
     using System.Collections.Concurrent;
     using RabbitMQ.Client;
 
-
-    class StreamerConsumer<T> : DefaultBasicConsumer, IMessageProducer<T>
+    internal class StreamerConsumer<T> : DefaultBasicConsumer, IRabbitMessageProducer<T>
     {
         private readonly ConcurrentBag<IMessageConsumer<T>> _consumers;
         private readonly IRabbitSerializer _serializer;

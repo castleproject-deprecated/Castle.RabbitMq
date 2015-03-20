@@ -74,10 +74,9 @@
             lock (_model)
             {
                 var result = _model.QueueDeclare(name, options.Durable, options.Exclusive, options.AutoDelete, options.Arguments);
-                return new RabbitQueue(_model, _defaultExchange, serializer, result, options);
+                return new RabbitQueue(_model, serializer, result, options);
             }
         }
-
 
         #endregion
 

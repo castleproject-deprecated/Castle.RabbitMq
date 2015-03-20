@@ -99,8 +99,7 @@
                                            MessageProperties properties = null,
                                            RpcSendOptions options = null)
         {
-            return _rpcHelper.SendRequest(
-                data, routingKey, properties, options);
+            return _rpcHelper.SendRequest(data, routingKey, properties, options);
         }
 
         public TResponse SendRequest<TRequest, TResponse>(TRequest request, string routingKey = "",
@@ -109,8 +108,7 @@
             where TRequest : class 
             where TResponse : class
         {
-            return _rpcHelper.SendRequest<TRequest, TResponse>(
-                request, routingKey, properties, options);
+            return _rpcHelper.SendRequest<TRequest, TResponse>(request, routingKey, properties, options);
         }
 
         #endregion
@@ -133,7 +131,7 @@
                     _model.QueueBind(result.QueueName, this.Name, "");
                 }
 
-                return new RabbitQueue(_model, this, serializer, result, options);
+                return new RabbitQueue(_model, serializer, result, options);
             }
         }
 

@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Asserts.cs" />
+    <Compile Include="Impl\Consumers\IRabbitMessageProducer.cs" />
     <Compile Include="MgmtConsole\BindingInfo.cs" />
     <Compile Include="MgmtConsole\HttpBasedRabbitConsole.cs" />
     <Compile Include="Extensions\api.cs" />
@@ -65,7 +66,7 @@
     <Compile Include="Impl\Consumers\IMessageConsumer.cs" />
     <Compile Include="Impl\Consumers\IMessageProducer.cs" />
     <Compile Include="Impl\Consumers\StreamerConsumer.cs" />
-    <Compile Include="Impl\Consumers\RabbitSharedQueueConsumer.cs" />
+    <Compile Include="Impl\Consumers\SharedQueueConsumer.cs" />
     <Compile Include="Impl\Consumers\RpcResponder.cs" />
     <Compile Include="Impl\ExtHelpers.cs" />
     <Compile Include="Impl\RabbitChannel.cs" />

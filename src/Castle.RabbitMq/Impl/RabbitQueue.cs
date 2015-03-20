@@ -7,24 +7,19 @@
     public class RabbitQueue : IRabbitQueue
     {
         private readonly IModel _model;
-        private readonly IRabbitExchange _exchange;
         private readonly IRabbitSerializer _defaultSerializer;
         private readonly QueueOptions _queueOptions;
-        private readonly RpcHelper _rpcHelper;
 
-        public RabbitQueue(IModel model, IRabbitExchange exchange, IRabbitSerializer serializer, 
+        public RabbitQueue(IModel model, IRabbitSerializer serializer, 
                            QueueDeclareOk result, QueueOptions queueOptions)
         {
             _model = model;
-            _exchange = exchange;
             _defaultSerializer = serializer ?? queueOptions.Serializer;
             _queueOptions = queueOptions;
 
             this.Name = result.QueueName;
             this.ConsumerCount = result.ConsumerCount;
             this.MessageCount = result.MessageCount;
-
-            _rpcHelper = new RpcHelper(_model, _exchange.Name, _defaultSerializer);
         }
 
         #region IRabbitQueue
@@ -51,67 +46,6 @@
                 _model.QueueDelete(this.Name, ifUnused, ifEmpty);
         }
 
-
-        #endregion
-
-        #region IRabbitSender
-
-        public MessageInfo Send(byte[] body, string routingKey = "", 
-                                MessageProperties properties = null, 
-                                SendOptions options = null)
-        {
-            return _exchange.Send(body, routingKey, properties, options);
-
-//            options = options ?? SendOptions.Default;
-//
-//            var prop = properties ?? _model.CreateBasicProperties();
-//            if (options.Persist)
-//            {
-//                prop.DeliveryMode = 2; // persistent
-//            }
-//
-//            lock (_model)
-//            {
-//                var id = _model.NextPublishSeqNo;
-//                _model.BasicPublish(_exchange.Name, routingKey,
-//                                    mandatory: options.Mandatory,
-//                                    immediate: options.Immediate, 
-//                                    basicProperties: properties, 
-//                                    body: body);
-//                return new MessageInfo() { Tag = id };
-//            }
-        }
-
-        public MessageInfo Send<T>(T message, string routingKey = "", 
-                                   MessageProperties properties = null, 
-                                   SendOptions options = null) 
-            where T : class
-        {
-            options = options ?? SendOptions.Default;
-            var serializer = options.Serializer ?? _defaultSerializer;
-            var data = serializer.Serialize(message);
-
-            return Send(data, routingKey, properties, options);
-        }
-
-        public MessageEnvelope SendRequest(byte[] data, string routingKey = "",
-                                           MessageProperties properties = null,
-                                           RpcSendOptions options = null)
-        {
-
-            return _rpcHelper.SendRequest(data, routingKey, properties, options);
-        }
-
-        public TResponse SendRequest<TRequest, TResponse>(TRequest request, 
-                                                          string routingKey = "",
-                                                          MessageProperties properties = null,
-                                                          RpcSendOptions options = null) 
-            where TRequest : class where TResponse : class
-        {
-            return _rpcHelper.SendRequest<TRequest, TResponse>(
-                request, routingKey, properties, options);
-        }
-
         #endregion
 
         #region IRabbitQueueConsumer
@@ -123,7 +57,7 @@
 
             var serializer = options.Serializer ?? _defaultSerializer;
 
-            var consumer = new StreamerConsumer<TRequest>(_model, serializer);
+            var consumer = CreateConsumer<TRequest>(serializer, options);
 
             consumer.Subscribe(new RpcResponder<TRequest, TResponse>(_model, serializer, onRespond));
 
@@ -142,8 +76,8 @@
 
             var serializer = options.Serializer ?? _defaultSerializer;
 
-            // TODO: perf test consumers
-            var consumer = new StreamerConsumer<T>(_model, serializer);
+            // PERF: perf test consumers
+            var consumer = CreateConsumer<T>(serializer, options);
 
             consumer.Subscribe(new ActionAdapter<T>(env =>
             {
@@ -167,5 +101,17 @@
         }
 
         #endregion
+
+        private IRabbitMessageProducer<T> CreateConsumer<T>(IRabbitSerializer serializer, ConsumerOptions options)
+        {
+            if (options.ConsumerStrategy == ConsumerStrategy.Default)
+            {
+                return new StreamerConsumer<T>(_model, serializer);
+            }
+            // else if (options.ConsumerStrategy == ConsumerStrategy.Queue)
+            {
+                return new SharedQueueConsumer<T>(_model, serializer);
+            }
+        }
     }
 }
