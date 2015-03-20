@@ -7,11 +7,15 @@
     {
         event EventHandler Started;
 
+        IRabbitSerializer Serializer { get; }
+
         void Publish(IMessage message);
         void Publish(IEnumerable<IMessage> messages);
 
         void Send(IMessage message);
         void Send(IEnumerable<IMessage> messages);
+
+        IDisposable Consume(string queueName, Action<MessageEnvelope<byte[]>, IMessageAck> onReceived);
 
         void Start();
     }
@@ -63,7 +67,7 @@
 
     public class ConfigSettings
     {
-        private IDictionary<string, string> _endpoints;
+        private IDictionary<string, string> _namespace2Exchange;
 
         public ConfigSettings()
         {
@@ -88,10 +92,10 @@
         public string Password { get; set; }
         public int Port { get; set; }
 
-        public IDictionary<string, string> Endpoints
+        public IDictionary<string, string> NamespaceExchangeMapping
         {
-            get { return _endpoints ?? (_endpoints = new Dictionary<string, string>()); }
-            set { _endpoints = value; }
+            get { return _namespace2Exchange ?? (_namespace2Exchange = new Dictionary<string, string>()); }
+            set { _namespace2Exchange = value; }
         }
     }
 }

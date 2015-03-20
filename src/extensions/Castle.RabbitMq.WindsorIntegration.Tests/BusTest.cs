@@ -25,9 +25,9 @@
                 VHost = vhost,
                 ExchangeNamePrefix = "test_e_",
                 QueueNamePrefix = "test_q_",
-                Endpoints = new Dictionary<string, string>()
+                NamespaceExchangeMapping = new Dictionary<string, string>()
                 {
-                    { "Castle.RabbitMq.WindsorIntegration.Tests", "test1" }
+                    { "Castle.RabbitMq.WindsorIntegration.Tests", "test_bus" }
                 }
             }, this.Channel);
 
@@ -46,12 +46,12 @@
             {
                 ack.Ack();
 
-                env.Properties.Type.Should().Be("Castle.RabbitMq.WindsorIntegration.Tests.MyRoutableMessage, Castle.Facilities.RabbitMq.Tests");
+                env.Properties.Type.Should().Be("Castle.RabbitMq.WindsorIntegration.Tests.MyRoutableMessage, Castle.RabbitMq.WindsorIntegration.Tests");
 
                 @event.Set();
             });
 
-            if (!@event.WaitOne(TimeSpan.FromSeconds(2)))
+            if (!@event.WaitOne(TimeSpan.FromSeconds(5)))
             {
                 throw new Exception("Did not consume expected message");
             }

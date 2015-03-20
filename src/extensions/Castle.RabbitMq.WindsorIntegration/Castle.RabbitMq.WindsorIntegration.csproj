@@ -51,11 +51,12 @@
   <ItemGroup>
     <Compile Include="CastleRabbitMqBus.cs" />
     <Compile Include="Helpers\Exts.cs" />
+    <Compile Include="Impl\Invokers\DefaultMessageHandlerInvoker.cs" />
     <Compile Include="Impl\Invokers\MessageHandlerInvoker.cs" />
+    <Compile Include="Impl\Invokers\TransactionalMessageHandlerInvoker.cs" />
+    <Compile Include="Impl\MessageHandlerMainDispatcher.cs" />
     <Compile Include="Transactions\DispatcherEnlistment.cs" />
     <Compile Include="MessageHandlersInstaller.cs" />
-    <Compile Include="Impl\MessageHandlingStrategy.cs" />
-    <Compile Include="Impl\MessageStreamSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -7,6 +7,7 @@
     using System.Transactions;
     using Messaging;
     using Castle.RabbitMq;
+    using Serializers;
     using Transactions;
 
 
@@ -15,6 +16,7 @@
         private readonly ConfigSettings _config;
         private readonly ConcurrentDictionary<string, IRabbitExchange> _declaredExchange;
         private readonly ConcurrentDictionary<string, IRabbitQueue> _declaredQueue;
+        private readonly IRabbitSerializer _serializer;
         private readonly object _exchangeDeclareLock = new object();
         private readonly object _queueDeclareLock = new object();
 
@@ -24,17 +26,29 @@
         private volatile bool _disposed;
         private bool _ownChannel;
 
-        public CastleRabbitMqBus(ConfigSettings config)
+
+        public CastleRabbitMqBus(ConfigSettings config, IRabbitSerializer serializer)
         {
             _config = config;
+            _serializer = serializer ?? new JsonSerializer();
 
             _declaredExchange = new ConcurrentDictionary<string, IRabbitExchange>(StringComparer.Ordinal);
             _declaredQueue = new ConcurrentDictionary<string, IRabbitQueue>(StringComparer.Ordinal);
         }
 
-        public CastleRabbitMqBus(ConfigSettings config, IRabbitChannel channel) : this(config)
+        public CastleRabbitMqBus(ConfigSettings config) : this(config, (IRabbitSerializer)null)
+        {
+        }
+
+        public CastleRabbitMqBus(ConfigSettings config, IRabbitChannel channel)
+            : this(config, (IRabbitSerializer)null)
         {
             _channel = channel;
+        }
+
+        public IRabbitSerializer Serializer
+        {
+            get { return _serializer; }
         }
 
         public event EventHandler Started;
@@ -57,6 +71,19 @@
         public void Send(IEnumerable<IMessage> messages)
         {
             InternalPublish(messages, exact: true, createQueue: true);
+        }
+
+        public IDisposable Consume(string queueName, Action<MessageEnvelope<byte[]>, IMessageAck> onReceived)
+        {
+            EnsureStarted();
+
+            if (!string.IsNullOrEmpty(_config.QueueNamePrefix) && !queueName.StartsWith(_config.QueueNamePrefix, StringComparison.Ordinal))
+            {
+                queueName = _config.QueueNamePrefix + queueName;
+            }
+
+            var queue = _channel.DeclareQueue(queueName, new QueueOptions() {Durable = true});
+            return queue.Consume(onReceived);
         }
 
         public void Start()
@@ -126,7 +153,8 @@
 
             Action sendAction = () => exchange.Send(message, routingKey, props, new SendOptions()
             {
-                Persist = persist
+                Persist = persist,
+                Serializer = _serializer
             });
 
             var curTransaction = Transaction.Current;
@@ -260,10 +288,10 @@
 
             // PERF: Assembly.GetName is slow
             var asmName = msgType.Assembly.GetName().Name;
-            if (config.Endpoints.TryGetValue(asmName, out endpoint))
+            if (config.NamespaceExchangeMapping.TryGetValue(asmName, out endpoint))
                 return (_config.ExchangeNamePrefix ?? "") + endpoint;
 
-            if (config.Endpoints.TryGetValue(msgType.Name, out endpoint))
+            if (config.NamespaceExchangeMapping.TryGetValue(msgType.Name, out endpoint))
                 return (_config.ExchangeNamePrefix ?? "") + endpoint;
 
             if (exact)

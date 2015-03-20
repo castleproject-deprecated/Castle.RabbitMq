@@ -22,7 +22,7 @@
         [Fact]
         public void MessageSentThroughBus_Should_ActivateMessageHandler()
         {
-            Purge("test_q_routing2");
+//            Purge("test_q_routing2");
 
             // Set initial state
             MyRoutableMessageHandler.Handled = false;
@@ -36,9 +36,9 @@
                 VHost = vhost,
                 ExchangeNamePrefix = "test_e_",
                 QueueNamePrefix = "test_q_",
-                Endpoints = new Dictionary<string, string>()
+                NamespaceExchangeMapping = new Dictionary<string, string>()
                 {
-                    {"Castle.RabbitMq.WindsorIntegration.Tests", "test2"}
+                    {"Castle.RabbitMq.WindsorIntegration.Tests", "test3"}
                 }
             };
 
