@@ -11,13 +11,16 @@
     using Xunit;
 
 
-    public class MessageHandlerTest : ChannelFixtureBase
+    public class MessageHandlerTest : IClassFixture<ChannelFixture>
     {
-        // What_When_Should
-
-        public MessageHandlerTest()
+        public MessageHandlerTest(ChannelFixture channelFix)
         {
+            this.Channel = channelFix.Channel;
         }
+
+        public IRabbitChannel Channel { get; set; }
+
+        // What_When_Should
 
         [Fact]
         public void MessageSentThroughBus_Should_ActivateMessageHandler()

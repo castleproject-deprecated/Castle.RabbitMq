@@ -10,8 +10,15 @@
     using Xunit;
 
 
-    public class BusTest : ChannelFixtureBase
+    public class BusTest : IClassFixture<ChannelFixture>
     {
+        public BusTest(ChannelFixture channelFix)
+        {
+            this.Channel = channelFix.Channel;
+        }
+
+        public IRabbitChannel Channel { get; set; }
+
         // What_When_Should
 
         [Fact]

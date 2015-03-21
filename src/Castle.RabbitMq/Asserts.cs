@@ -4,6 +4,14 @@
 
     internal static class Argument
     {
+        public static void NotNull(string argValue, string argName, string message = null)
+        {
+            if (argValue == null)
+            {
+                throw new ArgumentNullException(argName, (message ?? "Argument cannot be null"));
+            }
+        }
+
         public static void NotNullOrEmpty(string argValue, string argName, string message = null)
         {
             if (string.IsNullOrEmpty(argValue))

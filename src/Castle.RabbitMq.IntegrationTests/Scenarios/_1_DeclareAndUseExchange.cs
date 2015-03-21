@@ -2,8 +2,15 @@
 {
     using Xunit;
 
-    public class _1_DeclareAndUseExchange : ConnectorFixtureBase
+    public class _1_DeclareAndUseExchange : IClassFixture<ConnectorFixture>
     {
+        public _1_DeclareAndUseExchange(ConnectorFixture connectorFixture)
+        {
+            this.Connection = connectorFixture.Connection;
+        }
+
+        public IRabbitConnection Connection { get; set; }
+
         [Fact]
         public void DeclareExchangeAndUseIt()
         {

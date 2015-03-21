@@ -72,6 +72,7 @@
     <Compile Include="Scenarios\_2_ConsumingMsgs.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Scenarios\_4_HandlingUnroutedMessages.cs" />
     <Compile Include="Scenarios\_9_Rpc.cs" />
   </ItemGroup>
   <ItemGroup>

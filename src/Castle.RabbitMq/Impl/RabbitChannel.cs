@@ -2,6 +2,7 @@
 {
     using System;
     using RabbitMQ.Client;
+    using RabbitMQ.Client.Events;
 
     public class RabbitChannel : IRabbitChannel
     {
@@ -17,9 +18,13 @@
             _defaultExchange = new RabbitExchange(_model, _defaultSerializer, 
                 name: string.Empty, canDestroy: false, 
                 options: new ExchangeOptions());
+
+            _model.BasicReturn += ModelOnBasicReturn;
         }
 
         #region IRabbitChannel
+
+        public event Action<MessageUnroutedEventArgs> MessageUnrouted;
 
         public IRabbitExchange DefaultExchange
         {
@@ -97,9 +102,34 @@
             }
         }
 
+        private void ModelOnBasicReturn(object sender, BasicReturnEventArgs args)
+        {
+            if (LogAdapter.LogEnabled)
+            {
+                LogAdapter.LogDebug("RabbitChannel", 
+                    "Message dropped. Message sent to exchange " + args.Exchange + " with routing key " + args.RoutingKey, 
+                    null);
+            }
+
+            var ev = this.MessageUnrouted;
+            if (ev == null) return;
+
+            var envelope = new MessageEnvelope(args.BasicProperties, args.Body);
+            var eventArgs = new MessageUnroutedEventArgs()
+            {
+                MessageEnvelope = envelope,
+                Exchange = args.Exchange,
+                ReplyCode = args.ReplyCode,
+                ReplyText = args.ReplyText,
+                RoutingKey = args.RoutingKey
+            };
+                
+            ev(eventArgs);
+        }
+
         private void EnsureNotDisposed()
         {
-            if (_isDisposed) throw new ObjectDisposedException("RabbitConnection");
+            if (_isDisposed) throw new ObjectDisposedException("RabbitChannel");
         }
     }
 }

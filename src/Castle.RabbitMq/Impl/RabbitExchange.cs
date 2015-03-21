@@ -63,7 +63,7 @@
                                 MessageProperties properties = null, 
                                 SendOptions options = null)
         {
-            Argument.NotNullOrEmpty(routingKey, "routingKey");
+            Argument.NotNull(routingKey, "routingKey");
 
             options = options ?? SendOptions.Default;
             var prop = _model.CreateBasicProperties();
@@ -101,7 +101,7 @@
                                            MessageProperties properties = null,
                                            RpcSendOptions options = null)
         {
-            Argument.NotNullOrEmpty(routingKey, "routingKey");
+            Argument.NotNull(routingKey, "routingKey");
 
             return _rpcHelper.SendRequest(data, routingKey, properties, options);
         }
@@ -112,7 +112,7 @@
             where TRequest : class 
             where TResponse : class
         {
-            Argument.NotNullOrEmpty(routingKey, "routingKey");
+            Argument.NotNull(routingKey, "routingKey");
 
             return _rpcHelper.SendRequest<TRequest, TResponse>(request, routingKey, properties, options);
         }
@@ -123,7 +123,7 @@
 
         public IRabbitQueue DeclareQueue(string name, QueueOptions options)
         {
-            Argument.NotNullOrEmpty(name, "name");
+            Argument.NotNull(name, "name");
 
             options = options ?? QueueOptions.Default;
 

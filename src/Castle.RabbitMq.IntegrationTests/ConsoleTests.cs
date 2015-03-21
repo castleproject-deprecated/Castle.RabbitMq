@@ -6,8 +6,15 @@
     using Scenarios;
     using Xunit;
 
-    public class ConsoleTests : ConnectorFixtureBase
+    public class ConsoleTests : IClassFixture<ConnectorFixture>
     {
+        public ConsoleTests(ConnectorFixture connectorFixture)
+        {
+            this.Connection = connectorFixture.Connection;
+        }
+
+        public IRabbitConnection Connection { get; set; }
+
         [Fact]
         public async Task GetBindingsAsync()
         {

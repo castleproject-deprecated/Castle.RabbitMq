@@ -5,8 +5,15 @@ namespace Castle.RabbitMq.IntegrationTests.Scenarios
     using FluentAssertions;
     using Xunit;
 
-    public class _9_Rpc : ConnectorFixtureBase
+    public class _9_Rpc : IClassFixture<ConnectorFixture>
     {
+        public _9_Rpc(ConnectorFixture connectorFixture)
+        {
+            this.Connection = connectorFixture.Connection;
+        }
+
+        public IRabbitConnection Connection { get; set; }
+
         [Fact]
         public void BasicRequestReply()
         {

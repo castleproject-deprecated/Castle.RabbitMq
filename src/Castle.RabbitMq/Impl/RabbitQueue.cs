@@ -22,8 +22,6 @@
             this.MessageCount = result.MessageCount;
         }
 
-        #region IRabbitQueue
-
         public string Name { get; private set; }
         public uint ConsumerCount { get; private set; }
         public uint MessageCount { get; private set; }
@@ -45,8 +43,6 @@
             lock (_model)
                 _model.QueueDelete(this.Name, ifUnused, ifEmpty);
         }
-
-        #endregion
 
         #region IRabbitQueueConsumer
 

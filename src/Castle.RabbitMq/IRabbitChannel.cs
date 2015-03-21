@@ -5,7 +5,11 @@
     public interface IRabbitChannel : IRabbitQueueDeclarer, IDisposable
     {
         // OnException?
-        // OnMessageNotDelivered --> OnMessageUnrouted
+
+        /// <summary>
+        /// Mandatory message dropped by exchange because there were no matching queues.
+        /// </summary>
+        event Action<MessageUnroutedEventArgs> MessageUnrouted;
 
         IRabbitExchange DefaultExchange { get; }
 

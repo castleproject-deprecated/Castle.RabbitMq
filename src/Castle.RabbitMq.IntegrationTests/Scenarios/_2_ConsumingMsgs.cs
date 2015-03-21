@@ -5,8 +5,15 @@
     using FluentAssertions;
     using Xunit;
 
-    public class _2_ConsumingMsgs : ConnectorFixtureBase
+    public class _2_ConsumingMsgs : IClassFixture<ConnectorFixture>
     {
+        public _2_ConsumingMsgs(ConnectorFixture connectorFixture)
+        {
+            this.Connection = connectorFixture.Connection;
+        }
+
+        public IRabbitConnection Connection { get; set; }
+
         [Fact]
         public void ConsumingMsgFromQueueBoundToDefaultExchange()
         {
