@@ -9,7 +9,14 @@ namespace Castle.RabbitMq
             Mandatory = false,
             Persist = false,
             Immediate = false
-        }; 
+        };
+
+        internal static SendOptions Persistent = new SendOptions()
+        {
+            Mandatory = false,
+            Persist = true,
+            Immediate = false
+        };
 
         public bool Persist { get; set; }
         public bool Immediate { get; set; }

@@ -22,12 +22,12 @@
 
     public static class RabbitChannelExtensions
     {
-        public static IRabbitQueueBinding Bind(this IRabbitChannel source, 
-                                               string exchange, string queue,
-                                               string routingKeyOrFilter = null)
-        {
-            throw new NotImplementedException();
-        }
+//        public static IRabbitQueueBinding Bind(this IRabbitChannel source, 
+//                                               string exchange, string queue,
+//                                               string routingKeyOrFilter = null)
+//        {
+//            throw new NotImplementedException();
+//        }
 
         public static IRabbitExchange DeclareExchange(this IRabbitChannel source, string name, RabbitExchangeType exchangeType)
         {

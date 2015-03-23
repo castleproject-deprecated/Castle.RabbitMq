@@ -30,22 +30,22 @@ namespace Castle.RabbitMq
     {
         public static MessageInfo Send(this IRabbitSender source, byte[] body, string routingKey = "")
         {
-            return null;
+            return source.Send(body, routingKey, options: SendOptions.Default);
         }
 
         public static MessageInfo Send<T>(this IRabbitSender source, T message, string routingKey = "") where T : class
         {
-            return null;
+            return source.Send<T>(message, routingKey, options: SendOptions.Default);
         }
 
         public static MessageInfo SendPersistent(this IRabbitSender source, byte[] body, string routingKey = "")
         {
-            return null;
+            return source.Send(body, routingKey, options: SendOptions.Persistent);
         }
 
         public static MessageInfo SendPersistent<T>(this IRabbitSender source, T message, string routingKey = "") where T : class
         {
-            return null;
+            return source.Send<T>(message, routingKey, options: SendOptions.Persistent);
         }
     }
 }
