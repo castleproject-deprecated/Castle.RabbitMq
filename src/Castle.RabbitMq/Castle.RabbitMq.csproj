@@ -21,8 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>
-    </DocumentationFile>
+    <DocumentationFile>..\..\build\Castle.RabbitMq.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -57,7 +56,6 @@
     <Compile Include="MessageUnroutedEventArgs.cs" />
     <Compile Include="MgmtConsole\BindingInfo.cs" />
     <Compile Include="MgmtConsole\HttpBasedRabbitConsole.cs" />
-    <Compile Include="Extensions\api.cs" />
     <Compile Include="IRabbitConsole.cs" />
     <Compile Include="LogAdapter.cs" />
     <Compile Include="MgmtConsole\ExchangeInfo.cs" />
@@ -103,6 +101,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Extensions\" />
     <Folder Include="Stubs\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
