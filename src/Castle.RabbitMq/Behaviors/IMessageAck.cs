@@ -20,6 +20,7 @@
     {
         private readonly Action _ack;
         private readonly Action<bool> _nack;
+        private volatile bool _done;
 
         public MessageAck(Action ack, Action<bool> nack)
         {
@@ -29,10 +30,14 @@
 
         public void Ack()
         {
+            if (_done) return;
+            _done = true;
             _ack();
         }
         public void Reject(bool requeue)
         {
+            if (_done) return;
+            _done = true;
             _nack(requeue);
         }
     }
