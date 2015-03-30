@@ -50,12 +50,7 @@
 
         public IRabbitQueueBinding Bind(IRabbitExchange exchange, IRabbitQueue queue, string routingKeyOrFilter = null)
         {
-            EnsureNotDisposed();
-
-            lock (_model)
-                _model.QueueBind(queue.Name, exchange.Name, routingKeyOrFilter);
-
-            return new RabbitQueueBinding(_model, queue.Name, exchange.Name, routingKeyOrFilter);
+	        return BindInternal(queue.Name, exchange.Name, routingKeyOrFilter);
         }
 
         public void UnBind(IRabbitExchange exchange, IRabbitQueue queue, string routingKeyOrFilter = null)
@@ -101,6 +96,16 @@
                 _model.Dispose();
             }
         }
+
+		internal RabbitQueueBinding BindInternal(string queue, string exchange, string routingKeyOrFilter)
+	    {
+			EnsureNotDisposed();
+
+			lock (_model)
+				_model.QueueBind(queue, exchange, routingKeyOrFilter);
+
+			return new RabbitQueueBinding(_model, queue, exchange, routingKeyOrFilter);
+		}
 
         private void ModelOnBasicReturn(object sender, BasicReturnEventArgs args)
         {

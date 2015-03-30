@@ -15,19 +15,19 @@
 
         IRabbitExchange DeclareExchange(string name, ExchangeOptions options);
 
-        IRabbitQueueBinding Bind(IRabbitExchange exchange, IRabbitQueue queue, string routingKeyOrFilter = null);
+        IRabbitQueueBinding Bind(IRabbitExchange exchange, IRabbitQueue queue, string routingKeyOrFilter);
 
         void UnBind(IRabbitExchange exchange, IRabbitQueue queue, string routingKeyOrFilter = null);
     }
 
     public static class RabbitChannelExtensions
     {
-//        public static IRabbitQueueBinding Bind(this IRabbitChannel source, 
-//                                               string exchange, string queue,
-//                                               string routingKeyOrFilter = null)
-//        {
-//            throw new NotImplementedException();
-//        }
+        public static IRabbitQueueBinding Bind(this IRabbitChannel source, 
+                                               string exchange, string queue,
+                                               string routingKeyOrFilter)
+        {
+	        return (source as RabbitChannel).BindInternal(queue, exchange, routingKeyOrFilter);
+        }
 
         public static IRabbitExchange DeclareExchange(this IRabbitChannel source, string name, RabbitExchangeType exchangeType)
         {
