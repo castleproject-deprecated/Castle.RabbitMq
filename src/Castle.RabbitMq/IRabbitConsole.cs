@@ -14,10 +14,12 @@
 
         Task<IEnumerable<BindingInfo>> GetBindingsAsync(string exchange, string queue, string vhost = "/");
 
-        // TODO:
-        // /cluster-name
-        // /nodes
-        // /nodes/<name>
-        // /definitions --> returns all above
+	    Task<IEnumerable<BindingInfo>> GetBindingsAsync(string exchange, string vhost = "/");
+
+	    // TODO:
+	    // /cluster-name
+	    // /nodes
+	    // /nodes/<name>
+	    // /definitions --> returns all above
     }
 }

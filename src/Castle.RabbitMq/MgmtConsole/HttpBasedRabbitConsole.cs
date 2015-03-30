@@ -51,6 +51,19 @@
             return JsonConvert.DeserializeObject<IEnumerable<BindingInfo>>(json);
         }
 
+		// /api/exchanges/vhost/exchange/bindings/source
+        // A list of all bindings between an exchange and a queue. Remember, an exchange and a queue can be bound together many times 
+        public async Task<IEnumerable<BindingInfo>> GetBindingsAsync(string exchange, string vhost = "/")
+        {
+			//var url = string.Format("http://{0}:15672/api/exchanges/{2}/{1}/bindings/source", config.Host ?? "localhost", exchange, config.VHost ?? "%2F");
+            var url = string.Format("exchanges/{0}/{1}/bindings/source",
+                WebUtility.UrlEncode(vhost),
+                WebUtility.UrlEncode(exchange));
+            var json = await _client.GetStringAsync(url);
+
+            return JsonConvert.DeserializeObject<IEnumerable<BindingInfo>>(json);
+        }
+
         // /api/exchanges/vhost
         public async Task<IEnumerable<ExchangeInfo>> GetExchangesAsync(string vhost = "/")
         {
