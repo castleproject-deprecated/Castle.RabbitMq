@@ -1,8 +1,9 @@
 ﻿namespace Castle.RabbitMq
 {
     using System;
+    using RabbitMQ.Client;
 
-    public interface IRabbitChannel : IRabbitQueueDeclarer, IDisposable
+	public interface IRabbitChannel : IRabbitQueueDeclarer, IDisposable
     {
         // OnException?
 
@@ -18,6 +19,8 @@
         IRabbitQueueBinding Bind(IRabbitExchange exchange, IRabbitQueue queue, string routingKeyOrFilter);
 
         void UnBind(IRabbitExchange exchange, IRabbitQueue queue, string routingKeyOrFilter = null);
+
+		IModel Model { get; }
     }
 
     public static class RabbitChannelExtensions

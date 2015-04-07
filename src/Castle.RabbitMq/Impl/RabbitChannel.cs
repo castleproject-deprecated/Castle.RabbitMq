@@ -61,6 +61,8 @@
                 _model.QueueUnbind(queue.Name, exchange.Name, routingKeyOrFilter, null);
         }
 
+		public IModel Model { get { return _model; } }
+
         #endregion
 
         #region IRabbitQueueDeclarer
