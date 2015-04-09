@@ -59,6 +59,9 @@
 
                 if (!@event.WaitOne(options.Timeout))
                 {
+					MessageEnvelope val;
+					_replyData.TryRemove(prop.CorrelationId, out val);
+
                     throw new Exception("timeout");
                 }
 
@@ -139,7 +142,10 @@
             }
             catch (Exception)
             {
-                // potential object disposed
+	            // potential object disposed
+
+	            MessageEnvelope val;
+	            _replyData.TryRemove(correlationId, out val);
             }
         }
 

@@ -39,6 +39,7 @@ namespace Castle.RabbitMq.IntegrationTests.Scenarios
             @event.WaitOne(TimeSpan.FromSeconds(2));
 
             msgs.Should().Be(1);
+	        reply.Should().BeOfType<MyResponse>();
         }        
     }
 }
