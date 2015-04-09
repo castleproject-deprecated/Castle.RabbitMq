@@ -82,10 +82,10 @@
         {
             options = options ?? RpcSendOptions.Default;
 
-            var data = _serializer.Serialize(request);
+			var data = _serializer.Serialize(request, properties);
             var reply = this.SendRequest(data, routingKey, properties, options);
 
-            return _serializer.Deserialize<TResponse>(reply.Body);
+			return _serializer.Deserialize<TResponse>(reply.Body, reply.Properties);
         }
 
         private string GetOrCreateReturnQueue(string routingKey)

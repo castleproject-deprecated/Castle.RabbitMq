@@ -1,20 +1,21 @@
 ﻿namespace Castle.RabbitMq.Serializers
 {
     using System;
+    using RabbitMQ.Client;
 
-    public class ProtoBufSerializer : IRabbitSerializer
+	public class ProtoBufSerializer : IRabbitSerializer
     {
-        public byte[] Serialize<T>(T instance)
+		public byte[] Serialize<T>(T instance, IBasicProperties prop)
         {
             throw new NotImplementedException();
         }
 
-        public T Deserialize<T>(byte[] data)
+		public T Deserialize<T>(byte[] data, IBasicProperties prop)
         {
             throw new NotImplementedException();
         }
 
-        public object Deserialize(byte[] data, Type type)
+		public object Deserialize(byte[] data, Type type, IBasicProperties prop)
         {
             throw new NotImplementedException();
         }

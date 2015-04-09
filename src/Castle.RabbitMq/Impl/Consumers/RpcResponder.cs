@@ -47,7 +47,7 @@ namespace Castle.RabbitMq
             }
             else
             {
-                replyData = _serializer.Serialize(response);
+				replyData = _serializer.Serialize(response, newProp);
             }
 
             lock (_model)

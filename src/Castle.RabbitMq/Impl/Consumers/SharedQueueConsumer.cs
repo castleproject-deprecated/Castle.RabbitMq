@@ -87,7 +87,7 @@
             }
             else
             {
-                var deserialized = _serializer.Deserialize<T>(args.Body);
+				var deserialized = _serializer.Deserialize<T>(args.Body, args.BasicProperties);
 
                 var envelope = new MessageEnvelope<T>(args.BasicProperties, deserialized, args.Body)
                 {
