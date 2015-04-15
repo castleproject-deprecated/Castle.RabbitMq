@@ -1,6 +1,7 @@
 ﻿namespace Castle.RabbitMq
 {
-    using System.Collections.Generic;
+	using System;
+	using System.Collections.Generic;
     using RabbitMQ.Client;
 
     public class MessageProperties : IBasicProperties
@@ -23,7 +24,12 @@
         private AmqpTimestamp? _timestamp;
         private IDictionary<string, object> _headers;
 
-        internal void CopyTo(IBasicProperties properties)
+	    public MessageProperties()
+	    {
+			_headers = new Dictionary<string, object>(StringComparer.Ordinal);
+	    }
+
+	    internal void CopyTo(IBasicProperties properties)
         {
             if (this.IsAppIdPresent())
                 properties.AppId = this.AppId;
