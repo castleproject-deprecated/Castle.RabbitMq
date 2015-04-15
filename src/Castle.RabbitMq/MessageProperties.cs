@@ -22,7 +22,7 @@
         private byte? _deliveryMode;
         private PublicationAddress _replyToAddress;
         private AmqpTimestamp? _timestamp;
-        private IDictionary<string, object> _headers;
+        private readonly IDictionary<string, object> _headers;
 
 	    public MessageProperties()
 	    {
@@ -227,7 +227,7 @@
 
         public void ClearHeaders()
         {
-            _headers = null;
+            _headers.Clear();
         }
 
         public void ClearMessageId()
@@ -301,7 +301,7 @@
 
         public bool IsHeadersPresent()
         {
-            return _headers != null;
+            return _headers.Count != 0;
         }
 
         public bool IsMessageIdPresent()
