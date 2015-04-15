@@ -22,7 +22,7 @@
         private byte? _deliveryMode;
         private PublicationAddress _replyToAddress;
         private AmqpTimestamp? _timestamp;
-        private readonly IDictionary<string, object> _headers;
+        private IDictionary<string, object> _headers;
 
 	    public MessageProperties()
 	    {
