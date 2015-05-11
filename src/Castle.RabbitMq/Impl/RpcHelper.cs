@@ -59,6 +59,9 @@
 
                 if (!@event.WaitOne(options.Timeout))
                 {
+					MessageEnvelope val;
+					_replyData.TryRemove(prop.CorrelationId, out val);
+
                     throw new Exception("timeout");
                 }
 
@@ -79,10 +82,10 @@
         {
             options = options ?? RpcSendOptions.Default;
 
-            var data = _serializer.Serialize(request);
+			var data = _serializer.Serialize(request, properties);
             var reply = this.SendRequest(data, routingKey, properties, options);
 
-            return _serializer.Deserialize<TResponse>(reply.Body);
+			return _serializer.Deserialize<TResponse>(reply.Body, reply.Properties);
         }
 
         private string GetOrCreateReturnQueue(string routingKey)
@@ -139,7 +142,10 @@
             }
             catch (Exception)
             {
-                // potential object disposed
+	            // potential object disposed
+
+	            MessageEnvelope val;
+	            _replyData.TryRemove(correlationId, out val);
             }
         }
 

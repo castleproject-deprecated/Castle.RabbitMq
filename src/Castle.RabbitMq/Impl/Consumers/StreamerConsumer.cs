@@ -41,7 +41,7 @@ namespace Castle.RabbitMq
             }
             else
             {
-                var msg = _serializer.Deserialize<T>(body);
+				var msg = _serializer.Deserialize<T>(body, properties);
 
                 var envelope = new MessageEnvelope<T>(properties, msg, body)
                 {

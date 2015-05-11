@@ -92,9 +92,10 @@
         {
             options = options ?? SendOptions.Default;
             var serializer = options.Serializer ?? _defaultSerializer;
-            var data = serializer.Serialize(message);
+	        var prop = properties ?? new MessageProperties();
+			var data = serializer.Serialize(message, prop);
 
-            return Send(data, routingKey, properties, options);
+			return Send(data, routingKey, prop, options);
         }
 
         public MessageEnvelope SendRequest(byte[] data, string routingKey = "",
@@ -102,6 +103,7 @@
                                            RpcSendOptions options = null)
         {
             Argument.NotNull(routingKey, "routingKey");
+			properties = properties ?? new MessageProperties();
 
             return _rpcHelper.SendRequest(data, routingKey, properties, options);
         }
@@ -113,6 +115,7 @@
             where TResponse : class
         {
             Argument.NotNull(routingKey, "routingKey");
+	        properties = properties ?? new MessageProperties();
 
             return _rpcHelper.SendRequest<TRequest, TResponse>(request, routingKey, properties, options);
         }

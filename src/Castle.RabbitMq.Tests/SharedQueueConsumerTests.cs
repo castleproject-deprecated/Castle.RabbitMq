@@ -33,10 +33,11 @@
                 dispatchThreadId = Thread.CurrentThread.ManagedThreadId;
             }));
 
+	        var prop = new BasicProperties();
             sharedQConsumer.Queue.Enqueue(new BasicDeliverEventArgs()
             {
-                Body = _serializer.Serialize(new MyMessage()),
-                BasicProperties = new BasicProperties()
+				Body = _serializer.Serialize(new MyMessage(), prop),
+				BasicProperties = prop
             });
 
             Thread.Sleep(100);
