@@ -43,8 +43,9 @@
 
             lock (_model)
             {
-                _model.ExchangeDeclare(name, options.ExchangeType.ToStr());
+                _model.ExchangeDeclare(name, options.ExchangeType.ToStr(), options.Durable, options.AutoDelete, options.Arguments);
             }
+
             return new RabbitExchange(_model, _defaultSerializer, name, true, options);
         }
 
