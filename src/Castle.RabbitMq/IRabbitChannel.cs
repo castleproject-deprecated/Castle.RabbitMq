@@ -24,6 +24,8 @@
 
 		void UnBind(IRabbitExchange	exchange, IRabbitQueue queue, string routingKeyOrFilter	= null);
 
+		int ChannelNumber { get; }
+
 		IModel Model { get;	}
 	}
 

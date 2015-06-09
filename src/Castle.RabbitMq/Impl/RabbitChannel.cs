@@ -83,6 +83,11 @@
 
 		public IModel Model	{ get {	return _model; } }
 
+		public int ChannelNumber
+		{
+			get { return _model.ChannelNumber; }
+		}
+
 		#endregion
 
 		#region	IRabbitQueueDeclarer
