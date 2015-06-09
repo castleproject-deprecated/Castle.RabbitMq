@@ -10,12 +10,14 @@
         private readonly List<WeakReference<IModel>> _models = new List<WeakReference<IModel>>();
         private readonly Lazy<HttpBasedRabbitConsole> _console;
         private readonly IConnection _connection;
-        private volatile bool _isDisposed;
+	    private readonly ConnectionFactory _connInfo;
+	    private volatile bool _isDisposed;
 
         public RabbitConnection(IConnection connection, ConnectionFactory connInfo)
         {
             _connection = connection;
-            _console = new Lazy<HttpBasedRabbitConsole>(() => new HttpBasedRabbitConsole(connInfo)); 
+	        _connInfo = connInfo;
+	        _console = new Lazy<HttpBasedRabbitConsole>(() => new HttpBasedRabbitConsole(connInfo)); 
         }
 
         public IRabbitConsole Console
@@ -49,7 +51,12 @@
             return new RabbitChannel(model, options.DefaultSerializer);
         }
 
-        public void Dispose()
+	    public IRabbitConnection NewConnection()
+	    {
+		    return new RabbitConnection(_connInfo.CreateConnection(), _connInfo);
+	    }
+
+	    public void Dispose()
         {
             if (_isDisposed) return;
 
