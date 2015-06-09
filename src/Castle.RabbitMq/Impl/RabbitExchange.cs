@@ -134,15 +134,37 @@
 
 		public IRabbitQueue	DeclareQueue(string	name, QueueOptions options)
 		{
+			return DeclareQueueInternal(false, name, options);
+		}
+
+		public IRabbitQueue DeclareQueueNoWait(string name, QueueOptions options)
+		{
+			return DeclareQueueInternal(true, name, options);
+		}
+
+		#endregion
+
+		internal IRabbitQueue DeclareQueueInternal(bool nowait, string name, QueueOptions options)
+		{
 			Argument.NotNull(name, "name");
 
-			options	= options ?? QueueOptions.Default;
+			options = options ?? QueueOptions.Default;
 
-			var	serializer = options.Serializer	?? _defaultSerializer;
+			var serializer = options.Serializer ?? _defaultSerializer;
 
 			lock (_model)
 			{
-				var	result = _model.QueueDeclare(name, options.Durable,	options.Exclusive, options.AutoDelete, options.Arguments);
+				QueueDeclareOk result;
+
+				if (nowait)
+				{
+					_model.QueueDeclareNoWait(name, options.Durable, options.Exclusive, options.AutoDelete, options.Arguments);
+					result = new QueueDeclareOk(name, 0, 0);
+				}
+				else
+				{
+					result = _model.QueueDeclare(name, options.Durable, options.Exclusive, options.AutoDelete, options.Arguments);
+				}
 
 				if (!this._isDefaultExchange)
 				{
@@ -153,7 +175,5 @@
 				return new RabbitQueue(_model, serializer, result, options);
 			}
 		}
-
-		#endregion
 	}
 }

@@ -3,6 +3,8 @@
 	public interface IRabbitQueueDeclarer
 	{
 		IRabbitQueue DeclareQueue(string name, QueueOptions	options);
+
+		IRabbitQueue DeclareQueueNoWait(string name, QueueOptions options);
 	}
 
 	public static class	QueueDeclarerExtensions

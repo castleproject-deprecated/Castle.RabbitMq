@@ -89,19 +89,12 @@
 
 		public IRabbitQueue	DeclareQueue(string	name, QueueOptions options)
 		{
-			Argument.NotNullOrEmpty(name, "name");
+			return this.DeclareQueueInternal(false, name, options);
+		}
 
-			EnsureNotDisposed();
-
-			options	= options ?? QueueOptions.Default;
-
-			var	serializer = options.Serializer	?? _defaultSerializer;
-
-			lock (_model)
-			{
-				var	result = _model.QueueDeclare(name, options.Durable,	options.Exclusive, options.AutoDelete, options.Arguments);
-				return new RabbitQueue(_model, serializer, result, options);
-			}
+		public IRabbitQueue DeclareQueueNoWait(string name, QueueOptions options)
+		{
+			return this.DeclareQueueInternal(true, name, options);
 		}
 
 		#endregion
@@ -130,6 +123,29 @@
 					_model.QueueBind(queue, exchange, routingKeyOrFilter);
 
 			return new RabbitQueueBinding(_model, queue, exchange, routingKeyOrFilter);
+		}
+
+		internal IRabbitQueue DeclareQueueInternal(bool nowait, string name, QueueOptions options)
+		{
+			Argument.NotNullOrEmpty(name, "name");
+
+			EnsureNotDisposed();
+
+			options = options ?? QueueOptions.Default;
+
+			var serializer = options.Serializer ?? _defaultSerializer;
+
+			lock (_model)
+			{
+				if (nowait)
+				{
+					_model.QueueDeclareNoWait(name, options.Durable, options.Exclusive, options.AutoDelete, options.Arguments);
+					return new RabbitQueue(_model, serializer, new QueueDeclareOk(name, 0, 0), options);
+				}
+
+				var result = _model.QueueDeclare(name, options.Durable, options.Exclusive, options.AutoDelete, options.Arguments);
+				return new RabbitQueue(_model, serializer, result, options);
+			}
 		}
 
 		private	void ModelOnBasicReturn(object sender, BasicReturnEventArgs	args)
