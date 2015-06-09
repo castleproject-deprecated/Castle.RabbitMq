@@ -80,7 +80,6 @@
     <Compile Include="IRabbitChannel.cs" />
     <Compile Include="IRabbitConnection.cs" />
     <Compile Include="Behaviors\IRabbitQueueConsumer.cs" />
-    <Compile Include="Behaviors\IDestroyable.cs" />
     <Compile Include="IRabbitExchange.cs" />
     <Compile Include="IRabbitQueue.cs" />
     <Compile Include="IRabbitQueueBinding.cs" />

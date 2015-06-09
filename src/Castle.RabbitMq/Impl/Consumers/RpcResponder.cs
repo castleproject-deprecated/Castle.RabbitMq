@@ -1,59 +1,59 @@
 namespace Castle.RabbitMq
 {
-    using System;
-    using RabbitMQ.Client;
+	using System;
+	using RabbitMQ.Client;
 
-    class RpcResponder<T, TResponse> : IMessageConsumer<T>
-    {
-        private readonly IModel _model;
-        private readonly IRabbitSerializer _serializer;
-        private readonly Func<MessageEnvelope<T>, IMessageAck, TResponse> _onRespond;
+	class RpcResponder<T, TResponse> : IMessageConsumer<T>
+	{
+		private	readonly IModel	_model;
+		private	readonly IRabbitSerializer _serializer;
+		private	readonly Func<MessageEnvelope<T>, IMessageAck, TResponse> _onRespond;
 
-        public RpcResponder(IModel model, 
-                            IRabbitSerializer serializer, 
-                            Func<MessageEnvelope<T>, IMessageAck, TResponse> onRespond)
-        {
-            _model = model;
-            _serializer = serializer;
-            _onRespond = onRespond;
-        }
+		public RpcResponder(IModel model, 
+							IRabbitSerializer serializer, 
+							Func<MessageEnvelope<T>, IMessageAck, TResponse> onRespond)
+		{
+			_model = model;
+			_serializer	= serializer;
+			_onRespond = onRespond;
+		}
 
-        public void OnNext(MessageEnvelope<T> newMsg)
-        {
-            var msgAcker = new MessageAck(() =>
-            {
-                lock (_model) _model.BasicAck(newMsg.DeliveryTag, false);
-            }, (requeue) =>
-            {
-                lock (_model) _model.BasicNack(newMsg.DeliveryTag, false, requeue);
-            });
+		public void	OnNext(MessageEnvelope<T> newMsg)
+		{
+			var	msgAcker = new MessageAck(() =>
+			{
+				lock (_model) _model.BasicAck(newMsg.DeliveryTag, false);
+			}, (requeue) =>
+			{
+				lock (_model) _model.BasicNack(newMsg.DeliveryTag, false, requeue);
+			});
 
-            var response = _onRespond(newMsg, msgAcker);
+			var	response = _onRespond(newMsg, msgAcker);
 
-            var prop = newMsg.Properties;
-            var replyQueue = prop.ReplyTo;
-            var correlationId = prop.CorrelationId;
+			var	prop = newMsg.Properties;
+			var	replyQueue = prop.ReplyTo;
+			var	correlationId =	prop.CorrelationId;
 
-            var newProp = _model.CreateBasicProperties();
-            newProp.CorrelationId = correlationId;
+			var	newProp	= _model.CreateBasicProperties();
+			newProp.CorrelationId =	correlationId;
 
-            byte[] replyData = null;
+			byte[] replyData = null;
 
-            if (typeof(TResponse) == typeof(byte[]))
-            {
-                // ugly, but should be safe - 
-                // would this cause an expensive boxing/unboxing??
-                replyData = (byte[]) (object) response;
-            }
-            else
-            {
-				replyData = _serializer.Serialize(response, newProp);
-            }
+			if (typeof(TResponse) == typeof(byte[]))
+			{
+				// ugly, but should	be safe	- 
+				// would this cause	an expensive boxing/unboxing??
+				replyData =	(byte[]) (object) response;
+			}
+			else
+			{
+				replyData =	_serializer.Serialize(response,	newProp);
+			}
 
-            lock (_model)
-            {
-                _model.BasicPublish("", replyQueue, newProp, replyData);
-            }
-        }
-    }
+			lock (_model)
+			{
+				_model.BasicPublish("",	replyQueue,	newProp, replyData);
+			}
+		}
+	}
 }

@@ -1,14 +1,14 @@
 ﻿namespace Castle.RabbitMq
 {
-    public interface IRabbitQueue : IRabbitQueueConsumer
-    {
-        string Name { get; }
-        uint ConsumerCount { get; }
-        uint MessageCount { get; }
+	public interface IRabbitQueue :	IRabbitQueueConsumer
+	{
+		string Name	{ get; }
+		uint ConsumerCount { get; }
+		uint MessageCount {	get; }
 
-        void Purge();
+		void Purge();
 
-        void Delete();
-        void Delete(bool ifUnused, bool ifEmpty);
-    }
+		void Delete();
+		void Delete(bool ifUnused, bool	ifEmpty);
+	}
 }

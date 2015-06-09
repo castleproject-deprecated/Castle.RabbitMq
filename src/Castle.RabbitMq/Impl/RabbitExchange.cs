@@ -1,159 +1,159 @@
 ﻿namespace Castle.RabbitMq
 {
-    using RabbitMQ.Client;
+	using RabbitMQ.Client;
 
 
-    [System.Diagnostics.DebuggerDisplay("Exchange '{Name}' {_options}", Name = "Exchange")]
-    public class RabbitExchange : IRabbitExchange
-    {
-        private readonly IModel _model;
-        private readonly IRabbitSerializer _defaultSerializer;
-        private readonly bool _canDestroy;
-        private readonly ExchangeOptions _options;
-        private readonly RpcHelper _rpcHelper;
-        private readonly bool _isDefaultExchange;
+	[System.Diagnostics.DebuggerDisplay("Exchange '{Name}' {_options}",	Name = "Exchange")]
+	public class RabbitExchange	: IRabbitExchange
+	{
+		private	readonly IModel	_model;
+		private	readonly IRabbitSerializer _defaultSerializer;
+		private	readonly bool _canDestroy;
+		private	readonly ExchangeOptions _options;
+		private	readonly RpcHelper _rpcHelper;
+		private	readonly bool _isDefaultExchange;
 
-        public RabbitExchange(IModel model, IRabbitSerializer serializer, 
-                              string name, bool canDestroy, ExchangeOptions options)
-        {
-            this.Name = name;
+		public RabbitExchange(IModel model,	IRabbitSerializer serializer, 
+							  string name, bool	canDestroy,	ExchangeOptions	options)
+		{
+			this.Name =	name;
 
-            _model = model;
-            _defaultSerializer = serializer;
-            _canDestroy = canDestroy;
-            _options = options;
-            _isDefaultExchange = name == string.Empty;
+			_model = model;
+			_defaultSerializer = serializer;
+			_canDestroy	= canDestroy;
+			_options = options;
+			_isDefaultExchange = name == string.Empty;
 
-            _rpcHelper = new RpcHelper(_model, this.Name, serializer);
-        }
+			_rpcHelper = new RpcHelper(_model, this.Name, serializer);
+		}
 
-        #region IRabbitExchange
+		#region	IRabbitExchange
 
-        public string Name { get; private set; }
+		public string Name { get; private set; }
 
-        public IRabbitQueueBinding Bind(IRabbitQueue queue, string routingKeyOrFilter)
-        {
-            lock (_model)
-                _model.QueueBind(queue.Name, this.Name, routingKeyOrFilter);
+		public IRabbitQueueBinding Bind(IRabbitQueue queue,	string routingKeyOrFilter)
+		{
+			lock (_model)
+				_model.QueueBind(queue.Name, this.Name,	routingKeyOrFilter);
 
-            return new RabbitQueueBinding(_model, queue.Name, this.Name, routingKeyOrFilter);
-        }
+			return new RabbitQueueBinding(_model, queue.Name, this.Name, routingKeyOrFilter);
+		}
 
-	    public IRabbitQueueBinding BindNoWait(IRabbitQueue queue, string routingKeyOrFilter)
-	    {
+		public IRabbitQueueBinding BindNoWait(IRabbitQueue queue, string routingKeyOrFilter)
+		{
 			lock (_model)
 				_model.QueueBindNoWait(queue.Name, this.Name, routingKeyOrFilter, null);
 
 			return new RabbitQueueBinding(_model, queue.Name, this.Name, routingKeyOrFilter);
-	    }
+		}
 
-	    public void Delete()
-        {
-            if (!_canDestroy) return;
+		public void	Delete()
+		{
+			if (!_canDestroy) return;
 
-            lock (_model)
-                _model.ExchangeDelete(this.Name);
-        }
+			lock (_model)
+				_model.ExchangeDelete(this.Name);
+		}
 
-        public void Delete(bool ifUnused)
-        {
-            if (!_canDestroy) return;
+		public void	Delete(bool	ifUnused)
+		{
+			if (!_canDestroy) return;
 
-            lock (_model)
-                _model.ExchangeDelete(this.Name, ifUnused);
-        }
+			lock (_model)
+				_model.ExchangeDelete(this.Name, ifUnused);
+		}
 
-        #endregion
+		#endregion
 
-        #region IRabbitSender
+		#region	IRabbitSender
 
-        public MessageInfo Send(byte[] body, string routingKey = "", 
-                                MessageProperties properties = null, 
-                                SendOptions options = null)
-        {
-            Argument.NotNull(routingKey, "routingKey");
+		public MessageInfo Send(byte[] body, string	routingKey = "", 
+								MessageProperties properties = null, 
+								SendOptions	options	= null)
+		{
+			Argument.NotNull(routingKey, "routingKey");
 
-            options = options ?? SendOptions.Default;
-            var prop = _model.CreateBasicProperties();
-            if (properties != null) properties.CopyTo(prop);
-            if (options.Persist)
-            {
-                prop.DeliveryMode = 2; // persistent
-            }
+			options	= options ?? SendOptions.Default;
+			var	prop = _model.CreateBasicProperties();
+			if (properties != null)	properties.CopyTo(prop);
+			if (options.Persist)
+			{
+				prop.DeliveryMode =	2; // persistent
+			}
 
-            lock (_model)
-            {
-                var id = _model.NextPublishSeqNo;
-                _model.BasicPublish(this.Name, routingKey,
-                                    mandatory: options.Mandatory,
-                                    immediate: options.Immediate,
-                                    basicProperties: prop,
-                                    body: body);
-                return new MessageInfo() { Tag = id };
-            }
-        }
+			lock (_model)
+			{
+				var	id = _model.NextPublishSeqNo;
+				_model.BasicPublish(this.Name, routingKey,
+									mandatory: options.Mandatory,
+									immediate: options.Immediate,
+									basicProperties: prop,
+									body: body);
+				return new MessageInfo() { Tag = id	};
+			}
+		}
 
-        public MessageInfo Send<T>(T message, string routingKey = "", 
-                                   MessageProperties properties = null, 
-                                   SendOptions options = null) 
-            where T : class
-        {
-            options = options ?? SendOptions.Default;
-            var serializer = options.Serializer ?? _defaultSerializer;
-	        var prop = properties ?? new MessageProperties();
-			var data = serializer.Serialize(message, prop);
+		public MessageInfo Send<T>(T message, string routingKey	= "", 
+								   MessageProperties properties	= null,	
+								   SendOptions options = null) 
+			where T	: class
+		{
+			options	= options ?? SendOptions.Default;
+			var	serializer = options.Serializer	?? _defaultSerializer;
+			var	prop = properties ?? new MessageProperties();
+			var	data = serializer.Serialize(message, prop);
 
-			return Send(data, routingKey, prop, options);
-        }
+			return Send(data, routingKey, prop,	options);
+		}
 
-        public MessageEnvelope SendRequest(byte[] data, string routingKey = "",
-                                           MessageProperties properties = null,
-                                           RpcSendOptions options = null)
-        {
-            Argument.NotNull(routingKey, "routingKey");
-			properties = properties ?? new MessageProperties();
+		public MessageEnvelope SendRequest(byte[] data,	string routingKey =	"",
+										   MessageProperties properties	= null,
+										   RpcSendOptions options =	null)
+		{
+			Argument.NotNull(routingKey, "routingKey");
+			properties = properties	?? new MessageProperties();
 
-            return _rpcHelper.SendRequest(data, routingKey, properties, options);
-        }
+			return _rpcHelper.SendRequest(data,	routingKey,	properties,	options);
+		}
 
-        public TResponse SendRequest<TRequest, TResponse>(TRequest request, string routingKey = "",
-                                                          MessageProperties properties = null,
-                                                          RpcSendOptions options = null) 
-            where TRequest : class 
-            where TResponse : class
-        {
-            Argument.NotNull(routingKey, "routingKey");
-	        properties = properties ?? new MessageProperties();
+		public TResponse SendRequest<TRequest, TResponse>(TRequest request,	string routingKey =	"",
+														  MessageProperties	properties = null,
+														  RpcSendOptions options = null) 
+			where TRequest : class 
+			where TResponse	: class
+		{
+			Argument.NotNull(routingKey, "routingKey");
+			properties = properties	?? new MessageProperties();
 
-            return _rpcHelper.SendRequest<TRequest, TResponse>(request, routingKey, properties, options);
-        }
+			return _rpcHelper.SendRequest<TRequest,	TResponse>(request,	routingKey,	properties,	options);
+		}
 
-        #endregion
+		#endregion
 
-        #region IRabbitQueueDeclarer
+		#region	IRabbitQueueDeclarer
 
-        public IRabbitQueue DeclareQueue(string name, QueueOptions options)
-        {
-            Argument.NotNull(name, "name");
+		public IRabbitQueue	DeclareQueue(string	name, QueueOptions options)
+		{
+			Argument.NotNull(name, "name");
 
-            options = options ?? QueueOptions.Default;
+			options	= options ?? QueueOptions.Default;
 
-            var serializer = options.Serializer ?? _defaultSerializer;
+			var	serializer = options.Serializer	?? _defaultSerializer;
 
-            lock (_model)
-            {
-                var result = _model.QueueDeclare(name, options.Durable, options.Exclusive, options.AutoDelete, options.Arguments);
+			lock (_model)
+			{
+				var	result = _model.QueueDeclare(name, options.Durable,	options.Exclusive, options.AutoDelete, options.Arguments);
 
-                if (!this._isDefaultExchange)
-                {
-                    // binds it to "this" exchange
-                    _model.QueueBind(result.QueueName, this.Name, "");
-                }
+				if (!this._isDefaultExchange)
+				{
+					// binds it	to "this" exchange
+					_model.QueueBind(result.QueueName, this.Name, "");
+				}
 
-                return new RabbitQueue(_model, serializer, result, options);
-            }
-        }
+				return new RabbitQueue(_model, serializer, result, options);
+			}
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

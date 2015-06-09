@@ -1,12 +1,12 @@
 ﻿namespace Castle.RabbitMq
 {
-    using System;
+	using System;
 
-    /// <summary>
-    /// Represents a binding between an exchange and a queue
-    /// </summary>
-    public interface IRabbitQueueBinding : IDisposable
-    {
-        void Unbind();
-    }
+	///	<summary>
+	///	Represents a binding between an	exchange and a queue
+	///	</summary>
+	public interface IRabbitQueueBinding : IDisposable
+	{
+		void Unbind();
+	}
 }
