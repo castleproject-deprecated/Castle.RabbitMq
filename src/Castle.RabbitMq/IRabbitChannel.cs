@@ -33,7 +33,7 @@
 											   string exchange,	string queue,
 											   string routingKeyOrFilter)
 		{
-			return (source as RabbitChannel).BindInternal(queue, exchange, routingKeyOrFilter);
+			return (source as RabbitChannel).BindInternal(false, queue, exchange, routingKeyOrFilter);
 		}
 
 		public static IRabbitExchange DeclareExchange(this IRabbitChannel source, string name, RabbitExchangeType exchangeType)
