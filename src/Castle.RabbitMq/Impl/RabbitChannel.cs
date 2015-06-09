@@ -65,7 +65,12 @@
 
 		public IRabbitQueueBinding Bind(IRabbitExchange	exchange, IRabbitQueue queue, string routingKeyOrFilter	= null)
 		{
-			return BindInternal(queue.Name,	exchange.Name, routingKeyOrFilter);
+			return BindInternal(false, queue.Name,	exchange.Name, routingKeyOrFilter);
+		}
+
+		public IRabbitQueueBinding BindNoWait(IRabbitExchange exchange, IRabbitQueue queue, string routingKeyOrFilter)
+		{
+			return BindInternal(true, queue.Name, exchange.Name, routingKeyOrFilter);
 		}
 
 		public void	UnBind(IRabbitExchange exchange, IRabbitQueue queue, string	routingKeyOrFilter = null)
@@ -114,12 +119,15 @@
 			}
 		}
 
-		internal RabbitQueueBinding	BindInternal(string	queue, string exchange,	string routingKeyOrFilter)
+		internal RabbitQueueBinding	BindInternal(bool nowait, string queue, string exchange, string routingKeyOrFilter)
 		{
 			EnsureNotDisposed();
 
 			lock (_model)
-				_model.QueueBind(queue,	exchange, routingKeyOrFilter);
+				if (nowait)
+					_model.QueueBindNoWait(queue, exchange, routingKeyOrFilter, null);
+				else
+					_model.QueueBind(queue, exchange, routingKeyOrFilter);
 
 			return new RabbitQueueBinding(_model, queue, exchange, routingKeyOrFilter);
 		}

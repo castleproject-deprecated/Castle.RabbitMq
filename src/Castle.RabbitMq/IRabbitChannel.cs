@@ -19,6 +19,8 @@
 		IRabbitExchange	DeclareExchangeNoWait(string name, ExchangeOptions options);
 
 		IRabbitQueueBinding	Bind(IRabbitExchange exchange, IRabbitQueue	queue, string routingKeyOrFilter);
+		
+		IRabbitQueueBinding BindNoWait(IRabbitExchange exchange, IRabbitQueue queue, string routingKeyOrFilter);
 
 		void UnBind(IRabbitExchange	exchange, IRabbitQueue queue, string routingKeyOrFilter	= null);
 
