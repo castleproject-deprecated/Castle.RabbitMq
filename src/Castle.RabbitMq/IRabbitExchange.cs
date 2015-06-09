@@ -5,6 +5,7 @@
         string Name { get; }
 
         IRabbitQueueBinding Bind(IRabbitQueue queue, string routingKeyOrFilter);
+		IRabbitQueueBinding BindNoWait(IRabbitQueue queue, string routingKeyOrFilter);
 
         void Delete();
         void Delete(bool ifUnused);

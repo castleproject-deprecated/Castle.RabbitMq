@@ -39,7 +39,15 @@
             return new RabbitQueueBinding(_model, queue.Name, this.Name, routingKeyOrFilter);
         }
 
-        public void Delete()
+	    public IRabbitQueueBinding BindNoWait(IRabbitQueue queue, string routingKeyOrFilter)
+	    {
+			lock (_model)
+				_model.QueueBindNoWait(queue.Name, this.Name, routingKeyOrFilter, null);
+
+			return new RabbitQueueBinding(_model, queue.Name, this.Name, routingKeyOrFilter);
+	    }
+
+	    public void Delete()
         {
             if (!_canDestroy) return;
 

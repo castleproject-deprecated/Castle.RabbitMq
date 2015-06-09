@@ -49,6 +49,20 @@
             return new RabbitExchange(_model, _defaultSerializer, name, true, options);
         }
 
+		public IRabbitExchange DeclareExchangeNoWait(string name, ExchangeOptions options)
+		{
+			Argument.NotNullOrEmpty(name, "name");
+
+			EnsureNotDisposed();
+
+			lock (_model)
+			{
+				_model.ExchangeDeclareNoWait(name, options.ExchangeType.ToStr(), options.Durable, options.AutoDelete, options.Arguments);
+			}
+
+			return new RabbitExchange(_model, _defaultSerializer, name, true, options);
+		}
+
         public IRabbitQueueBinding Bind(IRabbitExchange exchange, IRabbitQueue queue, string routingKeyOrFilter = null)
         {
 	        return BindInternal(queue.Name, exchange.Name, routingKeyOrFilter);
