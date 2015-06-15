@@ -54,6 +54,7 @@
 
 					_waits[prop.CorrelationId] = @event;
 
+					//_model.BasicReturn += ModelOnBasicReturn;
 					_model.BasicPublish(_exchange, routingKey, prop, data);
 				}
 
@@ -62,7 +63,7 @@
 					MessageEnvelope	val;
 					_replyData.TryRemove(prop.CorrelationId, out val);
 
-					throw new Exception("timeout");
+					throw new TimeoutException("Timeout waiting for reply.");
 				}
 
 				MessageEnvelope	reply;
@@ -85,7 +86,17 @@
 			var	data = _serializer.Serialize(request, properties);
 			var	reply =	this.SendRequest(data, routingKey, properties, options);
 
+			if (reply.Properties.Headers.ContainsKey(ErrorResponse.Header))
+				HandleError(request, reply);
+
 			return _serializer.Deserialize<TResponse>(reply.Body, reply.Properties);
+		}
+
+		private void HandleError(object request, MessageEnvelope reply)
+		{
+			var response = _serializer.Deserialize<ErrorResponse>(reply.Body, reply.Properties);
+
+			throw new Exception("Error invoking remote handler for message: " + request.GetType(), response.Exception);
 		}
 
 		private	string GetOrCreateReturnQueue(string routingKey)
@@ -171,5 +182,11 @@
 		public void	HandleBasicConsumeOk(string	consumerTag)
 		{
 		}
+
+		//private void ModelOnBasicReturn(object sender, BasicReturnEventArgs args)
+		//{
+		//	if (LogAdapter.LogEnabled)
+		//		LogAdapter.LogDebug("RabbitChannel", "Message dropped. Message sent to exchange " + args.Exchange + " with routing key " + args.RoutingKey, (Exception) null);
+		//}
 	}
 }

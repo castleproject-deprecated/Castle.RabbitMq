@@ -1,5 +1,6 @@
 ﻿namespace Castle.RabbitMq
 {
+	using System;
 	using RabbitMQ.Client;
 
 	public class MessageEnvelope
@@ -35,5 +36,13 @@
 		}
 
 		public T Message { get;	private	set; }
+	}
+
+	[Serializable]
+	public class ErrorResponse
+	{
+		public const string Header = "castle.rabbitmq.exception";
+
+		public Exception Exception { get; set; }
 	}
 }
