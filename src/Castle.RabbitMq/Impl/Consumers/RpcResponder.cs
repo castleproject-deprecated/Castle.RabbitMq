@@ -1,6 +1,7 @@
 namespace Castle.RabbitMq
 {
 	using System;
+	using System.Collections.Generic;
 	using RabbitMQ.Client;
 
 	class RpcResponder<T, TResponse> : IMessageConsumer<T>
@@ -28,26 +29,36 @@ namespace Castle.RabbitMq
 				lock (_model) _model.BasicNack(newMsg.DeliveryTag, false, requeue);
 			});
 
-			var	response = _onRespond(newMsg, msgAcker);
-
-			var	prop = newMsg.Properties;
-			var	replyQueue = prop.ReplyTo;
-			var	correlationId =	prop.CorrelationId;
-
-			var	newProp	= _model.CreateBasicProperties();
-			newProp.CorrelationId =	correlationId;
+			var prop = newMsg.Properties;
+			var replyQueue = prop.ReplyTo;
+			var correlationId = prop.CorrelationId;
+			var newProp = _model.CreateBasicProperties();
+			newProp.CorrelationId = correlationId;
+			newProp.Headers = new Dictionary<string, object>();
 
 			byte[] replyData = null;
 
-			if (typeof(TResponse) == typeof(byte[]))
+			try
 			{
-				// ugly, but should	be safe	- 
-				// would this cause	an expensive boxing/unboxing??
-				replyData =	(byte[]) (object) response;
+				var response = _onRespond(newMsg, msgAcker);
+
+				if (typeof(TResponse) == typeof(byte[]))
+				{
+					// ugly, but should	be safe	- 
+					// would this cause	an expensive boxing/unboxing??
+					replyData = (byte[])(object)response;
+				}
+				else
+				{
+					replyData = _serializer.Serialize(response, newProp);
+				}
 			}
-			else
+			catch(Exception e)
 			{
-				replyData =	_serializer.Serialize(response,	newProp);
+				// Empty data
+				replyData = _serializer.Serialize(new ErrorResponse() { Exception = e }, newProp);
+
+				ErrorResponse.FlagHeaders(newProp.Headers);
 			}
 
 			lock (_model)

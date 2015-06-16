@@ -1,11 +1,10 @@
 namespace Castle.RabbitMq.IntegrationTests.Scenarios
 {
     using System;
-    using System.Threading;
     using FluentAssertions;
     using Xunit;
 
-    public class _9_Rpc : IClassFixture<ConnectorFixture>
+	public class _9_Rpc : IClassFixture<ConnectorFixture>
     {
         public _9_Rpc(ConnectorFixture connectorFixture)
         {
@@ -21,13 +20,11 @@ namespace Castle.RabbitMq.IntegrationTests.Scenarios
             var channelServer = this.Connection.CreateChannel();
 
             var msgs = 0;
-            var @event = new AutoResetEvent(false);
 
             channelServer.DeclareQueue("rpc_1")
                 .Respond<MyRequest, MyResponse>((env, ack) =>
                 {
                     msgs++;
-                    @event.Set();
                     return new MyResponse();
 
                 }, new ConsumerOptions());
@@ -36,10 +33,26 @@ namespace Castle.RabbitMq.IntegrationTests.Scenarios
             var reply = channelClient.DefaultExchange
                 .SendRequest<MyRequest, MyResponse>(new MyRequest(), "rpc_1");
 
-            @event.WaitOne(TimeSpan.FromSeconds(2));
-
             msgs.Should().Be(1);
 	        reply.Should().BeOfType<MyResponse>();
-        }        
+        }
+
+		[Fact]
+		public void CalleeThrowsExceptions()
+		{
+			var channelClient = this.Connection.CreateChannel();
+			var channelServer = this.Connection.CreateChannel();
+
+			channelServer.DeclareQueue("rpc_2")
+				.Respond<MyRequest, MyResponse>((env, ack) =>
+				{
+					throw new Exception("fake exception");
+
+				}, new ConsumerOptions());
+
+			Xunit.Assert.Throws<RpcException>(() => channelClient.DefaultExchange
+				.SendRequest<MyRequest, MyResponse>(new MyRequest(), "rpc_2"))
+			.Message.Should().Be("Error invoking remote handler for message: Castle.RabbitMq.IntegrationTests.Scenarios.MyRequest");
+		}  
     }
 }

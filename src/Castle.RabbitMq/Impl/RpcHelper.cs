@@ -41,38 +41,31 @@
 				properties.CopyTo(prop);
 			}
 
-			var	@event = new AutoResetEvent(false);
-
-			try
+			using(var @event = new AutoResetEvent(false))
 			{
-				lock (_model)
+				prop.CorrelationId = Guid.NewGuid().ToString();
+				prop.Expiration = options.Timeout.TotalMilliseconds.ToString();
+				_waits[prop.CorrelationId] = @event;
+
+				lock(_model)
 				{
-					var	returnQueue	= GetOrCreateReturnQueue(routingKey);
+					var returnQueue = GetOrCreateReturnQueue(routingKey);
 					prop.ReplyTo = returnQueue;
-					prop.CorrelationId = Guid.NewGuid().ToString();
-					prop.Expiration	= options.Timeout.TotalMilliseconds.ToString();
 
-					_waits[prop.CorrelationId] = @event;
-
-					//_model.BasicReturn += ModelOnBasicReturn;
 					_model.BasicPublish(_exchange, routingKey, prop, data);
 				}
 
 				if (!@event.WaitOne(options.Timeout))
 				{
-					MessageEnvelope	val;
+					MessageEnvelope val;
 					_replyData.TryRemove(prop.CorrelationId, out val);
 
 					throw new TimeoutException("Timeout waiting for reply.");
 				}
 
-				MessageEnvelope	reply;
+				MessageEnvelope reply;
 				_replyData.TryRemove(prop.CorrelationId, out reply);
 				return reply;
-			}
-			finally
-			{
-				@event.Dispose();
 			}
 		}
 
@@ -86,8 +79,10 @@
 			var	data = _serializer.Serialize(request, properties);
 			var	reply =	this.SendRequest(data, routingKey, properties, options);
 
-			if (reply.Properties.Headers.ContainsKey(ErrorResponse.Header))
+			if (ErrorResponse.IsHeaderErrorFlag(reply.Properties.Headers))
+			{
 				HandleError(request, reply);
+			}
 
 			return _serializer.Deserialize<TResponse>(reply.Body, reply.Properties);
 		}
@@ -96,7 +91,7 @@
 		{
 			var response = _serializer.Deserialize<ErrorResponse>(reply.Body, reply.Properties);
 
-			throw new Exception("Error invoking remote handler for message: " + request.GetType(), response.Exception);
+			throw new RpcException("Error invoking remote handler for message: " + request.GetType(), response.Exception);
 		}
 
 		private	string GetOrCreateReturnQueue(string routingKey)
@@ -108,7 +103,7 @@
 			_routing2RetQueue[routingKey] =	queueName;
 
 			// starts a	bare metal consumer	with no	acks
-			_model.BasicConsume(queueName, true, this);
+			_model.BasicConsume(queueName, noAck: true, consumer: this);
 			
 			return queueName;
 		}
@@ -127,7 +122,7 @@
 			var	correlationId =	properties.CorrelationId;
 			if (string.IsNullOrEmpty(correlationId))
 			{
-				throw new Exception("Invalid correlationId:	got	a null or empty	one");
+				throw new RpcException("Invalid correlationId:	got	a null or empty	one");
 			}
 
 			AutoResetEvent @event;
