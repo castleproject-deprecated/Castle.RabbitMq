@@ -91,7 +91,9 @@
 		{
 			var response = _serializer.Deserialize<ErrorResponse>(reply.Body, reply.Properties);
 
-			throw new RpcException("Error invoking remote handler for message: " + request.GetType(), response.Exception);
+			// throw new RpcException("Error invoking remote handler for message: " + request.GetType(), response.Exception);
+
+			throw response.Exception;
 		}
 
 		private	string GetOrCreateReturnQueue(string routingKey)
