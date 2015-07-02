@@ -60,6 +60,8 @@
 					MessageEnvelope val;
 					_replyData.TryRemove(prop.CorrelationId, out val);
 
+					LogAdapter.LogDebug("RpcHelper", "Timeout'ed correlation id " + prop.CorrelationId + " for " + routingKey);
+
 					throw new TimeoutException("Timeout waiting for reply.");
 				}
 
@@ -131,6 +133,8 @@
 			if (!_waits.TryRemove(correlationId, out @event))
 			{
 				// timeout'd - no need to move further
+				LogAdapter.LogDebug("RpcHelper", "Could not find wait for correlation " + correlationId +
+					" either it was timeout'ed, or the message was consumed by a outlier subscriber to " + routingKey);
 				return;
 			}
 
