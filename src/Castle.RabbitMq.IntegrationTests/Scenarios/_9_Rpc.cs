@@ -50,9 +50,9 @@ namespace Castle.RabbitMq.IntegrationTests.Scenarios
 
 				}, new ConsumerOptions());
 
-			Xunit.Assert.Throws<RpcException>(() => channelClient.DefaultExchange
+			Xunit.Assert.Throws<Exception>(() => channelClient.DefaultExchange
 				.SendRequest<MyRequest, MyResponse>(new MyRequest(), "rpc_2"))
-			.Message.Should().Be("Error invoking remote handler for message: Castle.RabbitMq.IntegrationTests.Scenarios.MyRequest");
+			.Message.Should().Be("fake exception");
 		}  
     }
 }

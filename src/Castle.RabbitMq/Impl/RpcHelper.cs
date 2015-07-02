@@ -79,7 +79,7 @@
 			var	data = _serializer.Serialize(request, properties);
 			var	reply =	this.SendRequest(data, routingKey, properties, options);
 
-			if (ErrorResponse.IsHeaderErrorFlag(reply.Properties.Headers))
+			if (ErrorResponse.IsHeaderErrorFlag(reply.Properties))
 			{
 				HandleError(request, reply);
 			}
@@ -124,7 +124,7 @@
 			var	correlationId =	properties.CorrelationId;
 			if (string.IsNullOrEmpty(correlationId))
 			{
-				throw new RpcException("Invalid correlationId:	got	a null or empty	one");
+				throw new RabbitException("Invalid correlationId:	got	a null or empty	one");
 			}
 
 			AutoResetEvent @event;

@@ -58,7 +58,7 @@ namespace Castle.RabbitMq
 				// Empty data
 				replyData = _serializer.Serialize(new ErrorResponse() { Exception = e }, newProp);
 
-				ErrorResponse.FlagHeaders(newProp.Headers);
+				ErrorResponse.FlagHeaders(newProp);
 			}
 
 			lock (_model)

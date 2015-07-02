@@ -7,12 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.RabbitMq", "src\Cast
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.RabbitMq.IntegrationTests", "src\Castle.RabbitMq.IntegrationTests\Castle.RabbitMq.IntegrationTests.csproj", "{B8AD1493-6E79-496E-99D0-17D5CA13325A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{EB2709FF-410A-467A-A9A9-E3E471345E00}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.RabbitMq.WindsorIntegration", "src\extensions\Castle.RabbitMq.WindsorIntegration\Castle.RabbitMq.WindsorIntegration.csproj", "{C718F8DF-DC89-47CA-8EB8-5E4A0B79B829}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.RabbitMq.WindsorIntegration.Tests", "src\extensions\Castle.RabbitMq.WindsorIntegration.Tests\Castle.RabbitMq.WindsorIntegration.Tests.csproj", "{236B3D10-520C-42FB-839C-2BC907900155}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.RabbitMq.Tests", "src\Castle.RabbitMq.Tests\Castle.RabbitMq.Tests.csproj", "{869C4E88-C0E5-48E9-BE88-0E460F0B6A26}"
 EndProject
 Global
@@ -29,12 +23,6 @@ Global
 		{B8AD1493-6E79-496E-99D0-17D5CA13325A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8AD1493-6E79-496E-99D0-17D5CA13325A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8AD1493-6E79-496E-99D0-17D5CA13325A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C718F8DF-DC89-47CA-8EB8-5E4A0B79B829}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C718F8DF-DC89-47CA-8EB8-5E4A0B79B829}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C718F8DF-DC89-47CA-8EB8-5E4A0B79B829}.Release|Any CPU.Build.0 = Release|Any CPU
-		{236B3D10-520C-42FB-839C-2BC907900155}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{236B3D10-520C-42FB-839C-2BC907900155}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{236B3D10-520C-42FB-839C-2BC907900155}.Release|Any CPU.Build.0 = Release|Any CPU
 		{869C4E88-C0E5-48E9-BE88-0E460F0B6A26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{869C4E88-C0E5-48E9-BE88-0E460F0B6A26}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{869C4E88-C0E5-48E9-BE88-0E460F0B6A26}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -42,9 +30,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{C718F8DF-DC89-47CA-8EB8-5E4A0B79B829} = {EB2709FF-410A-467A-A9A9-E3E471345E00}
-		{236B3D10-520C-42FB-839C-2BC907900155} = {EB2709FF-410A-467A-A9A9-E3E471345E00}
 	EndGlobalSection
 EndGlobal
