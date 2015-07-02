@@ -31,14 +31,14 @@
 
 		public MessageEnvelope SendRequest(byte[] data,	
 										   string routingKey, 
-										   MessageProperties properties,
+										   MessageProperties doNotUseProp,
 										   RpcSendOptions options)
 		{
 			// CreateBasicProperties doesnt	need the lock
 			var	prop = _model.CreateBasicProperties();
-			if (properties != null)
+			if (doNotUseProp != null)
 			{
-				properties.CopyTo(prop);
+				doNotUseProp.CopyTo(prop);
 			}
 
 			using(var @event = new AutoResetEvent(false))
