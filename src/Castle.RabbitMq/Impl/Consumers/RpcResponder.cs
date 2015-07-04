@@ -1,70 +1,76 @@
 namespace Castle.RabbitMq
 {
 	using System;
-	using System.Collections.Generic;
 	using RabbitMQ.Client;
+	using RabbitMQ.Client.Framing;
 
-	class RpcResponder<T, TResponse> : IMessageConsumer<T>
+
+	class RpcResponder : IMessageConsumer
 	{
 		private	readonly IModel	_model;
-		private	readonly IRabbitSerializer _serializer;
-		private	readonly Func<MessageEnvelope<T>, IMessageAck, TResponse> _onRespond;
+		private readonly Func<MessageEnvelope, IMessageAck, MessageEnvelope> _onRespond;
+//		private	readonly IRabbitSerializer _serializer;
 
 		public RpcResponder(IModel model, 
-							IRabbitSerializer serializer, 
-							Func<MessageEnvelope<T>, IMessageAck, TResponse> onRespond)
+//							IRabbitSerializer serializer,
+							Func<MessageEnvelope, IMessageAck, MessageEnvelope> onRespond)
 		{
 			_model = model;
-			_serializer	= serializer;
+//			_serializer	= serializer;
 			_onRespond = onRespond;
 		}
 
-		public void	OnNext(MessageEnvelope<T> newMsg)
+		public void	OnNext(MessageEnvelope newMsg)
 		{
-			var	msgAcker = new MessageAck(() =>
-			{
-				lock (_model) _model.BasicAck(newMsg.DeliveryTag, false);
-			}, (requeue) =>
-			{
-				lock (_model) _model.BasicNack(newMsg.DeliveryTag, false, requeue);
-			});
+			var incomingMsgProperties = newMsg.Properties;
+			var replyQueue = incomingMsgProperties.ReplyTo;
+			var correlationId = incomingMsgProperties.CorrelationId;
 
-			var prop = newMsg.Properties;
-			var replyQueue = prop.ReplyTo;
-			var correlationId = prop.CorrelationId;
-			var newProp = _model.CreateBasicProperties();
-			newProp.CorrelationId = correlationId;
-			newProp.Headers = new Dictionary<string, object>();
+			IBasicProperties replyProperties = null;
 
-			byte[] replyData = null;
+			byte[] replyData = new byte[0];
+
+			var msgAcker = CreateAcker(newMsg);
 
 			try
 			{
 				var response = _onRespond(newMsg, msgAcker);
+				response = response ?? new MessageEnvelope(new BasicProperties(), new byte[0]);
+				replyData = response.Body;
 
-				if (typeof(TResponse) == typeof(byte[]))
-				{
-					// ugly, but should	be safe	- 
-					// would this cause	an expensive boxing/unboxing??
-					replyData = (byte[])(object)response;
-				}
-				else
-				{
-					replyData = _serializer.Serialize(response, newProp);
-				}
+				replyProperties = response.Properties ?? new BasicProperties();
 			}
 			catch(Exception e)
 			{
-				// Empty data
-				replyData = _serializer.Serialize(new ErrorResponse() { Exception = e }, newProp);
+				replyProperties = replyProperties ?? new BasicProperties();
 
-				ErrorResponse.FlagHeaders(newProp);
+				if (LogAdapter.LogEnabled) LogAdapter.LogError("Rpc", "OnNext error", e);
+
+				// Empty data
+//				replyData = _serializer.Serialize(new ErrorResponse() { Exception = e }, newProp);
+
+				ErrorResponse.FlagHeaders(replyProperties);
 			}
+
+			// which call is which
+			replyProperties.CorrelationId = correlationId;
+
+			// Rabbit client will explode if this is not true
+			(replyProperties is RabbitMQ.Client.Impl.BasicProperties)
+				.AssertIsTrue("expected BasicProperties implementation of IBasicProperties");
 
 			lock (_model)
 			{
-				_model.BasicPublish("",	replyQueue,	newProp, replyData);
+				_model.BasicPublish("", replyQueue, replyProperties, replyData);
 			}
+		}
+
+		private MessageAck CreateAcker(MessageEnvelope newMsg)
+		{
+			var msgAcker = new MessageAck(() => { lock(_model) _model.BasicAck(newMsg.DeliveryTag, false); },
+				(requeue) => { lock(_model) _model.BasicNack(newMsg.DeliveryTag, false, requeue); });
+			
+			return msgAcker;
 		}
 	}
 }

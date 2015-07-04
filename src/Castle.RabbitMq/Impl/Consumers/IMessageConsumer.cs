@@ -1,24 +1,29 @@
 namespace Castle.RabbitMq
 {
-	using System;
+    using System;
 
-	interface IMessageConsumer<T>
-	{
-		void OnNext(MessageEnvelope<T> message);
-	}
+    interface IMessageConsumer
+    {
+        void OnNext(MessageEnvelope message);
+    }
 
-	class ActionAdapter<T> : IMessageConsumer<T>
-	{
-		private	readonly Action<MessageEnvelope<T>>	_action;
+//  interface IMessageConsumer<T>
+//  {
+//      void OnNext(MessageEnvelope<T> message);
+//  }
 
-		public ActionAdapter(Action<MessageEnvelope<T>>	action)
-		{
-			_action	= action;
-		}
+    class ActionAdapter : IMessageConsumer
+    {
+        private readonly Action<MessageEnvelope>    _action;
 
-		public void	OnNext(MessageEnvelope<T> message)
-		{
-			_action(message);
-		}
-	}
+        public ActionAdapter(Action<MessageEnvelope>    action)
+        {
+            _action = action;
+        }
+
+        public void OnNext(MessageEnvelope message)
+        {
+            _action(message);
+        }
+    }
 }

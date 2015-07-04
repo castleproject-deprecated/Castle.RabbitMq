@@ -4,61 +4,41 @@ namespace Castle.RabbitMq
 	using System.Collections.Concurrent;
 	using RabbitMQ.Client;
 
-	internal class StreamerConsumer<T> : DefaultBasicConsumer, IRabbitMessageProducer<T>
+	internal class StreamerConsumer : DefaultBasicConsumer, IRabbitMessageProducer
 	{
-		private	readonly ConcurrentBag<IMessageConsumer<T>>	_consumers;
-		private	readonly IRabbitSerializer _serializer;
+		private readonly ConcurrentBag<IMessageConsumer> _consumers;
 
-		public StreamerConsumer(IModel model, IRabbitSerializer	serializer)	: base(model)
+		public StreamerConsumer(IModel model) : base(model)
 		{
-			_consumers = new ConcurrentBag<IMessageConsumer<T>>();
-			_serializer	= serializer;
+			_consumers = new ConcurrentBag<IMessageConsumer>();
 		}
 
-		public void	Subscribe(IMessageConsumer<T> consumer)
+		public void Subscribe(IMessageConsumer consumer)
 		{
 			_consumers.Add(consumer);
 		}
 
-		public override	void HandleBasicDeliver(string consumerTag,
-												ulong deliveryTag, bool	redelivered,
-												string exchange, string	routingKey,
-												IBasicProperties properties,
-												byte[] body)
+		public override void HandleBasicDeliver(string consumerTag,
+			ulong deliveryTag, bool redelivered,
+			string exchange, string routingKey,
+			IBasicProperties properties,
+			byte[] body)
 		{
-			if (typeof(T) == typeof(byte[]))
+			var envelope = new MessageEnvelope(properties, body)
 			{
-				var	envelope = new MessageEnvelope<T>(properties, default(T), body)
-				{
-					ConsumerTag	= consumerTag, 
-					DeliveryTag	= deliveryTag,
-					ExchangeName = exchange,
-					IsRedelivery = redelivered,	
-					RoutingKey = routingKey
-				};
+				ConsumerTag = consumerTag,
+				DeliveryTag = deliveryTag,
+				ExchangeName = exchange,
+				IsRedelivery = redelivered,
+				RoutingKey = routingKey
+			};
 
-				InternalPublish(envelope);
-			}
-			else
-			{
-				var	msg	= _serializer.Deserialize<T>(body, properties);
-
-				var	envelope = new MessageEnvelope<T>(properties, msg, body)
-				{
-					ConsumerTag	= consumerTag,
-					DeliveryTag	= deliveryTag,
-					ExchangeName = exchange,
-					IsRedelivery = redelivered,
-					RoutingKey = routingKey
-				};
-
-				InternalPublish(envelope);
-			}
+			InternalPublish(envelope);
 		}
 
-		private	void InternalPublish(MessageEnvelope<T>	envelope)
+		private void InternalPublish(MessageEnvelope envelope)
 		{
-			foreach	(var consumer in _consumers)
+			foreach(var consumer in _consumers)
 			{
 				consumer.OnNext(envelope);
 			}

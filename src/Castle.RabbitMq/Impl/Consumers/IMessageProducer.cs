@@ -2,8 +2,13 @@ namespace Castle.RabbitMq
 {
 	using System;
 
-	interface IMessageProducer<T>
+	interface IMessageProducer
 	{
-		void Subscribe(IMessageConsumer<T> consumer);
+		void Subscribe(IMessageConsumer consumer);
 	}
+
+//	interface IMessageProducer<T>
+//	{
+//		void Subscribe(IMessageConsumer<T> consumer);
+//	}
 }

@@ -7,43 +7,44 @@
 	using RabbitMQ.Client.Events;
 
 
-	internal class SharedQueueConsumer<T> :	QueueingBasicConsumer, IRabbitMessageProducer<T>
+	internal class SharedQueueConsumer : QueueingBasicConsumer, IRabbitMessageProducer
 	{
-		private	readonly ConcurrentBag<IMessageConsumer<T>>	_consumers = new ConcurrentBag<IMessageConsumer<T>>();
-		private	readonly IRabbitSerializer _serializer;
-		private	readonly Thread	_thread;
-		private	volatile bool _closed;
+		private readonly ConcurrentBag<IMessageConsumer> _consumers = new ConcurrentBag<IMessageConsumer>();
+//		private readonly IRabbitSerializer _serializer;
+		private readonly Thread _thread;
+		private volatile bool _closed;
 
-		public SharedQueueConsumer(IModel model, IRabbitSerializer serializer) : base(model)
+		public SharedQueueConsumer(IModel model) : base(model)
 		{
-			_serializer	= serializer;
-			_thread	= new Thread(OnProc)
+//			_serializer = serializer;
+			_thread = new Thread(OnProc)
 			{
 				IsBackground = true
 			};
 			_thread.Start();
 		}
 
-		public void	Subscribe(IMessageConsumer<T> consumer)
+		public void Subscribe(IMessageConsumer consumer)
 		{
 			_consumers.Add(consumer);
 		}
 
-		private	void OnProc()
+		private void OnProc()
 		{
 			try
 			{
 				while (!_closed)
 				{
-					var	args = base.Queue.Dequeue();
-					if (args ==	null) continue;
+					var args = base.Queue.Dequeue();
+					if (args == null) continue;
 
-					if (_consumers.Count ==	0)
+					if (_consumers.Count == 0)
 					{
-						// throwing	out	messages due to	lack of	consumers
+						// throwing out messages due to lack of consumers
 
 						if (LogAdapter.LogEnabled)
-							LogAdapter.LogDebug(this.GetType().FullName, "SharedQueueConsumer dropping message due to lack of consumers	subscribed");
+							LogAdapter.LogDebug(this.GetType().FullName,
+								"SharedQueueConsumer dropping message due to lack of consumers subscribed");
 
 						continue;
 					}
@@ -51,57 +52,36 @@
 					PublishToConsumers(args);
 				}
 			}
-			catch (Exception e)
+			catch(Exception e)
 			{
 				if (LogAdapter.LogEnabled)
-					LogAdapter.LogError(this.GetType().FullName, "SharedQueueConsumer error	", e);
+					LogAdapter.LogError(this.GetType().FullName, "SharedQueueConsumer error ", e);
 			}
 		}
 
-		public override	void OnCancel()
+		public override void OnCancel()
 		{
-			_closed	= true;
+			_closed = true;
 			Thread.MemoryBarrier();
 
 			Thread.Sleep(0);
 			base.OnCancel();
 		}
 
-		private	void PublishToConsumers(BasicDeliverEventArgs args)
+		private void PublishToConsumers(BasicDeliverEventArgs args)
 		{
-			if (typeof(T) == typeof(byte[]))
+			var envelope = new MessageEnvelope(args.BasicProperties, args.Body)
 			{
-				var	envelope = new MessageEnvelope<byte[]>(args.BasicProperties, args.Body,	args.Body)
-				{
-					ConsumerTag	= args.ConsumerTag,
-					DeliveryTag	= args.DeliveryTag,
-					ExchangeName = args.Exchange,
-					IsRedelivery = args.Redelivered,
-					RoutingKey = args.RoutingKey
-				};
+				ConsumerTag = args.ConsumerTag,
+				DeliveryTag = args.DeliveryTag,
+				ExchangeName = args.Exchange,
+				IsRedelivery = args.Redelivered,
+				RoutingKey = args.RoutingKey
+			};
 
-				foreach	(var consumer in _consumers)
-				{
-					consumer.OnNext(envelope as	MessageEnvelope<T>);
-				}
-			}
-			else
+			foreach(var consumer in _consumers)
 			{
-				var	deserialized = _serializer.Deserialize<T>(args.Body, args.BasicProperties);
-
-				var	envelope = new MessageEnvelope<T>(args.BasicProperties,	deserialized, args.Body)
-				{
-					ConsumerTag	= args.ConsumerTag,
-					DeliveryTag	= args.DeliveryTag,
-					ExchangeName = args.Exchange,
-					IsRedelivery = args.Redelivered,
-					RoutingKey = args.RoutingKey
-				};
-
-				foreach	(var consumer in _consumers)
-				{
-					consumer.OnNext(envelope);
-				}
+				consumer.OnNext(envelope);
 			}
 		}
 	}
