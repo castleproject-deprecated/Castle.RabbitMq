@@ -1,15 +1,31 @@
 ﻿namespace Castle.RabbitMq.Stubs
 {
+	using System.Collections.Generic;
+
 	public class StubRabbitConnection : IRabbitConnection
 	{
-		public void Dispose()
+		private readonly List<StubRabbitChannel> _channelCreated = new List<StubRabbitChannel>();
+
+		public StubRabbitConnection()
 		{
-			throw new System.NotImplementedException();
 		}
+
+		// Stub helpers
+
+		public bool Disposed { get; private set; }
+
+		public List<StubRabbitChannel> ChannelCreated
+		{
+			get { return _channelCreated; }
+		}
+
+		// end stub helpers
 
 		public IRabbitChannel CreateChannel(ChannelOptions options = null)
 		{
-			throw new System.NotImplementedException();
+			var channel = new StubRabbitChannel(options);
+			_channelCreated.Add(channel);
+			return channel;
 		}
 
 		public IRabbitConsole Console
@@ -19,7 +35,13 @@
 
 		public IRabbitConnection NewConnection()
 		{
-			throw new System.NotImplementedException();
+			return new StubRabbitConnection();
 		}
+
+		public void Dispose()
+		{
+			this.Disposed = true;
+		}
+
 	}
 }

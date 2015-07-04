@@ -7,33 +7,7 @@
 
 	public class StubModel : IModel
 	{
-		public event EventHandler<BasicAckEventArgs> BasicAcks;
-		public event EventHandler<BasicNackEventArgs> BasicNacks;
-		public event EventHandler<EventArgs> BasicRecoverOk;
-		public event EventHandler<BasicReturnEventArgs> BasicReturn;
-		public event EventHandler<CallbackExceptionEventArgs> CallbackException;
-		public event EventHandler<FlowControlEventArgs> FlowControl;
-		public event EventHandler<ShutdownEventArgs> ModelShutdown;
-
-		public void Abort()
-		{
-			throw new NotImplementedException();
-		}
-
-		public void Abort(ushort replyCode, string replyText)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void BasicAck(ulong deliveryTag, bool multiple)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void BasicCancel(string consumerTag)
-		{
-			throw new NotImplementedException();
-		}
+		public bool Disposed { get; private set; }
 
 		public string BasicConsume(string queue, bool noAck, IBasicConsumer consumer)
 		{
@@ -56,17 +30,12 @@
 			throw new NotImplementedException();
 		}
 
-		public BasicGetResult BasicGet(string queue, bool noAck)
+		public void BasicAck(ulong deliveryTag, bool multiple)
 		{
 			throw new NotImplementedException();
 		}
 
 		public void BasicNack(ulong deliveryTag, bool multiple, bool requeue)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void BasicPublish(PublicationAddress addr, IBasicProperties basicProperties, byte[] body)
 		{
 			throw new NotImplementedException();
 		}
@@ -83,46 +52,6 @@
 
 		public void BasicPublish(string exchange, string routingKey, bool mandatory, bool immediate, IBasicProperties basicProperties,
 			byte[] body)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void BasicQos(uint prefetchSize, ushort prefetchCount, bool global)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void BasicRecover(bool requeue)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void BasicRecoverAsync(bool requeue)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void BasicReject(ulong deliveryTag, bool requeue)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void Close()
-		{
-			throw new NotImplementedException();
-		}
-
-		public void Close(ushort replyCode, string replyText)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void ConfirmSelect()
-		{
-			throw new NotImplementedException();
-		}
-
-		public IBasicProperties CreateBasicProperties()
 		{
 			throw new NotImplementedException();
 		}
@@ -232,6 +161,76 @@
 			throw new NotImplementedException();
 		}
 
+		public void QueueUnbind(string queue, string exchange, string routingKey, IDictionary<string, object> arguments)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Abort()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Abort(ushort replyCode, string replyText)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void BasicCancel(string consumerTag)
+		{
+			throw new NotImplementedException();
+		}
+
+		public BasicGetResult BasicGet(string queue, bool noAck)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void BasicPublish(PublicationAddress addr, IBasicProperties basicProperties, byte[] body)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void BasicQos(uint prefetchSize, ushort prefetchCount, bool global)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void BasicRecover(bool requeue)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void BasicRecoverAsync(bool requeue)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void BasicReject(ulong deliveryTag, bool requeue)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Close()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Close(ushort replyCode, string replyText)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void ConfirmSelect()
+		{
+			throw new NotImplementedException();
+		}
+
+		public IBasicProperties CreateBasicProperties()
+		{
+			throw new NotImplementedException();
+		}
+
 		public uint QueueDelete(string queue, bool ifUnused, bool ifEmpty)
 		{
 			throw new NotImplementedException();
@@ -248,11 +247,6 @@
 		}
 
 		public uint QueuePurge(string queue)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void QueueUnbind(string queue, string exchange, string routingKey, IDictionary<string, object> arguments)
 		{
 			throw new NotImplementedException();
 		}
@@ -330,8 +324,16 @@
 
 		public void Dispose()
 		{
-			throw new NotImplementedException();
+			this.Disposed = true;
 		}
 
+
+		public event EventHandler<BasicAckEventArgs> BasicAcks;
+		public event EventHandler<BasicNackEventArgs> BasicNacks;
+		public event EventHandler<EventArgs> BasicRecoverOk;
+		public event EventHandler<BasicReturnEventArgs> BasicReturn;
+		public event EventHandler<CallbackExceptionEventArgs> CallbackException;
+		public event EventHandler<FlowControlEventArgs> FlowControl;
+		public event EventHandler<ShutdownEventArgs> ModelShutdown;
 	}
 }
