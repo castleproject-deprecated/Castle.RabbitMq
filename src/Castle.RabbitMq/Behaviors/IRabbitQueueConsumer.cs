@@ -8,7 +8,6 @@
 
 		Subscription ConsumeRaw(Action<MessageEnvelope, IMessageAck> onReceived, ConsumerOptions options);
 
-
 		///	<summary>
 		///	Start listening for rpc request messages with the supplied func. 
 		/// A <see cref="IRabbitQueue"/> should have at most one Respond and these are mutually exclusive 
