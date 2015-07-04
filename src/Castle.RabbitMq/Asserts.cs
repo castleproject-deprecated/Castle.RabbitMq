@@ -31,6 +31,14 @@
 
     internal static class Assert
     {
+	    public static void AssertIsTrue(this bool source, string message = null)
+	    {
+		    if (!source)
+		    {
+				throw new Exception("Assertion failed: " + (message ?? "not true"));
+		    }
+	    }
+
         public static void AssertNotNullOrEmpty(this string source, string message = null)
         {
             if (string.IsNullOrEmpty(source))
