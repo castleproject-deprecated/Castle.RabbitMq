@@ -103,7 +103,7 @@
 			var	prop = properties ?? new MessageProperties();
 			var	data = serializer.Serialize(message, prop);
 
-			return Send(data, routingKey, prop,	options);
+			return SendRaw(data, routingKey, prop,	options);
 		}
 
 		public MessageEnvelope SendRequestRaw(byte[] data,	string routingKey =	"",
@@ -113,7 +113,7 @@
 			Argument.NotNull(routingKey, "routingKey");
 			properties = properties	?? new MessageProperties();
 
-			return _rpcHelper.SendRequest(data,	routingKey,	properties,	options);
+			return _rpcHelper.SendRequestRaw(data, routingKey, properties, options);
 		}
 
 		public TResponse SendRequest<TRequest, TResponse>(TRequest request,	string routingKey =	"",

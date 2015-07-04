@@ -29,10 +29,10 @@
 			_replyData = new ConcurrentDictionary<string, MessageEnvelope>(StringComparer.Ordinal);
 		}
 
-		public MessageEnvelope SendRequest(byte[] data,	
-										   string routingKey, 
-										   MessageProperties messageProperties,
-										   RpcSendOptions options)
+		public MessageEnvelope SendRequestRaw(byte[] data,	
+											  string routingKey, 
+											  MessageProperties messageProperties,
+											  RpcSendOptions options)
 		{
 			// CreateBasicProperties doesnt	need the lock
 			var	prop = _model.CreateBasicProperties();
@@ -79,7 +79,7 @@
 			options	= options ?? RpcSendOptions.Default;
 
 			var	data = _serializer.Serialize(request, properties);
-			var	reply =	this.SendRequest(data, routingKey, properties, options);
+			var reply = this.SendRequestRaw(data, routingKey, properties, options);
 
 			if (ErrorResponse.IsHeaderErrorFlag(reply.Properties))
 			{
