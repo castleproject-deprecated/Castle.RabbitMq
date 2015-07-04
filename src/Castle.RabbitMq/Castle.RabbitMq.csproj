@@ -90,7 +90,6 @@
     <Compile Include="Behaviors\IRabbitSender.cs" />
     <Compile Include="Behaviors\IMessageAck.cs" />
     <Compile Include="MessageEnvelope.cs" />
-    <Compile Include="MessageProperties.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Impl\RabbitConnection.cs" />
     <Compile Include="RabbitConnector.cs" />
@@ -100,9 +99,11 @@
     <Compile Include="Serializers\JsonSerializer.cs" />
     <Compile Include="Serializers\ProtoBufSerializer.cs" />
     <Compile Include="Stubs\StubModel.cs" />
+    <Compile Include="Stubs\StubRabbitChannel.cs" />
     <Compile Include="Stubs\StubRabbitConnection.cs" />
     <Compile Include="Stubs\StubRabbitExchange.cs" />
     <Compile Include="Stubs\StubRabbitQueue.cs" />
+    <Compile Include="Stubs\StubRabbitQueueBinding.cs" />
     <Compile Include="Stubs\StubRabbitSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
