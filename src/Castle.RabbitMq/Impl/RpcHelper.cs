@@ -8,34 +8,34 @@
 	using RabbitMQ.Client.Events;
 
 
-	class RpcHelper	: IBasicConsumer
+	internal class RpcHelper : IBasicConsumer
 	{
-		private	readonly IModel	_model;
-		private	readonly IRabbitSerializer _serializer;
-		private	readonly string	_exchange;
-		
-		private	readonly Dictionary<string,	string>	_routing2RetQueue;
-		private	readonly ConcurrentDictionary<string, AutoResetEvent> _waits;
-		private	readonly ConcurrentDictionary<string, MessageEnvelope> _replyData;
+		private readonly IModel _model;
+		private readonly IRabbitSerializer _serializer;
+		private readonly string _exchange;
 
-		public RpcHelper(IModel	model, string exchange,	IRabbitSerializer serializer)
+		private readonly Dictionary<string, string> _routing2RetQueue;
+		private readonly ConcurrentDictionary<string, AutoResetEvent> _waits;
+		private readonly ConcurrentDictionary<string, MessageEnvelope> _replyData;
+
+		public RpcHelper(IModel model, string exchange, IRabbitSerializer serializer)
 		{
 			_model = model;
-			_exchange =	exchange;
-			_serializer	= serializer;
+			_exchange = exchange;
+			_serializer = serializer;
 
-			_routing2RetQueue =	new	Dictionary<string, string>(StringComparer.Ordinal);
+			_routing2RetQueue = new Dictionary<string, string>(StringComparer.Ordinal);
 			_waits = new ConcurrentDictionary<string, AutoResetEvent>(StringComparer.Ordinal);
 			_replyData = new ConcurrentDictionary<string, MessageEnvelope>(StringComparer.Ordinal);
 		}
 
-		public MessageEnvelope SendRequestRaw(byte[] data,	
-											  string routingKey, 
-											  MessageProperties messageProperties,
-											  RpcSendOptions options)
+		public MessageEnvelope SendRequestRaw(byte[] data,
+			string routingKey,
+			MessageProperties messageProperties,
+			RpcSendOptions options)
 		{
-			// CreateBasicProperties doesnt	need the lock
-			var	prop = _model.CreateBasicProperties();
+			// CreateBasicProperties doesnt need the lock
+			var prop = _model.CreateBasicProperties();
 			if (messageProperties != null)
 			{
 				messageProperties.CopyTo(prop);
@@ -72,13 +72,13 @@
 		}
 
 		public TResponse SendRequest<TRequest, TResponse>(TRequest request,
-														  string routingKey,
-														  MessageProperties	properties,
-														  RpcSendOptions options)
+			string routingKey,
+			MessageProperties properties,
+			RpcSendOptions options)
 		{
-			options	= options ?? RpcSendOptions.Default;
+			options = options ?? RpcSendOptions.Default;
 
-			var	data = _serializer.Serialize(request, properties);
+			var data = _serializer.Serialize(request, properties);
 			var reply = this.SendRequestRaw(data, routingKey, properties, options);
 
 			if (ErrorResponse.IsHeaderErrorFlag(reply.Properties))
@@ -96,17 +96,17 @@
 			throw response.Exception;
 		}
 
-		private	string GetOrCreateReturnQueue(string routingKey)
+		private string GetOrCreateReturnQueue(string routingKey)
 		{
 			string queueName;
 			if (_routing2RetQueue.TryGetValue(routingKey, out queueName)) return queueName;
-			
-			queueName =	_model.QueueDeclare();
-			_routing2RetQueue[routingKey] =	queueName;
 
-			// starts a	bare metal consumer	with no	acks
+			queueName = _model.QueueDeclare();
+			_routing2RetQueue[routingKey] = queueName;
+
+			// starts a bare metal consumer with no acks
 			_model.BasicConsume(queueName, noAck: true, consumer: this);
-			
+
 			return queueName;
 		}
 
@@ -114,17 +114,17 @@
 		// IBasicConsumer implementation
 		//
 
-		public void	HandleBasicDeliver(string consumerTag, 
-									   ulong deliveryTag, 
-									   bool	redelivered, 
-									   string exchange,	string routingKey,
-									   IBasicProperties	properties,	
-									   byte[] body)
+		public void HandleBasicDeliver(string consumerTag,
+			ulong deliveryTag,
+			bool redelivered,
+			string exchange, string routingKey,
+			IBasicProperties properties,
+			byte[] body)
 		{
-			var	correlationId =	properties.CorrelationId;
+			var correlationId = properties.CorrelationId;
 			if (string.IsNullOrEmpty(correlationId))
 			{
-				throw new RabbitException("Invalid correlationId:	got	a null or empty	one");
+				throw new RabbitException("Invalid correlationId:   got a null or empty one");
 			}
 
 			AutoResetEvent @event;
@@ -132,17 +132,18 @@
 			{
 				// timeout'd - no need to move further
 				LogAdapter.LogDebug("RpcHelper", "Could not find wait for correlation " + correlationId +
-					" either it was timeout'ed, or the message was consumed by a outlier subscriber to " + routingKey);
+				                                 " either it was timeout'ed, or the message was consumed by a outlier subscriber to " +
+				                                 routingKey);
 				return;
 			}
 
-			// hold	reply
-			_replyData[correlationId] =	new	MessageEnvelope(properties,	body)
+			// hold reply
+			_replyData[correlationId] = new MessageEnvelope(properties, body)
 			{
-				ConsumerTag	= consumerTag, 
-				DeliveryTag	= deliveryTag,
-				ExchangeName = exchange, 
-				IsRedelivery = redelivered,	
+				ConsumerTag = consumerTag,
+				DeliveryTag = deliveryTag,
+				ExchangeName = exchange,
+				IsRedelivery = redelivered,
 				RoutingKey = routingKey
 			};
 
@@ -150,42 +151,36 @@
 			{
 				@event.Set(); // may have been disposed
 			}
-			catch (Exception)
+			catch(Exception)
 			{
-				// potential object	disposed
+				// potential object disposed
 
-				MessageEnvelope	val;
-				_replyData.TryRemove(correlationId,	out	val);
+				MessageEnvelope val;
+				_replyData.TryRemove(correlationId, out val);
 			}
 		}
 
 		public IModel Model
 		{
-			get	{ return _model; }
+			get { return _model; }
 		}
 
-		public void	HandleModelShutdown(object model, ShutdownEventArgs	reason)
+		public void HandleModelShutdown(object model, ShutdownEventArgs reason)
 		{
 		}
 
 		public event EventHandler<ConsumerEventArgs> ConsumerCancelled;
 
-		public void	HandleBasicCancel(string consumerTag)
+		public void HandleBasicCancel(string consumerTag)
 		{
 		}
 
-		public void	HandleBasicCancelOk(string consumerTag)
+		public void HandleBasicCancelOk(string consumerTag)
 		{
 		}
 
-		public void	HandleBasicConsumeOk(string	consumerTag)
+		public void HandleBasicConsumeOk(string consumerTag)
 		{
 		}
-
-		//private void ModelOnBasicReturn(object sender, BasicReturnEventArgs args)
-		//{
-		//	if (LogAdapter.LogEnabled)
-		//		LogAdapter.LogDebug("RabbitChannel", "Message dropped. Message sent to exchange " + args.Exchange + " with routing key " + args.RoutingKey, (Exception) null);
-		//}
 	}
 }
