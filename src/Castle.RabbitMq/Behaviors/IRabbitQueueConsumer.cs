@@ -5,17 +5,21 @@
 	public interface IRabbitQueueConsumer
 	{
 		///	<summary>
-		///	For	Rpc
+		///	Start listening for rpc request messages with the supplied func. 
+		/// A <see cref="IRabbitQueue"/> should have at most one Respond and these are mutually exclusive 
+		/// with the Consume. 
 		///	</summary>
-		///	<typeparam name="TRequest"></typeparam>
-		///	<typeparam name="TResponse"></typeparam>
+		///	<typeparam name="TRequest">Request type</typeparam>
+		///	<typeparam name="TResponse">Reply type</typeparam>
 		///	<param name="onRespond"></param>
 		///	<param name="options"></param>
 		Subscription Respond<TRequest, TResponse>(Func<MessageEnvelope<TRequest>, IMessageAck, TResponse> onRespond,
 												  ConsumerOptions options);
 
 		///	<summary>
-		///	For	pure message consumption
+		///	Starts listening for messages to process with the supplied action. 
+		/// A <see cref="IRabbitQueue"/> should have at most one Respond and these are mutually exclusive 
+		/// with the Consume. 
 		///	</summary>
 		///	<param name="onReceived"></param>
 		///	<param name="options"></param>

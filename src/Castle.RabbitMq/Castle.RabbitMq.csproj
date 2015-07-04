@@ -22,6 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\build\Castle.RabbitMq.XML</DocumentationFile>
+    <NoWarn>1591, 67</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -98,13 +99,16 @@
     <Compile Include="RabbitException.cs" />
     <Compile Include="Serializers\JsonSerializer.cs" />
     <Compile Include="Serializers\ProtoBufSerializer.cs" />
+    <Compile Include="Stubs\StubModel.cs" />
+    <Compile Include="Stubs\StubRabbitConnection.cs" />
+    <Compile Include="Stubs\StubRabbitExchange.cs" />
+    <Compile Include="Stubs\StubRabbitQueue.cs" />
+    <Compile Include="Stubs\StubRabbitSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Stubs\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -31,14 +31,14 @@
 
 		public MessageEnvelope SendRequest(byte[] data,	
 										   string routingKey, 
-										   MessageProperties doNotUseProp,
+										   MessageProperties messageProperties,
 										   RpcSendOptions options)
 		{
 			// CreateBasicProperties doesnt	need the lock
 			var	prop = _model.CreateBasicProperties();
-			if (doNotUseProp != null)
+			if (messageProperties != null)
 			{
-				doNotUseProp.CopyTo(prop);
+				messageProperties.CopyTo(prop);
 			}
 
 			using(var @event = new AutoResetEvent(false))
@@ -92,8 +92,6 @@
 		private void HandleError(object request, MessageEnvelope reply)
 		{
 			var response = _serializer.Deserialize<ErrorResponse>(reply.Body, reply.Properties);
-
-			// throw new RpcException("Error invoking remote handler for message: " + request.GetType(), response.Exception);
 
 			throw response.Exception;
 		}

@@ -67,9 +67,9 @@
 
 		#region	IRabbitSender
 
-		public MessageInfo Send(byte[] body, string	routingKey = "", 
-								MessageProperties properties = null, 
-								SendOptions	options	= null)
+		public MessageInfo SendRaw(byte[] body, string routingKey = "", 
+								   MessageProperties properties = null, 
+								   SendOptions options = null)
 		{
 			Argument.NotNull(routingKey, "routingKey");
 
@@ -106,9 +106,9 @@
 			return Send(data, routingKey, prop,	options);
 		}
 
-		public MessageEnvelope SendRequest(byte[] data,	string routingKey =	"",
-										   MessageProperties properties	= null,
-										   RpcSendOptions options =	null)
+		public MessageEnvelope SendRequestRaw(byte[] data,	string routingKey =	"",
+											  MessageProperties properties	= null,
+											  RpcSendOptions options =	null)
 		{
 			Argument.NotNull(routingKey, "routingKey");
 			properties = properties	?? new MessageProperties();

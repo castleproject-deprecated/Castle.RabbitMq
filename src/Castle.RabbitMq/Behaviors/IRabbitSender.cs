@@ -4,7 +4,7 @@ namespace Castle.RabbitMq
 
 	public interface IRabbitSender
 	{
-		MessageInfo	Send(byte[]	body, string routingKey	= "", 
+		MessageInfo SendRaw(byte[] body, string routingKey = "", 
 						 MessageProperties properties =	null, 
 						 SendOptions options = null);
 
@@ -12,9 +12,9 @@ namespace Castle.RabbitMq
 							MessageProperties properties = null, 
 							SendOptions	options	= null)	where T	: class;
 
-		MessageEnvelope	SendRequest(byte[] data, string	routingKey = "",
-									MessageProperties properties = null,
-									RpcSendOptions options = null);
+		MessageEnvelope	SendRequestRaw(byte[] data, string	routingKey = "",
+									   MessageProperties properties = null,
+									   RpcSendOptions options = null);
 
 		TResponse SendRequest<TRequest,	TResponse>(TRequest	request, 
 												   string routingKey = "", 
@@ -28,9 +28,9 @@ namespace Castle.RabbitMq
 
 	public static class	RabbitSenderExtensions
 	{
-		public static MessageInfo Send(this	IRabbitSender source, byte[] body, string routingKey = "")
+		public static MessageInfo SendRaw(this	IRabbitSender source, byte[] body, string routingKey = "")
 		{
-			return source.Send(body, routingKey, options: SendOptions.Default);
+			return source.SendRaw(body, routingKey, options: SendOptions.Default);
 		}
 
 		public static MessageInfo Send<T>(this IRabbitSender source, T message,	string routingKey =	"")	where T	: class
@@ -38,9 +38,9 @@ namespace Castle.RabbitMq
 			return source.Send<T>(message, routingKey, options:	SendOptions.Default);
 		}
 
-		public static MessageInfo SendPersistent(this IRabbitSender	source,	byte[] body, string	routingKey = "")
+		public static MessageInfo SendPersistentRaw(this IRabbitSender	source,	byte[] body, string	routingKey = "")
 		{
-			return source.Send(body, routingKey, options: SendOptions.Persistent);
+			return source.SendRaw(body, routingKey, options: SendOptions.Persistent);
 		}
 
 		public static MessageInfo SendPersistent<T>(this IRabbitSender source, T message, string routingKey	= "") where	T :	class
