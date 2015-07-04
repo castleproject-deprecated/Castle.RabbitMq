@@ -21,7 +21,8 @@
 
 			_disposed =	true;
 
-			_model.BasicCancel(_consumerTag);
+			lock (_model)
+				_model.BasicCancel(_consumerTag);
 		}
 	}
 }
