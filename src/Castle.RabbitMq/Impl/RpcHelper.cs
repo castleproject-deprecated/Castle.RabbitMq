@@ -31,15 +31,11 @@
 
 		public MessageEnvelope SendRequestRaw(byte[] data,
 			string routingKey,
-			MessageProperties messageProperties,
+			IBasicProperties messageProperties,
 			RpcSendOptions options)
 		{
 			// CreateBasicProperties doesnt need the lock
-			var prop = _model.CreateBasicProperties();
-			if (messageProperties != null)
-			{
-				messageProperties.CopyTo(prop);
-			}
+			var prop = messageProperties ?? _model.CreateBasicProperties();
 
 			using(var @event = new AutoResetEvent(false))
 			{
@@ -73,7 +69,7 @@
 
 		public TResponse SendRequest<TRequest, TResponse>(TRequest request,
 			string routingKey,
-			MessageProperties properties,
+			IBasicProperties properties,
 			RpcSendOptions options)
 		{
 			options = options ?? RpcSendOptions.Default;
