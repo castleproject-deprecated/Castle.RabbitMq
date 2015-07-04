@@ -4,6 +4,7 @@
 	using System.Collections.Generic;
 	using RabbitMQ.Client;
 	using RabbitMQ.Client.Events;
+	using RabbitMQ.Client.Framing;
 
 	public class StubModel : IModel
 	{
@@ -228,7 +229,7 @@
 
 		public IBasicProperties CreateBasicProperties()
 		{
-			throw new NotImplementedException();
+			return new BasicProperties();
 		}
 
 		public uint QueueDelete(string queue, bool ifUnused, bool ifEmpty)

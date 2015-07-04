@@ -68,14 +68,13 @@
 		#region	IRabbitSender
 
 		public MessageInfo SendRaw(byte[] body, string routingKey = "", 
-								   MessageProperties properties = null, 
+								   IBasicProperties properties = null, 
 								   SendOptions options = null)
 		{
 			Argument.NotNull(routingKey, "routingKey");
 
 			options	= options ?? SendOptions.Default;
-			var	prop = _model.CreateBasicProperties();
-			if (properties != null)	properties.CopyTo(prop);
+			var	prop = properties ?? _model.CreateBasicProperties();
 			if (options.Persist)
 			{
 				prop.DeliveryMode =	2; // persistent
@@ -93,37 +92,37 @@
 			}
 		}
 
-		public MessageInfo Send<T>(T message, string routingKey	= "", 
-								   MessageProperties properties	= null,	
+		public MessageInfo Send<T>(T message, string routingKey	= "",
+								   IBasicProperties properties = null,	
 								   SendOptions options = null) 
 			where T	: class
 		{
 			options	= options ?? SendOptions.Default;
 			var	serializer = options.Serializer	?? _defaultSerializer;
-			var	prop = properties ?? new MessageProperties();
+			var	prop = properties ?? _model.CreateBasicProperties();
 			var	data = serializer.Serialize(message, prop);
 
 			return SendRaw(data, routingKey, prop,	options);
 		}
 
 		public MessageEnvelope SendRequestRaw(byte[] data,	string routingKey =	"",
-											  MessageProperties properties	= null,
+											  IBasicProperties properties = null,
 											  RpcSendOptions options =	null)
 		{
 			Argument.NotNull(routingKey, "routingKey");
-			properties = properties	?? new MessageProperties();
+			properties = properties	?? _model.CreateBasicProperties();
 
 			return _rpcHelper.SendRequestRaw(data, routingKey, properties, options);
 		}
 
 		public TResponse SendRequest<TRequest, TResponse>(TRequest request,	string routingKey =	"",
-														  MessageProperties	properties = null,
+														  IBasicProperties properties = null,
 														  RpcSendOptions options = null) 
 			where TRequest : class 
 			where TResponse	: class
 		{
 			Argument.NotNull(routingKey, "routingKey");
-			properties = properties	?? new MessageProperties();
+			properties = properties ?? _model.CreateBasicProperties();
 
 			return _rpcHelper.SendRequest<TRequest,	TResponse>(request,	routingKey,	properties,	options);
 		}

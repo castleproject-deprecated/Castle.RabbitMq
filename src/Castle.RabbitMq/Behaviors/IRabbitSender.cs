@@ -1,6 +1,7 @@
 namespace Castle.RabbitMq
 {
 	using System;
+	using RabbitMQ.Client;
 
 	public interface IRabbitSender : IRabbitTypedSender, IRabbitRawSender
 	{
@@ -9,11 +10,11 @@ namespace Castle.RabbitMq
 	public interface IRabbitRawSender
 	{
 		MessageInfo SendRaw(byte[] body, string routingKey = "",
-			MessageProperties properties = null,
+			IBasicProperties properties = null,
 			SendOptions options = null);
 
 		MessageEnvelope SendRequestRaw(byte[] data, string routingKey = "",
-			MessageProperties properties = null,
+			IBasicProperties properties = null,
 			RpcSendOptions options = null);
 
 		// Action<int> ConfirmationCallback { get; set; }
@@ -22,12 +23,12 @@ namespace Castle.RabbitMq
 	public interface IRabbitTypedSender
 	{
 		MessageInfo Send<T>(T message, string routingKey = "",
-			MessageProperties properties = null,
+			IBasicProperties properties = null,
 			SendOptions options = null) where T : class;
 
 		TResponse SendRequest<TRequest, TResponse>(TRequest request,
 			string routingKey = "",
-			MessageProperties properties = null,
+			IBasicProperties properties = null,
 			RpcSendOptions options = null)
 			where TRequest : class
 			where TResponse : class;

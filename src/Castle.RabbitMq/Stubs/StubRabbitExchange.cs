@@ -2,6 +2,8 @@
 {
 	using System;
 	using System.Collections.Generic;
+	using RabbitMQ.Client;
+	using RabbitMQ.Client.Framing;
 
 	public class StubRabbitExchange : IRabbitExchange
 	{
@@ -89,16 +91,16 @@
 		public string Name { get; private set; }
 		public ExchangeOptions Options { get; private set; }
 
-		public MessageInfo SendRaw(byte[] body, string routingKey = "", 
-								   MessageProperties properties = null, 
+		public MessageInfo SendRaw(byte[] body, string routingKey = "",
+								   IBasicProperties properties = null, 
 								   SendOptions options = null)
 		{
 			_sendRaws.Add(Tuple.Create(new MessageEnvelope(properties, body), routingKey, options));
 			return new MessageInfo();
 		}
 
-		public MessageInfo Send<T>(T message, string routingKey = "", 
-								   MessageProperties properties = null, 
+		public MessageInfo Send<T>(T message, string routingKey = "",
+								   IBasicProperties properties = null, 
 								   SendOptions options = null) where T : class
 		{
 			_sends.Add(Tuple.Create<MessageEnvelope,string, SendOptions>(
@@ -106,17 +108,17 @@
 			return new MessageInfo();
 		}
 
-		public MessageEnvelope SendRequestRaw(byte[] data, string routingKey = "", 
-											  MessageProperties properties = null,
+		public MessageEnvelope SendRequestRaw(byte[] data, string routingKey = "",
+											  IBasicProperties properties = null,
 											  RpcSendOptions options = null)
 		{
 			_sendRequestsRaw.Add(Tuple.Create(new MessageEnvelope(properties, data), routingKey, options));
 			
-			return new MessageEnvelope(new MessageProperties(), new byte[0]);
+			return new MessageEnvelope(new BasicProperties(), new byte[0]);
 		}
 
-		public TResponse SendRequest<TRequest, TResponse>(TRequest request, string routingKey = "", 
-														  MessageProperties properties = null,
+		public TResponse SendRequest<TRequest, TResponse>(TRequest request, string routingKey = "",
+														  IBasicProperties properties = null,
 														  RpcSendOptions options = null) 
 			where TRequest : class where TResponse : class
 		{
