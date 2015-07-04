@@ -3,114 +3,151 @@
 	using System;
 	using RabbitMQ.Client;
 
-	[System.Diagnostics.DebuggerDisplay("Queue '{Name}'	{_queueOptions}", Name = "Queue")]
+	[System.Diagnostics.DebuggerDisplay("Queue '{Name}' {_queueOptions}", Name = "Queue")]
 	public class RabbitQueue : IRabbitQueue
 	{
-		private	readonly IModel	_model;
-		private	readonly IRabbitSerializer _defaultSerializer;
-		private	readonly QueueOptions _queueOptions;
+		private readonly IModel _model;
+		private readonly IRabbitSerializer _defaultSerializer;
+		private readonly QueueOptions _queueOptions;
 
-		public RabbitQueue(IModel model, IRabbitSerializer serializer, 
-						   QueueDeclareOk result, QueueOptions queueOptions)
+		public RabbitQueue(IModel model, 
+						   IRabbitSerializer serializer,
+						   QueueDeclareOk result, 
+						   QueueOptions queueOptions)
 		{
 			_model = model;
-			_defaultSerializer = serializer	?? queueOptions.Serializer;
-			_queueOptions =	queueOptions;
+			_defaultSerializer = serializer ?? queueOptions.Serializer;
+			_queueOptions = queueOptions;
 
-			this.Name =	result.QueueName;
+			this.Name = result.QueueName;
 			this.ConsumerCount = result.ConsumerCount;
-			this.MessageCount =	result.MessageCount;
+			this.MessageCount = result.MessageCount;
 		}
 
 		public string Name { get; private set; }
-		public uint	ConsumerCount {	get; private set; }
-		public uint	MessageCount { get;	private	set; }
+		public uint ConsumerCount { get; private set; }
+		public uint MessageCount { get; private set; }
 
-		public void	Purge()
+		public void Purge()
 		{
-			lock (_model)
+			lock(_model)
 				_model.QueuePurge(this.Name);
 		}
 
-		public void	Delete()
+		public void Delete()
 		{
-			lock (_model)
+			lock(_model)
 				_model.QueueDelete(this.Name);
 		}
 
-		public void	Delete(bool	ifUnused, bool ifEmpty)
+		public void Delete(bool ifUnused, bool ifEmpty)
 		{
-			lock (_model)
-				_model.QueueDelete(this.Name, ifUnused,	ifEmpty);
+			lock(_model)
+				_model.QueueDelete(this.Name, ifUnused, ifEmpty);
 		}
 
-		#region	IRabbitQueueConsumer
+		#region IRabbitQueueConsumer
 
-		public Subscription	Respond<TRequest, TResponse>(Func<MessageEnvelope<TRequest>, IMessageAck, TResponse> onRespond,
-														 ConsumerOptions options)
+		public Subscription RespondRaw(Func<MessageEnvelope, IMessageAck, MessageEnvelope> onRespond, ConsumerOptions options)
 		{
-			Argument.NotNull(onRespond,	"onRespond");
+			Argument.NotNull(onRespond, "onRespond");
+			options = options ?? ConsumerOptions.Default;
 
-			options	= options ?? ConsumerOptions.Default;
-
-			var	serializer = options.Serializer	?? _defaultSerializer;
-
-			var	consumer = CreateConsumer<TRequest>(serializer,	options);
-
-			consumer.Subscribe(new RpcResponder<TRequest, TResponse>(_model, serializer, onRespond));
-
-			lock (_model)
-			{
-				var	consumerTag	= _model.BasicConsume(this.Name, options.NoAck,	consumer);
-
-				return new Subscription(_model,	consumerTag);
-			}
+			throw new NotImplementedException();
 		}
 
-		public Subscription	Consume<T>(Action<MessageEnvelope<T>, IMessageAck> onReceived, 
-									   ConsumerOptions options)	
+		public Subscription ConsumeRaw(Action<MessageEnvelope, IMessageAck> onReceived, ConsumerOptions options)
 		{
 			Argument.NotNull(onReceived, "onReceived");
+			options = options ?? ConsumerOptions.Default;
 
-			options	= options ?? ConsumerOptions.Default;
+			var consumer = CreateConsumer(options);
 
-			var	serializer = options.Serializer	?? _defaultSerializer;
-
-			// PERF: perf test consumers
-			var	consumer = CreateConsumer<T>(serializer, options);
-
-			consumer.Subscribe(new ActionAdapter<T>(env	=>
+			consumer.Subscribe(new ActionAdapter(env =>
 			{
-				var	msgAcker = new MessageAck(() =>
-				{
-					lock (_model) _model.BasicAck(env.DeliveryTag, false);
-				}, (requeue) =>
-				{
-					lock (_model) _model.BasicNack(env.DeliveryTag,	false, requeue);
-				});
+				var msgAcker = new MessageAck(() => { lock(_model) _model.BasicAck(env.DeliveryTag, false); },
+					(requeue) => { lock(_model) _model.BasicNack(env.DeliveryTag, false, requeue); });
 
-				onReceived(env,	msgAcker);
+				onReceived(env, msgAcker);
 			}));
 
-			lock (_model)
+			lock(_model)
 			{
-				var	consumerTag	= _model.BasicConsume(this.Name, options.NoAck,	consumer);
+				var consumerTag = _model.BasicConsume(this.Name, options.NoAck, consumer);
 
-				return new Subscription(_model,	consumerTag);
+				return new Subscription(_model, consumerTag);
 			}
+		}
+
+		[Obsolete]
+		public Subscription Respond<TRequest, TResponse>(Func<MessageEnvelope<TRequest>, IMessageAck, TResponse> onRespond,
+			ConsumerOptions options)
+		{
+			Argument.NotNull(onRespond, "onRespond");
+			throw new NotImplementedException();
+
+//          options = options ?? ConsumerOptions.Default;
+//
+//          var serializer = options.Serializer ?? _defaultSerializer;
+//
+//          var consumer = CreateConsumer<TRequest>(serializer, options);
+//
+//          consumer.Subscribe(new RpcResponder<TRequest, TResponse>(_model, serializer, onRespond));
+//
+//          lock (_model)
+//          {
+//              var consumerTag = _model.BasicConsume(this.Name, options.NoAck, consumer);
+//
+//              return new Subscription(_model, consumerTag);
+//          }
+		}
+
+		[Obsolete]
+		public Subscription Consume<T>(Action<MessageEnvelope<T>, IMessageAck> onReceived,
+			ConsumerOptions options)
+		{
+			Argument.NotNull(onReceived, "onReceived");
+			throw new NotImplementedException();
+//
+//          options = options ?? ConsumerOptions.Default;
+//
+//          var serializer = options.Serializer ?? _defaultSerializer;
+//
+//          // PERF: perf test consumers
+//          var consumer = CreateConsumer<T>(serializer, options);
+//
+//          consumer.Subscribe(new ActionAdapter<T>(env =>
+//          {
+//              var msgAcker = new MessageAck(() =>
+//              {
+//                  lock (_model) _model.BasicAck(env.DeliveryTag, false);
+//              }, (requeue) =>
+//              {
+//                  lock (_model) _model.BasicNack(env.DeliveryTag, false, requeue);
+//              });
+//
+//              onReceived(env, msgAcker);
+//          }));
+//
+//          lock (_model)
+//          {
+//              var consumerTag = _model.BasicConsume(this.Name, options.NoAck, consumer);
+//
+//              return new Subscription(_model, consumerTag);
+//          }
 		}
 
 		#endregion
 
-		private	IRabbitMessageProducer<T> CreateConsumer<T>(IRabbitSerializer serializer, ConsumerOptions options)
+		private IRabbitMessageProducer CreateConsumer(ConsumerOptions options)
 		{
-			if (options.ConsumerStrategy ==	ConsumerStrategy.Default)
+			if (options.ConsumerStrategy == ConsumerStrategy.Default)
 			{
-				return new StreamerConsumer<T>(_model, serializer);
+				return new StreamerConsumer(_model);
 			}
-			// else	if (options.ConsumerStrategy ==	ConsumerStrategy.Queue)
+			// else if (options.ConsumerStrategy == ConsumerStrategy.Queue)
 			{
-				return new SharedQueueConsumer<T>(_model, serializer);
+				return new SharedQueueConsumer(_model);
 			}
 		}
 	}
