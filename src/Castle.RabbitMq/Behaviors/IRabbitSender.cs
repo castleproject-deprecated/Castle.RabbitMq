@@ -3,30 +3,21 @@ namespace Castle.RabbitMq
 	using System;
 	using RabbitMQ.Client;
 
-	public interface IRabbitSender : IRabbitTypedSender, IRabbitRawSender
-	{
-	}
-
-	public interface IRabbitRawSender
+	public interface IRabbitSender // : IRabbitTypedSender, IRabbitRawSender
 	{
 		MessageInfo SendRaw(byte[] body, string routingKey = "",
 			IBasicProperties properties = null,
 			SendOptions options = null);
 
-		MessageEnvelope SendRequestRaw(byte[] data, string routingKey = "",
+		MessageEnvelope CallRaw(byte[] data, string routingKey = "",
 			IBasicProperties properties = null,
 			RpcSendOptions options = null);
 
-		// Action<int> ConfirmationCallback { get; set; }
-	}
-
-	public interface IRabbitTypedSender
-	{
 		MessageInfo Send<T>(T message, string routingKey = "",
 			IBasicProperties properties = null,
 			SendOptions options = null) where T : class;
 
-		TResponse SendRequest<TRequest, TResponse>(TRequest request,
+		TResponse Call<TRequest, TResponse>(TRequest request,
 			string routingKey = "",
 			IBasicProperties properties = null,
 			RpcSendOptions options = null)

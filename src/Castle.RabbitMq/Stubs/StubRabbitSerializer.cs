@@ -5,12 +5,17 @@
 
 	public class StubRabbitSerializer : IRabbitSerializer
 	{
-		public byte[] Serialize<T>(T instance, IBasicProperties prop)
-		{
-			throw new NotImplementedException();
-		}
+//		public byte[] Serialize<T>(T instance, IBasicProperties prop)
+//		{
+//			throw new NotImplementedException();
+//		}
 
-		public T Deserialize<T>(byte[] data, IBasicProperties prop)
+//		public T Deserialize<T>(byte[] data, IBasicProperties prop)
+//		{
+//			throw new NotImplementedException();
+//		}
+
+		public byte[] Serialize(object instance, IBasicProperties prop)
 		{
 			throw new NotImplementedException();
 		}

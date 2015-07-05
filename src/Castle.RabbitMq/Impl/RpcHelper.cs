@@ -29,7 +29,7 @@
 			_replyData = new ConcurrentDictionary<string, MessageEnvelope>(StringComparer.Ordinal);
 		}
 
-		public MessageEnvelope SendRequestRaw(byte[] data,
+		public MessageEnvelope CallRaw(byte[] data,
 			string routingKey,
 			IBasicProperties messageProperties,
 			RpcSendOptions options)
@@ -67,22 +67,22 @@
 			}
 		}
 
-		public TResponse SendRequest<TRequest, TResponse>(TRequest request,
+		public TResponse CallTyped<TRequest, TResponse>(TRequest request,
 			string routingKey,
 			IBasicProperties properties,
 			RpcSendOptions options)
 		{
 			options = options ?? RpcSendOptions.Default;
 
-			var data = _serializer.Serialize(request, properties);
-			var reply = this.SendRequestRaw(data, routingKey, properties, options);
+			var data = _serializer.TypedSerialize(request, properties);
+			var reply = this.CallRaw(data, routingKey, properties, options);
 
 			if (ErrorResponse.IsHeaderErrorFlag(reply.Properties))
 			{
 				HandleError(reply);
 			}
 
-			return _serializer.Deserialize<TResponse>(reply.Body, reply.Properties);
+			return _serializer.TypedDeserialize<TResponse>(reply.Body, reply.Properties);
 		}
 
 		private void HandleError(MessageEnvelope reply)
@@ -92,7 +92,9 @@
 				throw new Exception("Call failed");
 			}
 
-			var response = _serializer.Deserialize<ErrorResponse>(reply.Body, reply.Properties);
+			// Note: ErrorResponse infra does not add the 
+			//       type name to properties, so we cannot call .TypedDeserialize()
+			var response = (ErrorResponse) _serializer.Deserialize(reply.Body, typeof(ErrorResponse), reply.Properties);
 			throw response.Exception;
 		}
 

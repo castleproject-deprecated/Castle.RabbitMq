@@ -3,135 +3,135 @@
 	using RabbitMQ.Client;
 
 
-	[System.Diagnostics.DebuggerDisplay("Exchange '{Name}' {_options}",	Name = "Exchange")]
-	public class RabbitExchange	: IRabbitExchange
+	[System.Diagnostics.DebuggerDisplay("Exchange '{Name}' {_options}", Name = "Exchange")]
+	public class RabbitExchange : IRabbitExchange
 	{
-		private	readonly IModel	_model;
-		private	readonly IRabbitSerializer _defaultSerializer;
-		private	readonly bool _canDestroy;
-		private	readonly ExchangeOptions _options;
-		private	readonly RpcHelper _rpcHelper;
-		private	readonly bool _isDefaultExchange;
+		private readonly IModel _model;
+		private readonly IRabbitSerializer _defaultSerializer;
+		private readonly bool _canDestroy;
+		private readonly ExchangeOptions _options;
+		private readonly RpcHelper _rpcHelper;
+		private readonly bool _isDefaultExchange;
 
-		public RabbitExchange(IModel model,	IRabbitSerializer serializer, 
-							  string name, bool	canDestroy,	ExchangeOptions	options)
+		public RabbitExchange(IModel model, IRabbitSerializer serializer,
+			string name, bool canDestroy, ExchangeOptions options)
 		{
-			this.Name =	name;
+			this.Name = name;
 
 			_model = model;
 			_defaultSerializer = serializer;
-			_canDestroy	= canDestroy;
+			_canDestroy = canDestroy;
 			_options = options;
 			_isDefaultExchange = name == string.Empty;
 
 			_rpcHelper = new RpcHelper(_model, this.Name, serializer);
 		}
 
-		#region	IRabbitExchange
+		#region IRabbitExchange
 
 		public string Name { get; private set; }
 
-		public IRabbitQueueBinding Bind(IRabbitQueue queue,	string routingKeyOrFilter)
+		public IRabbitQueueBinding Bind(IRabbitQueue queue, string routingKeyOrFilter)
 		{
-			lock (_model)
-				_model.QueueBind(queue.Name, this.Name,	routingKeyOrFilter);
+			lock(_model)
+				_model.QueueBind(queue.Name, this.Name, routingKeyOrFilter);
 
 			return new RabbitQueueBinding(_model, queue.Name, this.Name, routingKeyOrFilter);
 		}
 
 		public IRabbitQueueBinding BindNoWait(IRabbitQueue queue, string routingKeyOrFilter)
 		{
-			lock (_model)
+			lock(_model)
 				_model.QueueBindNoWait(queue.Name, this.Name, routingKeyOrFilter, null);
 
 			return new RabbitQueueBinding(_model, queue.Name, this.Name, routingKeyOrFilter);
 		}
 
-		public void	Delete()
+		public void Delete()
 		{
 			if (!_canDestroy) return;
 
-			lock (_model)
+			lock(_model)
 				_model.ExchangeDelete(this.Name);
 		}
 
-		public void	Delete(bool	ifUnused)
+		public void Delete(bool ifUnused)
 		{
 			if (!_canDestroy) return;
 
-			lock (_model)
+			lock(_model)
 				_model.ExchangeDelete(this.Name, ifUnused);
 		}
 
 		#endregion
 
-		#region	IRabbitSender
+		#region IRabbitSender
 
-		public MessageInfo SendRaw(byte[] body, string routingKey = "", 
-								   IBasicProperties properties = null, 
-								   SendOptions options = null)
+		public MessageInfo SendRaw(byte[] body, string routingKey = "",
+			IBasicProperties properties = null,
+			SendOptions options = null)
 		{
 			Argument.NotNull(routingKey, "routingKey");
 
-			options	= options ?? SendOptions.Default;
-			var	prop = properties ?? _model.CreateBasicProperties();
+			options = options ?? SendOptions.Default;
+			var prop = properties ?? _model.CreateBasicProperties();
 			if (options.Persist)
 			{
-				prop.DeliveryMode =	2; // persistent
+				prop.DeliveryMode = 2; // persistent
 			}
 
-			lock (_model)
+			lock(_model)
 			{
-				var	id = _model.NextPublishSeqNo;
+				var id = _model.NextPublishSeqNo;
 				_model.BasicPublish(this.Name, routingKey,
-									mandatory: options.Mandatory,
-									immediate: options.Immediate,
-									basicProperties: prop,
-									body: body);
-				return new MessageInfo() { Tag = id	};
+					mandatory: options.Mandatory,
+					immediate: options.Immediate,
+					basicProperties: prop,
+					body: body);
+				return new MessageInfo() {Tag = id};
 			}
 		}
 
-		public MessageInfo Send<T>(T message, string routingKey	= "",
-								   IBasicProperties properties = null,	
-								   SendOptions options = null) 
-			where T	: class
+		public MessageInfo Send<T>(T message, string routingKey = "",
+			IBasicProperties properties = null,
+			SendOptions options = null)
+			where T : class
 		{
-			options	= options ?? SendOptions.Default;
-			var	serializer = options.Serializer	?? _defaultSerializer;
-			var	prop = properties ?? _model.CreateBasicProperties();
-			var	data = serializer.Serialize(message, prop);
+			options = options ?? SendOptions.Default;
+			var serializer = options.Serializer ?? _defaultSerializer;
+			var prop = properties ?? _model.CreateBasicProperties();
+			var data = serializer.TypedSerialize(message, prop);
 
-			return SendRaw(data, routingKey, prop,	options);
+			return SendRaw(data, routingKey, prop, options);
 		}
 
-		public MessageEnvelope SendRequestRaw(byte[] data,	string routingKey =	"",
-											  IBasicProperties properties = null,
-											  RpcSendOptions options =	null)
-		{
-			Argument.NotNull(routingKey, "routingKey");
-			properties = properties	?? _model.CreateBasicProperties();
-
-			return _rpcHelper.SendRequestRaw(data, routingKey, properties, options);
-		}
-
-		public TResponse SendRequest<TRequest, TResponse>(TRequest request,	string routingKey =	"",
-														  IBasicProperties properties = null,
-														  RpcSendOptions options = null) 
-			where TRequest : class 
-			where TResponse	: class
+		public MessageEnvelope CallRaw(byte[] data, string routingKey = "",
+			IBasicProperties properties = null,
+			RpcSendOptions options = null)
 		{
 			Argument.NotNull(routingKey, "routingKey");
 			properties = properties ?? _model.CreateBasicProperties();
 
-			return _rpcHelper.SendRequest<TRequest,	TResponse>(request,	routingKey,	properties,	options);
+			return _rpcHelper.CallRaw(data, routingKey, properties, options);
+		}
+
+		public TResponse Call<TRequest, TResponse>(TRequest request, string routingKey = "",
+			IBasicProperties properties = null,
+			RpcSendOptions options = null)
+			where TRequest : class
+			where TResponse : class
+		{
+			Argument.NotNull(routingKey, "routingKey");
+			properties = properties ?? _model.CreateBasicProperties();
+
+			return _rpcHelper.CallTyped<TRequest, TResponse>(request, routingKey, properties, options);
 		}
 
 		#endregion
 
-		#region	IRabbitQueueDeclarer
+		#region IRabbitQueueDeclarer
 
-		public IRabbitQueue	DeclareQueue(string	name, QueueOptions options)
+		public IRabbitQueue DeclareQueue(string name, QueueOptions options)
 		{
 			return DeclareQueueInternal(false, name, options);
 		}
@@ -151,7 +151,7 @@
 
 			var serializer = options.Serializer ?? _defaultSerializer;
 
-			lock (_model)
+			lock(_model)
 			{
 				QueueDeclareOk result;
 
@@ -167,7 +167,7 @@
 
 				if (!this._isDefaultExchange)
 				{
-					// binds it	to "this" exchange
+					// binds it to "this" exchange
 					_model.QueueBind(result.QueueName, this.Name, "");
 				}
 

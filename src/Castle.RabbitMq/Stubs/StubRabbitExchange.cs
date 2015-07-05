@@ -108,18 +108,18 @@
 			return new MessageInfo();
 		}
 
-		public MessageEnvelope SendRequestRaw(byte[] data, string routingKey = "",
-											  IBasicProperties properties = null,
-											  RpcSendOptions options = null)
+		public MessageEnvelope CallRaw(byte[] data, string routingKey = "",
+									   IBasicProperties properties = null,
+									   RpcSendOptions options = null)
 		{
 			_sendRequestsRaw.Add(Tuple.Create(new MessageEnvelope(properties, data), routingKey, options));
 			
 			return new MessageEnvelope(new BasicProperties(), new byte[0]);
 		}
 
-		public TResponse SendRequest<TRequest, TResponse>(TRequest request, string routingKey = "",
-														  IBasicProperties properties = null,
-														  RpcSendOptions options = null) 
+		public TResponse Call<TRequest, TResponse>(TRequest request, string routingKey = "",
+												   IBasicProperties properties = null,
+												   RpcSendOptions options = null) 
 			where TRequest : class where TResponse : class
 		{
 			var reply = _rpcFunc(request);

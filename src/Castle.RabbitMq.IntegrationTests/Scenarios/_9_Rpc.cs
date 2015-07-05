@@ -31,7 +31,7 @@ namespace Castle.RabbitMq.IntegrationTests.Scenarios
 
 
             var reply = channelClient.DefaultExchange
-                .SendRequest<MyRequest, MyResponse>(new MyRequest(), "rpc_1");
+                .Call<MyRequest, MyResponse>(new MyRequest(), "rpc_1");
 
             msgs.Should().Be(1);
 	        reply.Should().BeOfType<MyResponse>();
@@ -51,7 +51,7 @@ namespace Castle.RabbitMq.IntegrationTests.Scenarios
 				}, new ConsumerOptions());
 
 			Xunit.Assert.Throws<Exception>(() => channelClient.DefaultExchange
-				.SendRequest<MyRequest, MyResponse>(new MyRequest(), "rpc_2"))
+				.Call<MyRequest, MyResponse>(new MyRequest(), "rpc_2"))
 			.Message.Should().Be("fake exception");
 		}  
     }

@@ -91,12 +91,12 @@
 
 			var typedOnRespond = new Func<MessageEnvelope, IMessageAck, MessageEnvelope>((envelope, ack) =>
 			{
-				var typedMessage = serializer.Deserialize<TRequest>(envelope.Body, envelope.Properties);
+				var typedMessage = serializer.TypedDeserialize<TRequest>(envelope.Body, envelope.Properties);
 
 				var replyInstance = onRespond(new MessageEnvelope<TRequest>(envelope, typedMessage), ack);
 
 				var replyProperties = new BasicProperties();
-				var replyData = serializer.Serialize(replyInstance, replyProperties);
+				var replyData = serializer.TypedSerialize(replyInstance, replyProperties);
 
 				return new MessageEnvelope(replyProperties, replyData);
 			});
@@ -116,7 +116,7 @@
 
 			var typedReceived = new Action<MessageEnvelope, IMessageAck>((envelope, ack) =>
 			{
-				var message = serializer.Deserialize<T>(envelope.Body, envelope.Properties);
+				var message = serializer.TypedDeserialize<T>(envelope.Body, envelope.Properties);
 
 				onReceived(new MessageEnvelope<T>(envelope, message), ack);
 			});
