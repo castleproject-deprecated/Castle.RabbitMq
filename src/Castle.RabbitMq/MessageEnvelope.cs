@@ -5,6 +5,17 @@
 
 	public class MessageEnvelope
 	{
+		// kind of copy constructor
+		public MessageEnvelope(MessageEnvelope source)
+			: this(source.Properties, source.Body)
+		{
+			this.ConsumerTag = source.ConsumerTag;
+			this.ExchangeName = source.ExchangeName;
+			this.RoutingKey = source.RoutingKey;
+			this.DeliveryTag = source.DeliveryTag;
+			this.IsRedelivery = source.IsRedelivery;
+		}
+
 		public MessageEnvelope(IBasicProperties	properties,	byte[] body)
 		{
 			this.Properties	= properties;
@@ -29,6 +40,11 @@
 
 	public class MessageEnvelope<T>	: MessageEnvelope
 	{
+		public MessageEnvelope(MessageEnvelope copy, T message) : base(copy)
+		{
+			this.Message = message;
+		}
+
 		public MessageEnvelope(IBasicProperties	properties,	T message, byte[] body)	
 			: base(properties, body)
 		{

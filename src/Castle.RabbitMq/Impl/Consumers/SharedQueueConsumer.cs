@@ -10,13 +10,11 @@
 	internal class SharedQueueConsumer : QueueingBasicConsumer, IRabbitMessageProducer
 	{
 		private readonly ConcurrentBag<IMessageConsumer> _consumers = new ConcurrentBag<IMessageConsumer>();
-//		private readonly IRabbitSerializer _serializer;
 		private readonly Thread _thread;
 		private volatile bool _closed;
 
 		public SharedQueueConsumer(IModel model) : base(model)
 		{
-//			_serializer = serializer;
 			_thread = new Thread(OnProc)
 			{
 				IsBackground = true

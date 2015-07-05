@@ -19,17 +19,17 @@
 		{
 			var	model =	new	Mock<IModel>();
 
-			var	sharedQConsumer	= new SharedQueueConsumer<MyMessage>(model.Object, _serializer);
+			var	sharedQConsumer	= new SharedQueueConsumer(model.Object);
 
-			var	msgsReceived = new List<MyMessage>();
+			var	msgsReceived = new List<MessageEnvelope>();
 
 			var	curThreadId	= Thread.CurrentThread.ManagedThreadId;
 			int	dispatchThreadId = 0;
 
 			
-			sharedQConsumer.Subscribe(new ActionAdapter<MyMessage>((env) =>
+			sharedQConsumer.Subscribe(new ActionAdapter((env) =>
 			{
-				msgsReceived.Add(env.Message);
+				msgsReceived.Add(env);
 				dispatchThreadId = Thread.CurrentThread.ManagedThreadId;
 			}));
 

@@ -2,6 +2,7 @@
 {
 	using System;
 	using RabbitMQ.Client;
+	using RabbitMQ.Client.Framing;
 
 	[System.Diagnostics.DebuggerDisplay("Queue '{Name}' {_queueOptions}", Name = "Queue")]
 	public class RabbitQueue : IRabbitQueue
@@ -48,15 +49,26 @@
 
 		#region IRabbitQueueConsumer
 
-		public Subscription RespondRaw(Func<MessageEnvelope, IMessageAck, MessageEnvelope> onRespond, ConsumerOptions options)
+		public Subscription RespondRaw(Func<MessageEnvelope, IMessageAck, MessageEnvelope> onRespond, 
+									   ConsumerOptions options)
 		{
 			Argument.NotNull(onRespond, "onRespond");
 			options = options ?? ConsumerOptions.Default;
 
-			throw new NotImplementedException();
+			var consumer = CreateConsumer(options);
+
+			consumer.Subscribe(new RpcResponder(_model, onRespond));
+
+			lock(_model)
+			{
+				var consumerTag = _model.BasicConsume(this.Name, options.NoAck, consumer);
+
+				return new Subscription(_model, consumerTag);
+			}
 		}
 
-		public Subscription ConsumeRaw(Action<MessageEnvelope, IMessageAck> onReceived, ConsumerOptions options)
+		public Subscription ConsumeRaw(Action<MessageEnvelope, IMessageAck> onReceived, 
+									   ConsumerOptions options)
 		{
 			Argument.NotNull(onReceived, "onReceived");
 			options = options ?? ConsumerOptions.Default;
@@ -84,22 +96,22 @@
 			ConsumerOptions options)
 		{
 			Argument.NotNull(onRespond, "onRespond");
-			throw new NotImplementedException();
+			
+			var serializer = options.Serializer ?? _defaultSerializer;
 
-//          options = options ?? ConsumerOptions.Default;
-//
-//          var serializer = options.Serializer ?? _defaultSerializer;
-//
-//          var consumer = CreateConsumer<TRequest>(serializer, options);
-//
-//          consumer.Subscribe(new RpcResponder<TRequest, TResponse>(_model, serializer, onRespond));
-//
-//          lock (_model)
-//          {
-//              var consumerTag = _model.BasicConsume(this.Name, options.NoAck, consumer);
-//
-//              return new Subscription(_model, consumerTag);
-//          }
+			var typedOnRespond = new Func<MessageEnvelope, IMessageAck, MessageEnvelope>((envelope, ack) =>
+			{
+				var typedMessage = serializer.Deserialize<TRequest>(envelope.Body, envelope.Properties);
+
+				var replyInstance = onRespond(new MessageEnvelope<TRequest>(envelope, typedMessage), ack);
+
+				var replyProperties = new BasicProperties();
+				var replyData = serializer.Serialize(replyInstance, replyProperties);
+
+				return new MessageEnvelope(replyProperties, replyData);
+			});
+
+			return this.RespondRaw(typedOnRespond, options);
 		}
 
 		[Obsolete]
@@ -107,34 +119,19 @@
 			ConsumerOptions options)
 		{
 			Argument.NotNull(onReceived, "onReceived");
-			throw new NotImplementedException();
-//
-//          options = options ?? ConsumerOptions.Default;
-//
-//          var serializer = options.Serializer ?? _defaultSerializer;
-//
-//          // PERF: perf test consumers
-//          var consumer = CreateConsumer<T>(serializer, options);
-//
-//          consumer.Subscribe(new ActionAdapter<T>(env =>
-//          {
-//              var msgAcker = new MessageAck(() =>
-//              {
-//                  lock (_model) _model.BasicAck(env.DeliveryTag, false);
-//              }, (requeue) =>
-//              {
-//                  lock (_model) _model.BasicNack(env.DeliveryTag, false, requeue);
-//              });
-//
-//              onReceived(env, msgAcker);
-//          }));
-//
-//          lock (_model)
-//          {
-//              var consumerTag = _model.BasicConsume(this.Name, options.NoAck, consumer);
-//
-//              return new Subscription(_model, consumerTag);
-//          }
+
+			options = options ?? ConsumerOptions.Default;
+
+			var serializer = options.Serializer ?? _defaultSerializer;
+
+			var typedReceived = new Action<MessageEnvelope, IMessageAck>((envelope, ack) =>
+			{
+				var message = serializer.Deserialize<T>(envelope.Body, envelope.Properties);
+
+				onReceived(new MessageEnvelope<T>(envelope, message), ack);
+			});
+
+			return this.ConsumeRaw(typedReceived, options);
 		}
 
 		#endregion
