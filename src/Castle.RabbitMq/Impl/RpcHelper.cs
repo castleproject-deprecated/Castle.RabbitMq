@@ -79,16 +79,20 @@
 
 			if (ErrorResponse.IsHeaderErrorFlag(reply.Properties))
 			{
-				HandleError(request, reply);
+				HandleError(reply);
 			}
 
 			return _serializer.Deserialize<TResponse>(reply.Body, reply.Properties);
 		}
 
-		private void HandleError(object request, MessageEnvelope reply)
+		private void HandleError(MessageEnvelope reply)
 		{
-			var response = _serializer.Deserialize<ErrorResponse>(reply.Body, reply.Properties);
+			if (reply.Body == null || reply.Body.Length == 0)
+			{
+				throw new Exception("Call failed");
+			}
 
+			var response = _serializer.Deserialize<ErrorResponse>(reply.Body, reply.Properties);
 			throw response.Exception;
 		}
 

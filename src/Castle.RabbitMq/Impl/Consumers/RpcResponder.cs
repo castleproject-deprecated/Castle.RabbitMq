@@ -9,15 +9,18 @@ namespace Castle.RabbitMq
 	{
 		private	readonly IModel	_model;
 		private readonly Func<MessageEnvelope, IMessageAck, MessageEnvelope> _onRespond;
-//		private	readonly IRabbitSerializer _serializer;
+		private readonly bool _shouldSerializeExceptions;
+		private	readonly IRabbitSerializer _serializer;
 
 		public RpcResponder(IModel model, 
-//							IRabbitSerializer serializer,
-							Func<MessageEnvelope, IMessageAck, MessageEnvelope> onRespond)
+							IRabbitSerializer serializer,
+							Func<MessageEnvelope, IMessageAck, MessageEnvelope> onRespond,
+							bool shouldSerializeExceptions)
 		{
 			_model = model;
-//			_serializer	= serializer;
+			_serializer	= serializer;
 			_onRespond = onRespond;
+			_shouldSerializeExceptions = shouldSerializeExceptions;
 		}
 
 		public void	OnNext(MessageEnvelope newMsg)
@@ -47,7 +50,8 @@ namespace Castle.RabbitMq
 				if (LogAdapter.LogEnabled) LogAdapter.LogError("Rpc", "OnNext error", e);
 
 				// Empty data
-//				replyData = _serializer.Serialize(new ErrorResponse() { Exception = e }, newProp);
+				if (_shouldSerializeExceptions)
+					replyData = _serializer.Serialize(new ErrorResponse() { Exception = e }, replyProperties);
 
 				ErrorResponse.FlagHeaders(replyProperties);
 			}

@@ -53,18 +53,8 @@
 									   ConsumerOptions options)
 		{
 			Argument.NotNull(onRespond, "onRespond");
-			options = options ?? ConsumerOptions.Default;
 
-			var consumer = CreateConsumer(options);
-
-			consumer.Subscribe(new RpcResponder(_model, onRespond));
-
-			lock(_model)
-			{
-				var consumerTag = _model.BasicConsume(this.Name, options.NoAck, consumer);
-
-				return new Subscription(_model, consumerTag);
-			}
+			return InternalRespondRaw(onRespond, options, shouldSerializeExceptions: false);
 		}
 
 		public Subscription ConsumeRaw(Action<MessageEnvelope, IMessageAck> onReceived, 
@@ -111,7 +101,7 @@
 				return new MessageEnvelope(replyProperties, replyData);
 			});
 
-			return this.RespondRaw(typedOnRespond, options);
+			return InternalRespondRaw(typedOnRespond, options, shouldSerializeExceptions: true);
 		}
 
 		[Obsolete]
@@ -135,6 +125,25 @@
 		}
 
 		#endregion
+
+		private Subscription InternalRespondRaw(Func<MessageEnvelope, IMessageAck, MessageEnvelope> onRespond, 
+			ConsumerOptions options, 
+			bool shouldSerializeExceptions)
+		{
+			options = options ?? ConsumerOptions.Default;
+			var serializer = options.Serializer ?? _defaultSerializer;
+
+			var consumer = CreateConsumer(options);
+
+			consumer.Subscribe(new RpcResponder(_model, serializer, onRespond, shouldSerializeExceptions));
+
+			lock (_model)
+			{
+				var consumerTag = _model.BasicConsume(this.Name, options.NoAck, consumer);
+
+				return new Subscription(_model, consumerTag);
+			}
+		}
 
 		private IRabbitMessageProducer CreateConsumer(ConsumerOptions options)
 		{
