@@ -5,7 +5,7 @@
 	using RabbitMQ.Client;
 
 
-	public class StubRabbitChannel : IRabbitChannel
+	public class StubRabbitChannel : IRabbitChannel, IRabbitChannelInternal
 	{
 		private readonly StubRabbitExchange _defaultExchange;
 		private readonly List<StubRabbitQueue> _queuesDeclared;
@@ -134,6 +134,16 @@
 		{
 			var binding = new StubRabbitQueueBinding(exchange, queue, routingKeyOrFilter);
 			_unbound.Add(binding);
+		}
+
+		IRabbitQueueBinding IRabbitChannelInternal.BindInternal(bool nowait, string queue, string exchange, string routingKeyOrFilter)
+		{
+			var ex = new StubRabbitExchange(exchange, new ExchangeOptions());
+			var q = new StubRabbitQueue(queue, new QueueOptions());
+
+			return nowait ? 
+				this.BindNoWait(ex, q, routingKeyOrFilter) : 
+				this.Bind(ex, q, routingKeyOrFilter);
 		}
 
 		public int ChannelNumber { get; set; }

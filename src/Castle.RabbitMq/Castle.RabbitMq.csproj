@@ -54,7 +54,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Asserts.cs" />
+    <Compile Include="Extensions\RabbitSenderExtensions.cs" />
+    <Compile Include="Extensions\RabbitQueueConsumerExtensions.cs" />
     <Compile Include="ErrorResponse.cs" />
+    <Compile Include="Extensions\QueueDeclarerExtensions.cs" />
     <Compile Include="Impl\Consumers\IRabbitMessageProducer.cs" />
     <Compile Include="MessageUnroutedEventArgs.cs" />
     <Compile Include="MgmtConsole\BindingInfo.cs" />
@@ -92,10 +95,12 @@
     <Compile Include="MessageEnvelope.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Impl\RabbitConnection.cs" />
+    <Compile Include="Extensions\RabbitChannelExtensions.cs" />
     <Compile Include="RabbitConnector.cs" />
     <Compile Include="Options\ExchangeOptions.cs" />
     <Compile Include="Options\QueueOptions.cs" />
     <Compile Include="RabbitException.cs" />
+    <Compile Include="Extensions\RabbitSerializerExtensions.cs" />
     <Compile Include="Serializers\JsonSerializer.cs" />
     <Compile Include="Serializers\ProtoBufSerializer.cs" />
     <Compile Include="Stubs\StubModel.cs" />

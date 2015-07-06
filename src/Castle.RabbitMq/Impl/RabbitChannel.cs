@@ -4,7 +4,7 @@
 	using RabbitMQ.Client;
 	using RabbitMQ.Client.Events;
 
-	public class RabbitChannel : IRabbitChannel
+	public class RabbitChannel : IRabbitChannel, IRabbitChannelInternal
 	{
 		private	readonly IModel	_model;
 		private	readonly IRabbitSerializer _defaultSerializer;
@@ -65,12 +65,12 @@
 
 		public IRabbitQueueBinding Bind(IRabbitExchange	exchange, IRabbitQueue queue, string routingKeyOrFilter	= null)
 		{
-			return BindInternal(false, queue.Name,	exchange.Name, routingKeyOrFilter);
+			return (this as IRabbitChannelInternal).BindInternal(false, queue.Name,	exchange.Name, routingKeyOrFilter);
 		}
 
 		public IRabbitQueueBinding BindNoWait(IRabbitExchange exchange, IRabbitQueue queue, string routingKeyOrFilter)
 		{
-			return BindInternal(true, queue.Name, exchange.Name, routingKeyOrFilter);
+			return (this as IRabbitChannelInternal).BindInternal(true, queue.Name, exchange.Name, routingKeyOrFilter);
 		}
 
 		public void	UnBind(IRabbitExchange exchange, IRabbitQueue queue, string	routingKeyOrFilter = null)
@@ -117,7 +117,7 @@
 			}
 		}
 
-		internal RabbitQueueBinding	BindInternal(bool nowait, string queue, string exchange, string routingKeyOrFilter)
+		IRabbitQueueBinding IRabbitChannelInternal.BindInternal(bool nowait, string queue, string exchange, string routingKeyOrFilter)
 		{
 			EnsureNotDisposed();
 
