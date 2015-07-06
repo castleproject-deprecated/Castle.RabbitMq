@@ -2,9 +2,11 @@
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Diagnostics;
 	using RabbitMQ.Client;
 	using RabbitMQ.Client.Framing;
 
+	[DebuggerDisplay("StubRabbitExchange {Name}")]
 	public class StubRabbitExchange : IRabbitExchange
 	{
 		private Func<object, object> _rpcFunc;

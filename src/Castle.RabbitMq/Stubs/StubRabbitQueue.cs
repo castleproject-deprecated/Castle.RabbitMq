@@ -1,8 +1,10 @@
 ﻿namespace Castle.RabbitMq.Stubs
 {
 	using System;
+	using System.Diagnostics;
 
 
+	[DebuggerDisplay("StubRabbitQueue {Name}")]
 	public class StubRabbitQueue : IRabbitQueue
 	{
 		private bool _consumedCalled;
