@@ -30,7 +30,7 @@
 
 			_byte2instance[buffer] = instance;
 
-			return new byte[0];
+			return buffer;
 		}
 
 		public object Deserialize(byte[] data, Type type, IBasicProperties prop)

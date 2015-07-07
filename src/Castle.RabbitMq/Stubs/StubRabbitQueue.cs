@@ -3,6 +3,7 @@
 	using System;
 	using System.Collections.Generic;
 	using System.Diagnostics;
+	using RabbitMQ.Client.Framing;
 
 
 	public class StubMessageAcker : IMessageAck
@@ -50,12 +51,21 @@
 		public bool Deleted { get; set; }
 		public bool Purged { get; set; }
 
-		public void StubPublish<T>(MessageEnvelope<T> message, IMessageAck acker = null)
+		public void StubPublish(MessageEnvelope message, IMessageAck acker = null)
 		{
 			if (!_consumedCalled) throw new Exception("Not consumer set up");
 			if (acker == null) acker = new StubMessageAcker();
 
 			_consumer(message, acker);
+		}
+
+		public void StubPublish<T>(T message, IMessageAck acker = null)
+		{
+			var props = new BasicProperties();
+			var bytes = this.DefaultSerializer.TypedSerialize<T>(message, props);
+			var env = new MessageEnvelope(props, bytes);
+
+			StubPublish(env, acker);
 		}
 
 		public MessageEnvelope StubRespond(MessageEnvelope requestMessage, IMessageAck acker = null)
@@ -64,6 +74,16 @@
 			if (acker == null) acker = new StubMessageAcker();
 
 			return _responder(requestMessage, acker);
+		}
+
+		public MessageEnvelope<TReply> StubRespond<TRequest, TReply>(TRequest requestMessage, IMessageAck acker = null)
+			where TReply : class
+		{
+			var props = new BasicProperties();
+			var bytes = this.DefaultSerializer.TypedSerialize<TRequest>(requestMessage, props);
+			var env = new MessageEnvelope(props, bytes);
+
+			return (MessageEnvelope<TReply>)StubRespond(env, acker);
 		}
 
 		// End Stub helpers
