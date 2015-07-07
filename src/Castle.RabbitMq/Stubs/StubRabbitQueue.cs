@@ -40,6 +40,8 @@
 			this.Options = options;
 
 			_model = new StubModel();
+
+			this.DefaultSerializer = new StubRabbitSerializer();
 		}
 
 		// Stub helpers
@@ -90,10 +92,7 @@
 
 		public string Name { get; private set; }
 
-		public IRabbitSerializer DefaultSerializer
-		{
-			get { throw new NotImplementedException(); }
-		}
+		public IRabbitSerializer DefaultSerializer { get; set; }
 
 		public uint ConsumerCount { get; set; }
 

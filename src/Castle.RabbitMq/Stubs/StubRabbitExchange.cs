@@ -25,6 +25,7 @@
 
 			this.Name = name;
 			this.Options = options;
+			this.DefaultSerializer = new StubRabbitSerializer();
 
 			_sendRaws = new List<Tuple<MessageEnvelope, string, SendOptions>>();
 			_sends = new List<Tuple<MessageEnvelope, string, SendOptions>>();
