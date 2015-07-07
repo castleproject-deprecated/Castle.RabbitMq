@@ -67,6 +67,11 @@
 
 		#region IRabbitSender
 
+		public IRabbitSerializer DefaultSerializer
+		{
+			get { return _defaultSerializer; }
+		}
+
 		public MessageInfo SendRaw(byte[] body, string routingKey = "",
 			IBasicProperties properties = null,
 			SendOptions options = null)

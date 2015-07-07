@@ -54,8 +54,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Asserts.cs" />
+    <Compile Include="Extensions\RabbitQueueExtensions.cs" />
     <Compile Include="Extensions\RabbitSenderExtensions.cs" />
-    <Compile Include="Extensions\RabbitQueueConsumerExtensions.cs" />
     <Compile Include="ErrorResponse.cs" />
     <Compile Include="Extensions\QueueDeclarerExtensions.cs" />
     <Compile Include="Impl\Consumers\IRabbitMessageProducer.cs" />

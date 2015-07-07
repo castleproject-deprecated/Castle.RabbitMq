@@ -23,6 +23,11 @@
 		{
 			ConsumerStrategy = ConsumerStrategy.Default
 		};
+		internal static ConsumerOptions DefaultForRespond = new ConsumerOptions()
+		{
+			ConsumerStrategy = ConsumerStrategy.Default,
+			ShouldSerializeExceptions = true
+		};
 
 		public ConsumerOptions()
 		{
@@ -41,5 +46,7 @@
 		///	server before they are even	transmitted	across the network to us. 
 		///	</summary>
 		public bool	NoAck {	get; set; }
+
+		public bool ShouldSerializeExceptions { get; set; }
 	}
 }

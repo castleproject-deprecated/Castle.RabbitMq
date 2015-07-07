@@ -10,5 +10,9 @@
 
 		void Delete();
 		void Delete(bool ifUnused, bool	ifEmpty);
+
+		IRabbitSerializer DefaultSerializer { get; }
 	}
+
+
 }

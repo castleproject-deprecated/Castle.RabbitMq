@@ -13,6 +13,8 @@ namespace Castle.RabbitMq
 			IBasicProperties properties = null,
 			RpcSendOptions options = null);
 
+		IRabbitSerializer DefaultSerializer { get; }
+
 		MessageInfo Send<T>(T message, string routingKey = "",
 			IBasicProperties properties = null,
 			SendOptions options = null) where T : class;

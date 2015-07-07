@@ -29,6 +29,11 @@
 		public uint ConsumerCount { get; private set; }
 		public uint MessageCount { get; private set; }
 
+		public IRabbitSerializer DefaultSerializer
+		{
+			get { return _defaultSerializer; }
+		}
+
 		public void Purge()
 		{
 			lock(_model)
@@ -54,7 +59,9 @@
 		{
 			Argument.NotNull(onRespond, "onRespond");
 
-			return InternalRespondRaw(onRespond, options, shouldSerializeExceptions: false);
+			options = options ?? new ConsumerOptions();
+
+			return InternalRespondRaw(onRespond, options, options.ShouldSerializeExceptions);
 		}
 
 		public Subscription ConsumeRaw(Action<MessageEnvelope, IMessageAck> onReceived, 
@@ -81,49 +88,7 @@
 			}
 		}
 
-		[Obsolete]
-		public Subscription Respond<TRequest, TResponse>(Func<MessageEnvelope<TRequest>, IMessageAck, TResponse> onRespond,
-			ConsumerOptions options)
-		{
-			Argument.NotNull(onRespond, "onRespond");
-			
-			var serializer = options.Serializer ?? _defaultSerializer;
-
-			var typedOnRespond = new Func<MessageEnvelope, IMessageAck, MessageEnvelope>((envelope, ack) =>
-			{
-				var typedMessage = serializer.TypedDeserialize<TRequest>(envelope.Body, envelope.Properties);
-
-				var replyInstance = onRespond(new MessageEnvelope<TRequest>(envelope, typedMessage), ack);
-
-				var replyProperties = new BasicProperties();
-				var replyData = serializer.TypedSerialize(replyInstance, replyProperties);
-
-				return new MessageEnvelope(replyProperties, replyData);
-			});
-
-			return InternalRespondRaw(typedOnRespond, options, shouldSerializeExceptions: true);
-		}
-
-		[Obsolete]
-		public Subscription Consume<T>(Action<MessageEnvelope<T>, IMessageAck> onReceived,
-			ConsumerOptions options)
-		{
-			Argument.NotNull(onReceived, "onReceived");
-
-			options = options ?? ConsumerOptions.Default;
-
-			var serializer = options.Serializer ?? _defaultSerializer;
-
-			var typedReceived = new Action<MessageEnvelope, IMessageAck>((envelope, ack) =>
-			{
-				var message = serializer.TypedDeserialize<T>(envelope.Body, envelope.Properties);
-
-				onReceived(new MessageEnvelope<T>(envelope, message), ack);
-			});
-
-			return this.ConsumeRaw(typedReceived, options);
-		}
-
+		
 		#endregion
 
 		private Subscription InternalRespondRaw(Func<MessageEnvelope, IMessageAck, MessageEnvelope> onRespond, 

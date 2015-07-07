@@ -16,6 +16,8 @@
 		private readonly List<StubRabbitQueueBinding> _boundNoWait;
 		private readonly List<StubRabbitQueueBinding> _unbound;
 
+		private volatile bool _disposed;
+
 		public StubRabbitChannel(ChannelOptions options)
 		{
 			this.Options = options;
@@ -35,7 +37,7 @@
 
 		// Stub helpers
 
-		public bool Disposed { get; private set; }
+		public bool Disposed { get { return _disposed; } }
 
 		public ChannelOptions Options { get; private set; }
 
@@ -78,6 +80,8 @@
 
 		public IRabbitQueue DeclareQueue(string name, QueueOptions options)
 		{
+			EnsureNotDisposed();
+
 			var queue = new StubRabbitQueue(name, options);
 			_queuesDeclared.Add(queue);
 			return queue;
@@ -85,6 +89,8 @@
 
 		public IRabbitQueue DeclareQueueNoWait(string name, QueueOptions options)
 		{
+			EnsureNotDisposed();
+
 			var queue = new StubRabbitQueue(name, options);
 			_queuesDeclaredNoWait.Add(queue);
 			return queue;
@@ -92,7 +98,7 @@
 
 		public void Dispose()
 		{
-			this.Disposed = true;
+			this._disposed = true;
 		}
 
 		public event Action<MessageUnroutedEventArgs> MessageUnrouted;
@@ -111,6 +117,8 @@
 
 		public IRabbitExchange DeclareExchangeNoWait(string name, ExchangeOptions options)
 		{
+			EnsureNotDisposed();
+
 			var exchange = new StubRabbitExchange(name, options, (o => null));
 			_exchangesDeclaredNoWait.Add(exchange);
 			return exchange;
@@ -118,6 +126,8 @@
 
 		public IRabbitQueueBinding Bind(IRabbitExchange exchange, IRabbitQueue queue, string routingKeyOrFilter)
 		{
+			EnsureNotDisposed();
+
 			var binding = new StubRabbitQueueBinding(exchange, queue, routingKeyOrFilter);
 			_bound.Add(binding);
 			return binding;
@@ -125,6 +135,8 @@
 
 		public IRabbitQueueBinding BindNoWait(IRabbitExchange exchange, IRabbitQueue queue, string routingKeyOrFilter)
 		{
+			EnsureNotDisposed();
+
 			var binding = new StubRabbitQueueBinding(exchange, queue, routingKeyOrFilter);
 			_boundNoWait.Add(binding);
 			return binding;
@@ -132,12 +144,16 @@
 
 		public void UnBind(IRabbitExchange exchange, IRabbitQueue queue, string routingKeyOrFilter = null)
 		{
+			EnsureNotDisposed();
+
 			var binding = new StubRabbitQueueBinding(exchange, queue, routingKeyOrFilter);
 			_unbound.Add(binding);
 		}
 
 		IRabbitQueueBinding IRabbitChannelInternal.BindInternal(bool nowait, string queue, string exchange, string routingKeyOrFilter)
 		{
+			EnsureNotDisposed();
+
 			var ex = new StubRabbitExchange(exchange, new ExchangeOptions());
 			var q = new StubRabbitQueue(queue, new QueueOptions());
 
@@ -149,5 +165,10 @@
 		public int ChannelNumber { get; set; }
 
 		public IModel Model { get; set; }
+
+		private void EnsureNotDisposed()
+		{
+			if (_disposed) throw new ObjectDisposedException("StubRabbitChannel");
+		}
 	}
 }

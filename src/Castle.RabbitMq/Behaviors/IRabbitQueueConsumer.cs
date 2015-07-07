@@ -17,9 +17,8 @@
 		///	<typeparam name="TResponse">Reply type</typeparam>
 		///	<param name="onRespond"></param>
 		///	<param name="options"></param>
-		[Obsolete]
-		Subscription Respond<TRequest, TResponse>(Func<MessageEnvelope<TRequest>, IMessageAck, TResponse> onRespond,
-												  ConsumerOptions options);
+//		Subscription Respond<TRequest, TResponse>(Func<MessageEnvelope<TRequest>, IMessageAck, TResponse> onRespond,
+//												  ConsumerOptions options);
 
 		///	<summary>
 		///	Starts listening for messages to process with the supplied action. 
@@ -28,9 +27,9 @@
 		///	</summary>
 		///	<param name="onReceived"></param>
 		///	<param name="options"></param>
-		[Obsolete]
-		Subscription Consume<T>(Action<MessageEnvelope<T>, IMessageAck> onReceived,	
-								ConsumerOptions	options);
+//		[Obsolete]
+//		Subscription Consume<T>(Action<MessageEnvelope<T>, IMessageAck> onReceived,	
+//								ConsumerOptions	options);
 
 		// MessageEnvelope<T> Receive<T>() where T : class;
 		// MessageEnvelope<T> Peek<T>()	where T	: class;

@@ -92,6 +92,7 @@
 
 		public string Name { get; private set; }
 		public ExchangeOptions Options { get; private set; }
+		public IRabbitSerializer DefaultSerializer { get; set; }
 
 		public MessageInfo SendRaw(byte[] body, string routingKey = "",
 								   IBasicProperties properties = null, 
