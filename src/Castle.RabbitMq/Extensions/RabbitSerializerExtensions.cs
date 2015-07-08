@@ -11,6 +11,9 @@
 			{
 				var msgType = instance.GetType();
 
+				if (Castle.Core.ProxyServices.IsDynamicProxy(instance.GetType()))
+					throw new Exception("Serialization of a proxy type will be really bad for your sanity");
+
 				var fullname = msgType.AssemblyQualifiedName;
 				var sndComma = fullname.IndexOf("Version=", msgType.FullName.Length, StringComparison.Ordinal);
 
