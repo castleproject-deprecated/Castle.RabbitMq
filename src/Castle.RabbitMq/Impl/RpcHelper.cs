@@ -169,6 +169,16 @@
 
 		public void HandleModelShutdown(object model, ShutdownEventArgs reason)
 		{
+			LogAdapter.LogWarn("RpcHelper", "Model Shutdown. Reason: " + reason);
+
+			ResetQueueCache();
+		}
+
+		private void ResetQueueCache()
+		{
+			LogAdapter.LogWarn("RpcHelper", "Reseting return queue cache.");
+
+			_routing2RetQueue.Clear();
 		}
 
 		public event EventHandler<ConsumerEventArgs> ConsumerCancelled;
