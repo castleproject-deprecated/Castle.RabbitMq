@@ -32,10 +32,21 @@
 					Debugger.Log(1,	"ERROR", msg);
 				}
 			};
+
+			LogAdapter.LogWarnFn =	(c,	m, ex) =>
+			{
+				var	msg	= string.Format("{0}: {1}",	c, m);
+				Console.Error.WriteLine(msg);
+				if (Debugger.IsLogging())
+				{
+					Debugger.Log(1,	"WARN", msg);
+				}
+			};
 		}
 
 		public static Action<string, string, Exception>	LogDebugFn { get; set; }
 		public static Action<string, string, Exception>	LogErrorFn { get; set; }
+		public static Action<string, string, Exception>	LogWarnFn { get; set; }
 
 		public static void LogDebug(string context,	string message)
 		{
@@ -48,6 +59,10 @@
 		public static void LogError(string context,	string message,	Exception ex)
 		{
 			LogErrorFn(context,	message, ex);
+		}
+		public static void LogWarn(string context, string message,	Exception ex = null)
+		{
+			LogWarnFn(context,	message, ex);
 		}
 	}
 }
