@@ -70,6 +70,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scenarios\ConnectorFixture.cs" />
     <Compile Include="Scenarios\Messages\MyDumbMessage.cs" />
+    <Compile Include="Scenarios\_10_MultiConsumersSameQueue.cs" />
     <Compile Include="Scenarios\_1_DeclareAndUseExchange.cs" />
     <Compile Include="Scenarios\_2_ConsumingMsgs.cs">
       <SubType>Code</SubType>
