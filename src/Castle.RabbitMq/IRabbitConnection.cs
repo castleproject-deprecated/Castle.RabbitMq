@@ -9,7 +9,7 @@
 
 		public ChannelOptions()
 		{
-			this.DefaultSerializer	= new JsonSerializer();
+			this.DefaultSerializer = new DotNetSerializer();
 		}
 
 		public bool	WithConfirmation { get;	set; }
@@ -17,11 +17,29 @@
 		public IRabbitSerializer DefaultSerializer { get; set; }
 	}
 
+	public sealed class RabbitConnectionInfo
+	{
+		public string HostName { get; private set; }
+		public string VirtualHost { get; private set; }
+		public string UserName { get; private set; }
+		public string Password { get; private set; }
+		public int Port { get; private set; }
+
+		public RabbitConnectionInfo(string hostName, string virtualHost, string userName, string password, int port)
+		{
+			HostName = hostName;
+			VirtualHost = virtualHost;
+			UserName = userName;
+			Password = password;
+			Port = port;
+		}
+	}
+
 	public interface IRabbitConnection : IDisposable
 	{
 		IRabbitChannel CreateChannel(ChannelOptions	options	= null);
 
-		IRabbitConsole Console { get; }
+		RabbitConnectionInfo ConnectionInfo { get; }
 
 		///	<summary>
 		///	Duplicates the connection, opening a new one

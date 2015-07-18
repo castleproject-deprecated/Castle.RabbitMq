@@ -5,6 +5,7 @@
 	using ProtoBuf.Meta;
 	using RabbitMQ.Client;
 
+
 	public class ProtoBufSerializer : IRabbitSerializer
 	{
 		private readonly RuntimeTypeModel _rtModel;

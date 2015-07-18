@@ -41,13 +41,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="protobuf-net">
-      <HintPath>..\..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
-    </Reference>
     <Reference Include="RabbitMQ.Client, Version=3.5.3.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\RabbitMQ.Client.3.5.3\lib\net40\RabbitMQ.Client.dll</HintPath>
@@ -63,13 +56,9 @@
     <Compile Include="ErrorResponse.cs" />
     <Compile Include="Extensions\QueueDeclarerExtensions.cs" />
     <Compile Include="Impl\Consumers\IRabbitMessageProducer.cs" />
+    <Compile Include="MessageEnvelopeOfT.cs" />
     <Compile Include="MessageUnroutedEventArgs.cs" />
-    <Compile Include="MgmtConsole\BindingInfo.cs" />
-    <Compile Include="MgmtConsole\HttpBasedRabbitConsole.cs" />
-    <Compile Include="IRabbitConsole.cs" />
     <Compile Include="LogAdapter.cs" />
-    <Compile Include="MgmtConsole\ExchangeInfo.cs" />
-    <Compile Include="MgmtConsole\QueueInfo.cs" />
     <Compile Include="Options\SendOptions.cs" />
     <Compile Include="Options\ConsumerOptions.cs" />
     <Compile Include="Behaviors\MessageInfo.cs" />
@@ -105,8 +94,7 @@
     <Compile Include="Options\QueueOptions.cs" />
     <Compile Include="RabbitException.cs" />
     <Compile Include="Extensions\RabbitSerializerExtensions.cs" />
-    <Compile Include="Serializers\JsonSerializer.cs" />
-    <Compile Include="Serializers\ProtoBufSerializer.cs" />
+    <Compile Include="Serializers\DotNetSerializer.cs" />
     <Compile Include="Stubs\StubModel.cs" />
     <Compile Include="Stubs\StubRabbitChannel.cs" />
     <Compile Include="Stubs\StubRabbitConnection.cs" />
@@ -118,7 +106,9 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="MgmtConsole\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

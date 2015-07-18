@@ -1,16 +1,19 @@
 ﻿namespace Castle.RabbitMq.IntegrationTests.Scenarios
 {
+	using System;
+
+	[Serializable]
     class MyDumbMessage
     {
     }
 
-    class MyRequest
+	[Serializable]
+	class MyRequest
     {
-        
     }
 
-    class MyResponse
+	[Serializable]
+	class MyResponse
     {
-        
     }
 }

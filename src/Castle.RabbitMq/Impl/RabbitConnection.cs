@@ -2,13 +2,11 @@
 {
 	using System;
 	using System.Collections.Generic;
-	using MgmtConsole;
 	using RabbitMQ.Client;
 
 	public class RabbitConnection :	IRabbitConnection
 	{
 		private	readonly List<WeakReference<IModel>> _models = new List<WeakReference<IModel>>();
-		private	readonly Lazy<HttpBasedRabbitConsole> _console;
 		private	readonly IConnection _connection;
 		private	readonly ConnectionFactory _connInfo;
 		private	volatile bool _isDisposed;
@@ -17,12 +15,6 @@
 		{
 			_connection	= connection;
 			_connInfo =	connInfo;
-			_console = new Lazy<HttpBasedRabbitConsole>(() => new HttpBasedRabbitConsole(connInfo)); 
-		}
-
-		public IRabbitConsole Console
-		{
-			get	{ return _console.Value; }
 		}
 
 		public IRabbitChannel CreateChannel(ChannelOptions options)
@@ -56,16 +48,16 @@
 			return new RabbitConnection(_connInfo.CreateConnection(), _connInfo);
 		}
 
+		public RabbitConnectionInfo ConnectionInfo
+		{
+			get { return new RabbitConnectionInfo(_connInfo.HostName, _connInfo.VirtualHost, _connInfo.UserName, _connInfo.Password, _connInfo.Port); }
+		}
+
 		public void	Dispose()
 		{
 			if (_isDisposed) return;
 
 			_isDisposed	= true;
-
-			if (_console.IsValueCreated)
-			{
-				_console.Value.Dispose();
-			}
 
 			foreach	(var weakReference in _models)
 			{

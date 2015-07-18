@@ -79,6 +79,10 @@
     <Compile Include="Scenarios\_9_Rpc.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Castle.RabbitMq.Console\Castle.RabbitMq.Console.csproj">
+      <Project>{cb61a742-ced4-4d2c-82b5-1f25736a88a4}</Project>
+      <Name>Castle.RabbitMq.Console</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Castle.RabbitMq\Castle.RabbitMq.csproj">
       <Project>{12ab9987-23c0-415d-8740-3e58d254b03d}</Project>
       <Name>Castle.RabbitMq</Name>

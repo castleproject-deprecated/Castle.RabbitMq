@@ -1,6 +1,5 @@
 ﻿namespace Castle.RabbitMq
 {
-	using ProtoBuf;
 	using RabbitMQ.Client;
 
 	public class MessageEnvelope
@@ -36,21 +35,5 @@
 			return string.Format("RoutingKey: {0} DeliveryTag: {1} IsRedelivery: {2} ConsumerTag: {3} Exchange:	{4}",
 				RoutingKey,	DeliveryTag, IsRedelivery, ConsumerTag,	ExchangeName);
 		}
-	}
-
-	public class MessageEnvelope<T>	: MessageEnvelope
-	{
-		public MessageEnvelope(MessageEnvelope copy, T message) : base(copy)
-		{
-			this.Message = message;
-		}
-
-		public MessageEnvelope(IBasicProperties	properties,	T message, byte[] body)	
-			: base(properties, body)
-		{
-			this.Message = message;
-		}
-
-		public T Message { get;	private	set; }
 	}
 }

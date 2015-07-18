@@ -12,7 +12,7 @@
 
 	public class SharedQueueConsumerTests
 	{
-		private	readonly IRabbitSerializer _serializer = new JsonSerializer();
+		private	readonly IRabbitSerializer _serializer = new DotNetSerializer();
 
 		[Fact]
 		public void	Dequeue_ShouldDispatchFromSeparateThread()

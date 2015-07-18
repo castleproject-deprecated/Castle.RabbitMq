@@ -39,9 +39,9 @@
 			return channel;
 		}
 
-		public IRabbitConsole Console
+		public RabbitConnectionInfo ConnectionInfo
 		{
-			get { throw new System.NotImplementedException(); }
+			get { throw new NotImplementedException(); }
 		}
 
 		public IRabbitConnection NewConnection()

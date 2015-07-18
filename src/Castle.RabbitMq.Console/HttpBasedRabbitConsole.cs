@@ -14,7 +14,7 @@
 	{
 		private	readonly HttpClient	_client;
 
-		public HttpBasedRabbitConsole(ConnectionFactory	connInfo)
+		public HttpBasedRabbitConsole(RabbitConnectionInfo connInfo)
 		{
 			_client	= new HttpClient()
 			{
