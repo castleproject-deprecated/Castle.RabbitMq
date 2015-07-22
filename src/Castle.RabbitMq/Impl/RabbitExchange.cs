@@ -1,5 +1,6 @@
 ﻿namespace Castle.RabbitMq
 {
+	using System;
 	using RabbitMQ.Client;
 
 
@@ -151,6 +152,7 @@
 		internal IRabbitQueue DeclareQueueInternal(bool nowait, string name, QueueOptions options)
 		{
 			Argument.NotNull(name, "name");
+			if (nowait && name == String.Empty) throw new ArgumentException("Auto gen queues cannot be declared with no-wait");
 
 			options = options ?? QueueOptions.Default;
 

@@ -22,8 +22,16 @@ namespace Castle.RabbitMq
 
 		public RabbitExchangeType ExchangeType { get; set; }
 		
+		/// <summary>
+		/// If set when creating a new exchange, the exchange will be marked as durable. 
+		/// Durable exchanges remain active when a server restarts. Non-durable exchanges 
+		/// (transient exchanges) are purged if/when a server restarts.
+		/// </summary>
 		public bool	Durable	{ get; set;	}
 		
+		/// <summary>
+		/// If set, the exchange is deleted when all queues have finished using it.
+		/// </summary>
 		public bool	AutoDelete { get; set; }
 		
 		public IDictionary<string, object> Arguments { get;	set; }

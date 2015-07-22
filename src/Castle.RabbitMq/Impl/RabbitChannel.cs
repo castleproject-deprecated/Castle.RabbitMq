@@ -132,7 +132,8 @@
 
 		internal IRabbitQueue DeclareQueueInternal(bool nowait, string name, QueueOptions options)
 		{
-			Argument.NotNullOrEmpty(name, "name");
+			Argument.NotNull(name, "name");
+			if (nowait && name == String.Empty) throw new ArgumentException("Auto gen queues cannot be declared with no-wait");
 
 			EnsureNotDisposed();
 
