@@ -74,15 +74,22 @@
 		{
 			options = options ?? RpcSendOptions.Default;
 
-			var data = _serializer.TypedSerialize(request, properties);
-			var reply = this.CallRaw(data, routingKey, properties, options);
-
-			if (ErrorResponse.IsHeaderErrorFlag(reply.Properties))
+			try
 			{
-				HandleError(reply);
-			}
+				var data = _serializer.TypedSerialize(request, properties);
+				var reply = this.CallRaw(data, routingKey, properties, options);
 
-			return _serializer.TypedDeserialize<TResponse>(reply.Body, reply.Properties);
+				if (ErrorResponse.IsHeaderErrorFlag(reply.Properties))
+				{
+					HandleError(reply);
+				}
+
+				return _serializer.TypedDeserialize<TResponse>(reply.Body, reply.Properties);
+			}
+			catch(TimeoutException)
+			{
+				throw new TimeoutException("Timeout waiting for reply for Rpc call: " + typeof(TRequest).FullName);
+			}
 		}
 
 		private void HandleError(MessageEnvelope reply)
