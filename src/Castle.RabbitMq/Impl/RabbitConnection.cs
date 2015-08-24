@@ -3,6 +3,7 @@
 	using System;
 	using System.Collections.Generic;
 	using RabbitMQ.Client;
+	using RabbitMQ.Client.Events;
 
 	public class RabbitConnection :	IRabbitConnection
 	{
@@ -15,6 +16,9 @@
 		{
 			_connection	= connection;
 			_connInfo =	connInfo;
+
+			_connection.ConnectionBlocked += OnConnectionBlocked;
+			_connection.ConnectionUnblocked += OnConnectionUnblocked;
 		}
 
 		public IRabbitChannel CreateChannel(ChannelOptions options)
@@ -69,6 +73,15 @@
 			}
 
 			_connection.Dispose();
+		}
+
+		private void OnConnectionBlocked(object sender, ConnectionBlockedEventArgs e)
+		{
+			LogAdapter.LogWarn("Connection", "Connection blocked - broker running low on resources (memory or disk)");
+		}
+		private void OnConnectionUnblocked(object sender, EventArgs e)
+		{
+			LogAdapter.LogWarn("Connection", "Connection Unblocked - broker running is back on its feet");
 		}
 
 		private	void EnsureNotDisposed()

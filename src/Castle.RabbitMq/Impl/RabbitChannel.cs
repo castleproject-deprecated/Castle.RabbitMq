@@ -43,7 +43,7 @@
 
 			lock (_model)
 			{
-				_model.ExchangeDeclare(name, options.ExchangeType.ToStr(), options.Durable,	options.AutoDelete,	options.Arguments);
+				_model.ExchangeDeclare(name, options.ToExchangeType(), options.Durable, options.AutoDelete, options.Arguments);
 			}
 
 			return new RabbitExchange(_model, _defaultSerializer, name,	true, options);
@@ -57,7 +57,7 @@
 
 			lock (_model)
 			{
-				_model.ExchangeDeclareNoWait(name, options.ExchangeType.ToStr(), options.Durable, options.AutoDelete, options.Arguments);
+				_model.ExchangeDeclareNoWait(name, options.ToExchangeType(), options.Durable, options.AutoDelete, options.Arguments);
 			}
 
 			return new RabbitExchange(_model, _defaultSerializer, name,	true, options);

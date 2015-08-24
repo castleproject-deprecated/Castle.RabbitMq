@@ -8,7 +8,8 @@ namespace Castle.RabbitMq
 		Direct,
 		Fanout,
 		Headers, 
-		Topic
+		Topic,
+		Custom
 	}
 
 	public class ExchangeOptions
@@ -21,6 +22,8 @@ namespace Castle.RabbitMq
 		}
 
 		public RabbitExchangeType ExchangeType { get; set; }
+
+		public string CustomExchangeType { get; set; }
 		
 		/// <summary>
 		/// If set when creating a new exchange, the exchange will be marked as durable. 
