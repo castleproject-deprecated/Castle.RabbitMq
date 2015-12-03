@@ -181,13 +181,6 @@
 			ResetQueueCache();
 		}
 
-		private void ResetQueueCache()
-		{
-			LogAdapter.LogWarn("RpcHelper", "Reseting return queue cache.");
-
-			_routing2RetQueue.Clear();
-		}
-
 		public event EventHandler<ConsumerEventArgs> ConsumerCancelled;
 
 		public void HandleBasicCancel(string consumerTag)
@@ -200,6 +193,13 @@
 
 		public void HandleBasicConsumeOk(string consumerTag)
 		{
+		}
+
+		private void ResetQueueCache()
+		{
+			LogAdapter.LogWarn("RpcHelper", "Reseting return queue cache.");
+
+			_routing2RetQueue.Clear();
 		}
 	}
 }

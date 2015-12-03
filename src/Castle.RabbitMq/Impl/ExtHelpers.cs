@@ -14,7 +14,7 @@
 				return source.CustomExchangeType;
 			}
 
-			return source.ToString().ToLowerInvariant();
+			return source.ExchangeType.ToString().ToLowerInvariant();
 		}
 	}
 }
