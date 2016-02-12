@@ -91,7 +91,6 @@
 				var id = _model.NextPublishSeqNo;
 				_model.BasicPublish(this.Name, routingKey,
 					mandatory: options.Mandatory,
-					immediate: options.Immediate,
 					basicProperties: prop,
 					body: body);
 				return new MessageInfo() {Tag = id};
