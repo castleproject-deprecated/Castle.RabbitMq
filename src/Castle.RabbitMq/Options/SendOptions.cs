@@ -21,7 +21,7 @@ namespace Castle.RabbitMq
 
 		public override	string ToString()
 		{
-			return String.Format("Mandatory: {0} Persist: {1}}", Mandatory, Persist);
+			return String.Format("Mandatory: {0} Persist: {1}", Mandatory, Persist);
 		}
 	}
 
