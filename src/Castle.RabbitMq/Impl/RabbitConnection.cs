@@ -21,16 +21,6 @@
 			_connection.ConnectionUnblocked += OnConnectionUnblocked;
 		}
 
-		private void OnConnectionUnblocked(object sender, EventArgs e)
-		{
-			LogAdapter.LogWarn("RabbitConnection", "Connection Unblocked");
-		}
-
-		private void OnConnectionBlocked(object sender, ConnectionBlockedEventArgs e)
-		{
-			LogAdapter.LogWarn("RabbitConnection", "Connection Blocked: " + e.Reason);
-		}
-
 		public IRabbitChannel CreateChannel(ChannelOptions options)
 		{
 			EnsureNotDisposed();
