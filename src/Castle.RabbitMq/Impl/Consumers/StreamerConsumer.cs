@@ -18,6 +18,13 @@ namespace Castle.RabbitMq
 			_consumers.Add(consumer);
 		}
 
+		public override void HandleBasicCancel(string consumerTag)
+		{
+			base.HandleBasicCancel(consumerTag);
+
+			LogAdapter.LogWarn("StreamerConsumer", "consumer has been cancelled unexpectedly: tag " + consumerTag);
+		}
+
 		public override void HandleBasicDeliver(string consumerTag,
 			ulong deliveryTag, bool redelivered,
 			string exchange, string routingKey,

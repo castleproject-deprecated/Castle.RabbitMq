@@ -22,6 +22,13 @@
 			_thread.Start();
 		}
 
+		public override void HandleBasicCancel(string consumerTag)
+		{
+			base.HandleBasicCancel(consumerTag);
+
+			LogAdapter.LogWarn("SharedQueueConsumer", "consumer has been cancelled unexpectedly: tag " + consumerTag);
+		}
+
 		public void Subscribe(IMessageConsumer consumer)
 		{
 			_consumers.Add(consumer);

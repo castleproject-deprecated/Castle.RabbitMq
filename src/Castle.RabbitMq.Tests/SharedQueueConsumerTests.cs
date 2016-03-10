@@ -1,5 +1,6 @@
 ﻿namespace Castle.RabbitMq.Tests
 {
+	using System;
 	using System.Collections.Generic;
 	using System.Threading;
 	using FluentAssertions;
@@ -48,7 +49,8 @@
 		}
 	}
 
-	class MyMessage
+	[Serializable]
+	public class MyMessage
 	{
 		
 	}

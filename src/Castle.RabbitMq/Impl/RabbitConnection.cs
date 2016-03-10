@@ -85,6 +85,15 @@
 			_connection.Dispose();
 		}
 
+		private void OnConnectionBlocked(object sender, ConnectionBlockedEventArgs e)
+		{
+			LogAdapter.LogWarn("Connection", "Connection blocked - broker running low on resources (memory or disk)");
+		}
+		private void OnConnectionUnblocked(object sender, EventArgs e)
+		{
+			LogAdapter.LogWarn("Connection", "Connection Unblocked - broker running is back on its feet");
+		}
+
 		private	void EnsureNotDisposed()
 		{
 			if (_isDisposed) throw new ObjectDisposedException("RabbitConnection");

@@ -323,6 +323,18 @@
 			get { throw new NotImplementedException(); }
 		}
 
+		public uint MessageCount(string queue)
+		{
+			return 0;
+		}
+
+		public uint ConsumerCount(string queue)
+		{
+			return 0;
+		}
+
+		public TimeSpan ContinuationTimeout { get; set; }
+
 		public void Dispose()
 		{
 			this.Disposed = true;
