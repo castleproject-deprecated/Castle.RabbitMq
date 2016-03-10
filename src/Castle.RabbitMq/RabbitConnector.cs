@@ -9,7 +9,8 @@
 		public static RabbitConnection Connect(string hostname,	int	port = 5672, 
 											   string username = "guest", 
 											   string password = "guest", 
-											   string vhost	= "/")
+											   string vhost	= "/",
+											   ushort? heartbeat = null)
 		{
 			var	connFactory	= new ConnectionFactory()
 			{
@@ -21,6 +22,9 @@
 				// should it be	enabled	by default?
 				AutomaticRecoveryEnabled = true
 			};
+
+			if (heartbeat.HasValue)
+				connFactory.RequestedHeartbeat = heartbeat.Value;
 
 			var	connection = connFactory.CreateConnection();
 
