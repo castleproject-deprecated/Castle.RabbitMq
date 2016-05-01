@@ -27,6 +27,8 @@
 		int ChannelNumber { get; }
 
 		IModel Model { get;	}
+
+		IRabbitSerializer Serializer { get; }
 	}
 
 	internal interface IRabbitChannelInternal

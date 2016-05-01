@@ -166,6 +166,8 @@
 
 		public IModel Model { get; set; }
 
+		public IRabbitSerializer Serializer { get; set; }
+
 		private void EnsureNotDisposed()
 		{
 			if (_disposed) throw new ObjectDisposedException("StubRabbitChannel");

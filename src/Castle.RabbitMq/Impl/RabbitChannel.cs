@@ -26,6 +26,8 @@
 
 		public event Action<MessageUnroutedEventArgs> MessageUnrouted;
 
+		public IRabbitSerializer Serializer { get { return _defaultSerializer; } }
+
 		public IRabbitExchange DefaultExchange
 		{
 			get
