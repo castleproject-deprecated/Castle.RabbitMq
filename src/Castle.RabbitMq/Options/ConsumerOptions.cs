@@ -48,5 +48,29 @@
 		public bool	NoAck {	get; set; }
 
 		public bool ShouldSerializeExceptions { get; set; }
+
+		protected bool Equals(ConsumerOptions other)
+		{
+			return ConsumerStrategy == other.ConsumerStrategy && NoAck == other.NoAck && ShouldSerializeExceptions == other.ShouldSerializeExceptions;
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			if (obj.GetType() != this.GetType()) return false;
+			return Equals((ConsumerOptions) obj);
+		}
+
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				var hashCode = (int) ConsumerStrategy;
+				hashCode = (hashCode*397) ^ NoAck.GetHashCode();
+				hashCode = (hashCode*397) ^ ShouldSerializeExceptions.GetHashCode();
+				return hashCode;
+			}
+		}
 	}
 }
