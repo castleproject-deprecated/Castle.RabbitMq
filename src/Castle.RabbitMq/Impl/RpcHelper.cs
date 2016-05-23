@@ -27,6 +27,11 @@
 			_routing2RetQueue = new Dictionary<string, string>(StringComparer.Ordinal);
 			_waits = new ConcurrentDictionary<string, AutoResetEvent>(StringComparer.Ordinal);
 			_replyData = new ConcurrentDictionary<string, MessageEnvelope>(StringComparer.Ordinal);
+
+			this.ConsumerCancelled += (sender, args) =>
+			{
+				LogAdapter.LogDebug("RpcHelper", "Consumer cancelled: " + args.ConsumerTag);
+			};
 		}
 
 		public MessageEnvelope CallRaw(byte[] data,
@@ -43,11 +48,14 @@
 				prop.Expiration = options.Timeout.TotalMilliseconds.ToString();
 				_waits[prop.CorrelationId] = @event;
 
-				lock(_model)
+				lock (_model)
 				{
 					var returnQueue = GetOrCreateReturnQueue(routingKey);
 					prop.ReplyTo = returnQueue;
+				}
 
+				lock(_model) 
+				{
 					_model.BasicPublish(_exchange, routingKey, prop, data);
 				}
 
@@ -114,7 +122,9 @@
 			_routing2RetQueue[routingKey] = queueName;
 
 			// starts a bare metal consumer with no acks
-			_model.BasicConsume(queueName, noAck: true, consumer: this);
+			var consumerTag = _model.BasicConsume(queueName, noAck: true, consumer: this);
+
+			LogAdapter.LogDebug("RpcHelper", "Started consumer " + consumerTag + " temporary queue " + queueName + " for routing " + routingKey);
 
 			return queueName;
 		}
